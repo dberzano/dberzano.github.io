@@ -1,0 +1,11 @@
+name: "My name is Dario Berzano"
+description: "My personal page"
+
+url: "dberzano.github.io"
+
+paginate: 10
+
+#markdown: rdiscount
+markdown: redcarpet
+permalink: pretty
+pygments: true
