@@ -58,6 +58,7 @@ html>body #box {
 #footer_text {
   padding-top: 6px;
   font-size: 14px;
+  text-align: center;
 }
 
 #tags, #authors, #search_results {
