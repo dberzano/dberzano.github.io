@@ -1,4 +1,49 @@
-* {
+/* This style sheet is loaded only if the screen width is at most 960px */
+
+/* For debug: red headline on tablets */
+h1 {
+  /*color: red !important;*/
+}
+
+/* Container of page body */
+html > body #box {
+  width: 95%;
+  max-width: 100%;
+  /*background-color: yellow;*/
+}
+
+/* Container of head text */
+#head #about {
+  width: 95%;
+  padding-top: 13px;
+  /*background-color: green;*/
+}
+
+/* Container for the header */
+#header-content {
+  width: 95%;
+  /*background-color: red;*/
+}
+
+/* Content */
+#content {
+  /*background-color: blue;*/
+}
+
+body {
+  font-size: 26px;
+}
+
+#content p {
+  line-height: 42px;
+}
+
+/** {
+  -webkit-text-size-adjust: 100%;
+}
+*/
+
+/** {
   -webkit-text-size-adjust: 300%;
 }
 
@@ -94,5 +139,4 @@ html>body #box {
     height: 100px;
   }
 }
-
-
+*/

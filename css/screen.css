@@ -50,15 +50,16 @@ html>body #box {
 }
 
 #footer {
-  width: 600px;
+  width: 100%;
   clear: both;
   height: 21px;
   min-height: 21px;
+  /*background-color: yellow;*/
 }
 
 #footer_text {
   padding-top: 6px;
-  font-size: 14px;
+  font-size: 80%;
   text-align: center;
 }
 
@@ -108,10 +109,11 @@ html>body #box {
 
 #head h1 {
   color: white;
-  font-size: 24px;
+  font-size: 160%
 }
 
 #head p {
+  font-size: 100%;
   margin: 0px;
   margin-top: 5px;
 }
@@ -304,13 +306,13 @@ h1.pagetitle {
 
 /* --- h1 --- */
 #content h1 {
-  font-size: 180%;
+  font-size: 155%;
   counter-reset: sec_h2;
 }
 
 /* --- h2 --- */
 #content h2 {
-  font-size: 150%;
+  font-size: 145%;
   font-weight: 600; /* bold */
 }
 .countsections h2 {
