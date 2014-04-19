@@ -39,11 +39,15 @@ code {
 }
 
 /* This is bizarre: chrome for android magnifies this inline text for no reason?! */
-p code, li code {
+/*p code, li code {
   font-size: 60%;
-}
+}*/
 
 #content p {
+  line-height: 48px;
+}
+
+#content li {
   line-height: 48px;
 }
 
