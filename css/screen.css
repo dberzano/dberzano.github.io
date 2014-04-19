@@ -4,7 +4,7 @@
   http://192.168.2.106:3000/themes/paperplanes/stylesheets/screen.css
 */
 
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,400,600);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,400,600|Inconsolata:400,700);
 
 /**
  * =Body
@@ -197,8 +197,9 @@ br {
   clear: both;
 }
 code {
-  font-family: Monaco, 'Courier New', Courier;
-  font-size: 70%;
+  font-weight: 400;
+  font-family: Inconsolata, Monaco, 'Courier New', monospace;
+  font-size: 100%;
   color: #2B7598;
   /* inline snippets */
   border: 1px solid #eaeaea;
