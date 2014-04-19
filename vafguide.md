@@ -1,10 +1,35 @@
 ---
-title: Virtual Analysis Facility for ALICE Guide
+title: "Virtual Analysis Facility for ALICE Guide: this title spans on multiple lines"
 layout: tweet
 ---
 
-This guide provides basic information for using the PROOF-based
-Analysis Facility for ALICE at INFN Torino.
+
+*This guide provides basic information for using the PROOF-based
+Analysis Facility for ALICE at INFN Torino.*
+
+
+Test of H1
+==========
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu tortor id justo euismod sollicitudin. Nunc venenatis imperdiet dolor in iaculis. Etiam consectetur magna lorem, et pulvinar mi pharetra non. Ut ornare dui quam, nec auctor magna tempus eget. Donec nec porttitor lectus, vel vulputate nibh. Duis vitae facilisis massa. Integer placerat nisi ac mattis lacinia. Aliquam erat volutpat. Donec ullamcorper vel nibh vel vehicula.
+
+
+Test of H2
+----------
+
+Curabitur a sem laoreet, sodales ipsum eu, ornare massa. Quisque nec erat quis purus semper aliquam. Aliquam vel mollis arcu. Etiam et libero et augue hendrerit ullamcorper. Mauris magna arcu, pulvinar sit amet imperdiet ut, blandit eu mauris. Suspendisse potenti. Suspendisse rhoncus interdum eleifend. Vestibulum vulputate placerat cursus. Aenean at est sem. Proin molestie iaculis convallis.
+
+
+### Test of H3
+
+Pellentesque id pellentesque tortor. Sed odio erat, ultricies tincidunt diam in, faucibus vestibulum lacus. Duis et elementum mauris, a pulvinar quam. Nunc gravida ante sed consequat interdum. Suspendisse vitae cursus orci. Vestibulum volutpat condimentum mi, et accumsan ante consectetur ac. Mauris a ligula augue. Duis volutpat porta urna ac rutrum. Ut ornare, nisi at mattis sagittis, lacus libero varius massa, a vestibulum leo nunc eu felis. Ut augue turpis, volutpat at ante sit amet, consequat porta sem.
+
+
+#### Test of H4
+
+Etiam ac volutpat tellus. Duis nec lacus ac nisi ultricies sollicitudin. Nullam tincidunt eget urna nec viverra. Vivamus diam tellus, sollicitudin eu iaculis quis, euismod a massa. Morbi pulvinar neque nec fringilla luctus. Aenean feugiat est scelerisque, consequat eros in, accumsan nisi. Phasellus ut egestas velit, ut vestibulum odio. Integer libero odio, dapibus molestie bibendum et, lobortis vitae diam. Phasellus vel lectus ut libero hendrerit pulvinar. Praesent sed lacus arcu. Fusce tincidunt nulla in nisi pretium, at sodales nibh blandit.
+
+Maecenas fringilla adipiscing neque in adipiscing. Curabitur vitae nunc lorem. Fusce blandit vehicula urna, ut fermentum velit. Maecenas sit amet ipsum ligula. Morbi id ligula nec justo interdum condimentum. Donec suscipit odio risus, vel mattis risus tempor a. Vestibulum varius nisl orci, et venenatis purus pellentesque quis. Proin fringilla lectus sollicitudin erat ultrices malesuada. Morbi malesuada tristique interdum. Integer sed mi nisl. Sed tincidunt imperdiet ligula id dignissim. Proin tincidunt elementum libero, ultricies viverra arcu pulvinar sed. Sed risus lorem, suscipit sed lacus nec, euismod porttitor ligula. Duis nec nisl facilisis, mollis mauris in, viverra justo.
 
 
 General information
@@ -262,6 +287,8 @@ TProof::Open("pod://");
 // Upload and enable package
 gProof->UploadPackage("AliRoot.par");
 gProof->EnablePackage("AliRoot.par", list);
+
+// Note that this is a very long line artficially added to see how this thing behaves: will it break it, will it show scroll bars? And, what about the mobile layout?
 ```
 
 Datasets have also different names with respect to the CAF. Names used
