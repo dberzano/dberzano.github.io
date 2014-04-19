@@ -198,12 +198,14 @@ br {
   clear: both;
 }
 code {
+
   font-weight: 400;
   font-family: Inconsolata, Monaco, 'Courier New', monospace;
   font-size: 90%;
-  color: #2B7598;
   background-color: white;
+
   /* inline snippets */
+  color: #2B7598; /* blue */
   border: 1px solid #eaeaea;
   margin-top: 2px;
   margin-bottom: 2px;
@@ -212,12 +214,13 @@ code {
   padding-top: 1px;
   padding-bottom: 1px;
   border-radius: 3px;
-  /* /inline snippets */
+  /* end of inline snippets */
 }
 .highlight code {
   margin: 0;
   padding: 0;
   border: 0;
+  color: #4C4C4C; /* gray in code blocks */
 }
 .highlight pre {
   margin-top: 2px;
@@ -225,8 +228,12 @@ code {
   padding: 4px;
   border: 1px solid #eaeaea;
   background-color: white;
-  border-radius: 3px;
+  border-radius: 6px;
   overflow: auto; /* scrollbar */
+  /* glow effect! would it work in ie?! */
+  -moz-box-shadow: 0 0 20px #eaeaea;
+  -webkit-box-shadow: 0 0 20px #eaeaea;
+  box-shadow: 0px 0px 20px #eaeaea;
 }
 a > code {
   color: #2B7598;
@@ -285,7 +292,7 @@ li {
 /*
  * Note!
  * This color is dark blue: #2B7598
- * This color is dark grey:;
+ * This color is dark grey: #4C4C4C
  */
 
 /* --- all h* --- */
