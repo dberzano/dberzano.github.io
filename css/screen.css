@@ -304,9 +304,11 @@ h1.pagetitle {
 #content h2 {
   font-size: 150%;
   font-weight: 500;
+}
+.countsections h2 {
   counter-reset: sec_h3;
 }
-#content h2:before {
+.countsections h2:before {
   content: counter(sec_h2) " ";
   counter-increment: sec_h2;
 }
@@ -314,9 +316,11 @@ h1.pagetitle {
 /* --- h3 --- */
 #content h3 {
   font-size: 130%;
+}
+.countsections {
   counter-reset: sec_h4;
 }
-#content h3:before {
+.countsections h3:before {
   content: counter(sec_h2) "." counter(sec_h3) " ";
   counter-increment: sec_h3;
 }
@@ -325,7 +329,7 @@ h1.pagetitle {
 #content h4 {
   font-size: 100%;
 }
-#content h4:before {
+.countsections h4:before {
   content: counter(sec_h2) "." counter(sec_h3) "." counter(sec_h4) " ";
   counter-increment: sec_h4;
 }
