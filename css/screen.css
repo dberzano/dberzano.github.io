@@ -343,3 +343,9 @@ h1.pagetitle {
   content: counter(sec_h2) "." counter(sec_h3) "." counter(sec_h4) " ";
   counter-increment: sec_h4;
 }
+
+/* Styles */
+
+strong {
+  font-weight: 400; /* normal weight; because text is light */
+}
