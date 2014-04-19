@@ -34,6 +34,15 @@ body {
   font-size: 26px;
 }
 
+code {
+  font-size: 120%;
+}
+
+/* This is bizarre: chrome for android magnifies this inline text for no reason?! */
+p code, li code {
+  font-size: 60%;
+}
+
 #content p {
   line-height: 42px;
 }
