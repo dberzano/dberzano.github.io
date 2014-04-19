@@ -1,6 +1,6 @@
 ---
 title: Virtual Analysis Facility for ALICE Guide
-layout: default
+layout: tweet
 ---
 
 This guide provides basic information for using the PROOF-based
