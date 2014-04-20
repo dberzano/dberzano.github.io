@@ -14,6 +14,53 @@
     <link href="/css/screen.css" media="screen" rel="stylesheet" title="paperplanes" type="text/css" />
     <link rel="stylesheet" type="text/css" href="/css/mobile.css" media="handheld, only screen and (max-device-width: 960px)" />
     <script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+
+<script>
+
+$(document).ready( function() {
+
+  // Separate at this tag name
+  tag_name = 'h2';
+
+  // jQuery object containing what we want to paginate
+  container_name = 'content';
+
+  // Class name of the pages
+  paginator_class = tag_name + '-paginated';
+
+  all = '';
+  tag_name = tag_name.toUpperCase();
+
+  // I can change the DOM while iterating on it
+  // http://stackoverflow.com/questions/4735604/jquery-each-behavior-if-changing-dom-within-loop
+
+  in_page = false;
+  page = undefined;
+
+  $( '#'+container_name ).children().each( function() {
+
+    // Separate at tag named tag_name (i.e., H2 -- uppercase)
+    if ( $(this).prop('tagName') == tag_name ) {
+
+      page = $('<div></div>').addClass(paginator_class);
+      $(this).after( page );
+
+    }
+    else if (page !== undefined) {
+
+      // alert(in_page);
+      $(this).detach().appendTo( $(page) );
+
+    }
+
+  } );
+
+});
+
+
+
+</script>
+
   </head>
   
   <body id="www-paperplanes-de">
