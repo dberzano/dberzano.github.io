@@ -9,147 +9,28 @@ h1 {
 html > body #box {
   width: 95%;
   max-width: 100%;
-  /*background-color: yellow;*/
 }
 
 /* Container of head text */
 #head #about {
   width: 95%;
   padding-top: 13px;
-  /*background-color: green;*/
 }
 
 /* Container for the header */
 #header-content {
   width: 95%;
-  /*background-color: red;*/
 }
 
-/* Content */
-#content {
-  /*background-color: blue;*/
-}
-
-body {
-  font-size: 26px;
-}
-
+/* --- Content sizes --- */
 code {
   font-size: 120%;
 }
 
-/* This is bizarre: chrome for android magnifies this inline text for no reason?! */
-/*p code, li code {
-  font-size: 60%;
-}*/
-
-#content p {
-  line-height: 48px;
+body {
+  font-size: 20px;
 }
 
-#content li {
-  line-height: 48px;
+#content p, #content li {
+  line-height: 40px;
 }
-
-/** {
-  -webkit-text-size-adjust: 100%;
-}
-*/
-
-/** {
-  -webkit-text-size-adjust: 300%;
-}
-
-.default {
-  display: none;
-}
-
-.mobile {
-  display: inherit;
-}
-
-#head {
-  height: 190px;
-}
-
-#head #about {
-  width: 95%;
-}
-
-#head #about h1, #head #about h1 a {
-  -webkit-text-size-adjust: 200%;
-}
-
-#head #about p {
-  display: none;
-}
-
-#header-content {
-  width: 95%;
-  max-width: 100%;
-}
-
-#box {
-  width: 95%;
-  max-width: 100%;
-}
-
-html>body #box {
-  width: 95%;
-  max-width: 100%;
-}
-
-@media all and (orientation: landscape) {
-  #head #about h1, #head #about h1 a {
-    -webkit-text-size-adjust: 150%;
-  }
-
-  #head {
-    height: 130px;
-  }
-
-  #head #about {
-    padding-top: 40px;
-  }
-
-  * {
-    -webkit-text-size-adjust: 200%;
-  }
-}
-
-@media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait) {
-  * {
-    -webkit-text-size-adjust: 150%;
-  }
-
-  #head #about h1, #head #about h1 a {
-    -webkit-text-size-adjust: 150%;
-  }
-
-  #head #about {
-    padding-top: 40px;
-  }
-
-  #head {
-    height: 100px;
-  }
-}
-
-@media all and (device-width: 768px) and (device-height: 1024px) and (orientation:landscape) {
-  * {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  #head #about h1, #head #about h1 a {
-    -webkit-text-size-adjust: 120%;
-  }
-
-  #head #about {
-    padding-top: 50px;
-  }
-
-  #head {
-    height: 100px;
-  }
-}
-*/
