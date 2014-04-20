@@ -32,7 +32,12 @@
     </div>
 
     <div id="box">
-      <div id="content"><!-- class="countsections"> -->
+      {% if page.countsections == true %}
+      <!-- h2, h3, h4 will be numbered by css -->
+      <div id="content" class="countsections">
+      {% else %}
+      <div id="content">
+      {% endif %}
         <h1 class="pagetitle">{{ page.title }}</h1>
 
         {{ content }}
