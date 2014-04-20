@@ -177,13 +177,18 @@ h4, .item_meta {
 /**
  * =Links
  ***************************/
-a {
+a:link, a:visited, a:active {
   color: #2B7598;
   text-decoration: none;
+  outline: none;
 }
 a:hover {
   color: #000;
   text-decoration: underline;
+}
+
+h1 a, h2 a, h3 a, h4 a {
+  color: inherit !important;
 }
 
 h1 a, h1 a:hover {
@@ -271,11 +276,12 @@ li {
   padding-bottom: 40px;
   font-size: 15px;
 }
-.next {
+
+.pagination .next {
   float: right;
 }
 
-.previous {
+.pagination .previous {
   float: left;
 }
 
@@ -363,4 +369,19 @@ h1.pagetitle {
 
 strong {
   font-weight: 400; /* normal weight; because text is light */
+}
+
+/* Inner pagination */
+
+#inner-pagination {
+  /*display: none;*/
+  padding-bottom: 40px;
+}
+
+#inner-pagination .previous {
+  float: left;
+}
+
+#inner-pagination .next {
+  float: right;
 }
