@@ -23,6 +23,10 @@ img {
   margin: 0px auto;
 }
 
+a img {
+  border: 0;
+}
+
 /**
  * =Layout
  ***************************/
