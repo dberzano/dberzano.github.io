@@ -11,12 +11,6 @@ html > body #box {
   max-width: 100%;
 }
 
-/* Container of head text */
-#head #about {
-  width: 95%;
-  padding-top: 13px;
-}
-
 /* Container for the header */
 #header-content {
   width: 95%;

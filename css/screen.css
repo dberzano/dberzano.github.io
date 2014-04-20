@@ -36,7 +36,7 @@ strong {
   max-width: 650px;
 }
 
-html>body #box {
+html > body #box {
   max-width: 650px;
   padding-right: 0px;
   margin-bottom: 20px;
@@ -45,7 +45,6 @@ html>body #box {
 #content {
   padding-top: 20px;
   padding-bottom: 10px;
-  padding-left: 10px;
   margin: 20px 20px;
 }
 
@@ -92,19 +91,31 @@ html>body #box {
 }
 
 #header-content {
-  width: 650px;
-  margin: 0px auto;
+  width: 610px;
+  /* To remember the order: TRouBLe :-) */
+  margin: 0 auto;
+  height: 100%;
+  overflow: hidden;
 }
 
+#header-content > #about-valign-helper {
+  display: table;
+  height: 100%;
+}
+
+#about-valign-helper > #about {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/* Small image at right on the header */
 #header-content #paperplane {
   float: right;
   margin-top: 17px;
 }
 
 #head #about {
-  width: 590px;
-  margin: 0px auto; 
-  padding-top: 30px;
+  color: white;
 }
 
 #head h1 {
