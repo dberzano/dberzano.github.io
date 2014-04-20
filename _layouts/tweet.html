@@ -17,19 +17,23 @@
 
 <script>
 
+// Separate at this tag name
+tag_name = 'h2';
+
+// jQuery object containing what we want to paginate
+container_name = 'content';
+
+// Class name of the pages
+paginator_class = tag_name + '-inner-page';
+
+// Prefix to the name of the inner pages
+paginator_prefix = 'inner-page-';
+
+// Start numbering from H1, H2...?
+start_numb_from_level = 2;  // h2
+
+
 $(document).ready( function() {
-
-  // Separate at this tag name
-  tag_name = 'h2';
-
-  // jQuery object containing what we want to paginate
-  container_name = 'content';
-
-  // Class name of the pages
-  paginator_class = tag_name + '-inner-page';
-
-  // Start numbering from H1, H2...?
-  start_numb_from_level = 2;  // h2
 
   level_counters = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
   tag_name = tag_name.toUpperCase();
@@ -82,8 +86,8 @@ $(document).ready( function() {
       page_num++;
       page = $('<div></div>')
                .addClass(paginator_class)
-               .attr('id', 'inner-page-'+page_num)
-               //.hide();
+               .attr('id', paginator_prefix+page_num)
+               .hide();
       $(this).after( page );
       $(this).detach().prependTo( page );
 
@@ -97,9 +101,13 @@ $(document).ready( function() {
 
   } );
 
+  // Show the correct section based on the hash written in the browser's URL
+
+  m = window.location.hash.match(/^#sec-([0-9]+)/);
+  level = (m ? parseInt(m[1]) : 1);
+  $('#'+paginator_prefix+level).show();
+
 });
-
-
 
 </script>
 
