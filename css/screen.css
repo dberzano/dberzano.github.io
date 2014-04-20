@@ -23,21 +23,13 @@ img {
   margin: 0px auto;
 }
 
-strong {
-  font-weight: 600;
-}
-
 /**
  * =Layout
  ***************************/
-#box {
+html > body > #box {
   margin: 20px auto;
   text-align: left;
-  max-width: 650px;
-}
-
-html > body #box {
-  max-width: 650px;
+  width: 650px;
   padding-right: 0px;
   margin-bottom: 20px;
 }
