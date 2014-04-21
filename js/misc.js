@@ -24,6 +24,10 @@ var Misc = {
       toc = $('<ul></ul>');
       toc_level = toc;
     }
+    else {
+      toc = undefined;
+      toc_level = undefined;
+    }
 
     prev_level = Misc.auto_anchors.start_level;
 
@@ -103,7 +107,10 @@ var Misc = {
 
     // Append TOC to DOM
     if (toc !== undefined) {
-      $( Misc.general.toc ).empty().append( toc );
+      $( Misc.general.toc_content ).empty().append( toc );
+    }
+    else {
+      $( Misc.general.toc ).hide();
     }
 
   }

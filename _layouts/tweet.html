@@ -19,7 +19,8 @@
     <script>
       Misc.general = {
         container : '#content',
-        toc : '#toc'
+        toc : '#toc',
+        toc_content : '#toc-content'
       };
       Misc.auto_anchors = {
         start_level : 2,
@@ -48,23 +49,32 @@
     </div>
 
     <div id="box">
+
+      <div id="pagetitle">
+        <h1>{{ page.title }}</h1>
+      </div>
+
+      <div id="toc">
+        <h2>Table of contents</h2>
+        <div id="toc-content"></div>
+      </div>
+
       {% if page.countsections == true %}
       <!-- h2, h3, h4 will be numbered by css -->
       <div id="content" class="countsections">
       {% else %}
       <div id="content">
       {% endif %}
-        <h1 class="pagetitle">{{ page.title }}</h1>
-        <div id="toc"></div>
 
         {{ content }}
 
       </div>
 
-      <div id="inner-pagination">
+      <!--<div id="inner-pagination">
         <a href="#" class="previous">Previous</a>
         <a href="#" class="next">Next</a>
-      </div>
+      </div>-->
+
     </div>
 
     <div id="foot">
