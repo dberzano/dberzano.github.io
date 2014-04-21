@@ -26,7 +26,7 @@ a img {
   border: 0;
 }
 
-html > body > #box {
+#box {
   margin: 20px auto;
   text-align: left;
   width: 650px;
@@ -121,6 +121,7 @@ a:link, a:visited, a:active {
   text-decoration: none;
   outline: none;
 }
+
 a:hover {
   color: #000;
   text-decoration: underline;
@@ -168,7 +169,7 @@ blockquote {
 
 #content p, #content li, #toc li {
   text-align: justify;
-  line-height: 28px;
+  line-height: 1.7;
 }
 
 /* Code */
