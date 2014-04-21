@@ -16,6 +16,17 @@
     <!-- <script src="//code.jquery.com/jquery-2.1.0.min.js"></script> -->
     <script src="/js/jquery-2.1.0.min.js"></script>
     <script src="/js/misc.js"></script>
+    <script>
+      Misc.general = {
+        container : '#content'
+      };
+      Misc.auto_anchors = {
+        start_level : 2,
+        use_names : true,
+        prepend_numbers : true
+      };
+      $(document).ready( Misc.init );
+    </script>
   </head>
   
   <body id="www-paperplanes-de">
