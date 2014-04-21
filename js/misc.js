@@ -2,6 +2,12 @@
 
 var Misc = {
 
+  re : {
+    invalid_anchor : new RegExp( /[<>#%"\s[{}|\\^\[\]`;\/?:@&=+$,]/g ),
+    mult_uscores   : new RegExp( /_{2,}/g ),
+    ext_uscores    : new RegExp( /(^_|_$)/g )
+  },
+
   init : function() {
 
     if ( Misc.auto_anchors !== undefined ) {
@@ -31,9 +37,10 @@ var Misc = {
 
           // Use header text instead of number for reference
           if ( Misc.auto_anchors.use_names ) {
-            anchor = $(this).text().toLowerCase();
-            anchor = anchor.replace(/[^a-z0-9]/g, '_');
-            anchor = anchor.replace(/_+/g, '_');
+            anchor = $(this).text().toLowerCase()
+                       .replace(Misc.re.invalid_anchor, '_')
+                       .replace(Misc.re.mult_uscores, '_')
+                       .replace(Misc.re.ext_uscores, '');
           }
           else {
             anchor = 'sec-' + anchor;
