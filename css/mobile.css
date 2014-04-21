@@ -18,9 +18,10 @@
   width: 95%;
 }
 
-/* font size is bigger: all the rest scales thanks to percentages */;
-body {
-  font-size: 21px;
+/* font size is bigger: all the rest scales thanks to percentages */
+/* note: we must use the html > body notation to have "more priority" (because we are "more specific") wrt the default stylesheet */
+html > body {
+  font-size: 20px;
 }
 
 /* mobile vs. default alternatives */
