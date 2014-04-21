@@ -59,21 +59,9 @@
         <div id="toc-content"></div>
       </div>
 
-      {% if page.countsections == true %}
-      <!-- h2, h3, h4 will be numbered by css -->
-      <div id="content" class="countsections">
-      {% else %}
       <div id="content">
-      {% endif %}
-
         {{ content }}
-
       </div>
-
-      <!--<div id="inner-pagination">
-        <a href="#" class="previous">Previous</a>
-        <a href="#" class="next">Next</a>
-      </div>-->
 
     </div>
 

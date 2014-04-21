@@ -8,6 +8,8 @@ var Misc = {
     ext_uscores    : new RegExp( /(^_|_$)/g )
   },
 
+  auto_anchors : undefined,
+
   init : function() {
 
     if ( Misc.auto_anchors !== undefined ) {
@@ -47,14 +49,14 @@ var Misc = {
           }
 
           // Use header text instead of number for reference
-          if ( Misc.auto_anchors.use_names ) {
+          if ( Misc.auto_anchors.use_names === true ) {
             anchor = $(this).text().toLowerCase()
                        .replace(Misc.re.invalid_anchor, '_')
                        .replace(Misc.re.mult_uscores, '_')
                        .replace(Misc.re.ext_uscores, '');
           }
           else {
-            anchor = 'sec-' + anchor;
+            anchor = 'sec-' + level_str;
           }
 
           // Instead of using CSS numbering prepend section string

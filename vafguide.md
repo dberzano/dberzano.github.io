@@ -1,7 +1,6 @@
 ---
 title: "Virtual Analysis Facility for ALICE Guide: this title spans on multiple lines"
 layout: tweet
-xxcountsections: true
 ---
 
 
