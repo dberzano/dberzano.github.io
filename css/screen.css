@@ -385,3 +385,13 @@ strong {
 #inner-pagination .next {
   float: right;
 }
+
+/* Table of Contents */
+#toc ul, #toc ol {
+  list-style-type: none;
+  margin: 0;
+}
+
+#toc li {
+  font-size: 90%;
+}

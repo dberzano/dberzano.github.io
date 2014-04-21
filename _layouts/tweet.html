@@ -18,12 +18,14 @@
     <script src="/js/misc.js"></script>
     <script>
       Misc.general = {
-        container : '#content'
+        container : '#content',
+        toc : '#toc'
       };
       Misc.auto_anchors = {
         start_level : 2,
         use_names : true,
-        prepend_numbers : true
+        prepend_numbers : true,
+        create_toc : true
       };
       $(document).ready( Misc.init );
     </script>
@@ -53,6 +55,7 @@
       <div id="content">
       {% endif %}
         <h1 class="pagetitle">{{ page.title }}</h1>
+        <div id="toc"></div>
 
         {{ content }}
 

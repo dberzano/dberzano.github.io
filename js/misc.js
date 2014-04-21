@@ -20,6 +20,13 @@ var Misc = {
 
     level_counters = [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
+    if ( Misc.auto_anchors.create_toc ) {
+      toc = $('<ul></ul>');
+      toc_level = toc;
+    }
+
+    prev_level = Misc.auto_anchors.start_level;
+
     // Automatic numbered anchors
     $( Misc.general.container ).children().each( function() {
 
@@ -51,6 +58,28 @@ var Misc = {
             $(this).prepend( level_str + '&nbsp;' );
           }
 
+          // Creating TOC?
+          if (toc_level !== undefined) {
+
+            if (level > prev_level) {
+              new_toc_level = $('<ul></ul>');
+              toc_level.append( new_toc_level );
+              toc_level = new_toc_level;
+            }
+            else if (level < prev_level) {
+              toc_level = toc_level.parent();
+            }
+
+
+            li = $('<li></li>').append(
+              $('<a></a>')
+                .attr('href', '#'+anchor)
+                .text( $(this).text() )
+            );
+            toc_level.append( li );
+
+          }
+
           // Create new header
           new_header = $('<h'+level+'></h'+level+'>');
           new_anchor = $('<a></a>')
@@ -64,11 +93,19 @@ var Misc = {
 
           $(this).replaceWith( $(new_header) );
 
+          //console.log( 'previous: ' + prev_level + ', current: ' + level );
+          prev_level = level;
+
         }
       }
 
     } );
 
+    // Append TOC to DOM
+    if (toc !== undefined) {
+      $( Misc.general.toc ).empty().append( toc );
+    }
+
   }
 
-}
+};

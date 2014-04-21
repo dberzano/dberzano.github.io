@@ -1,7 +1,7 @@
 ---
 title: "Virtual Analysis Facility for ALICE Guide: this title spans on multiple lines"
 layout: tweet
-countsections: true
+xxcountsections: true
 ---
 
 
@@ -9,8 +9,6 @@ countsections: true
 Analysis Facility for ALICE at INFN Torino.*
 
 
-General information
--------------------
 
 The Virtual Analysis Facility is a PROOF cluster running on virtual
 machines capable of expanding and reducing automatically upon user
