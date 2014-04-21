@@ -1,10 +1,33 @@
 /* This style sheet is loaded only if the screen width is at most 960px */
 
-#box, #header-content {
-  width: 95%;
-  max-width: 100%;
+#box, #header-content, #foot {
+  width: 100%;
 }
 
+#box {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+#content {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+#header-content {
+  width: 95%;
+}
+
+/* font size is bigger: all the rest scales thanks to percentages */;
 body {
   font-size: 21px;
+}
+
+/* mobile vs. default alternatives */
+.mobile {
+  display: initial; /* does not work in ie, who cares */
+}
+
+.default {
+  display: none;
 }
