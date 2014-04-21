@@ -97,6 +97,7 @@ a img {
   color: white;
   font-size: 160%;
   margin: 0;
+  font-weight: 600;
 }
 
 #head p {
@@ -235,6 +236,10 @@ blockquote {
 /* --- h1 --- */
 #content h1, #pagetitle h1 {
   font-size: 160%;
+}
+
+#pagetitle h1 {
+  font-weight: 400;
 }
 
 /* --- h2 --- */
