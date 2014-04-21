@@ -295,7 +295,7 @@ li {
   padding-bottom: 10px;
 }
 
-#content p {
+#content p, #content li {
   text-align: justify;
   line-height: 28px;
 }
