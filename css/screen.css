@@ -167,7 +167,7 @@ blockquote {
   margin: 20px 0 20px 0; /* same as code blocks */
   padding-left: 0.75em;
 
-  color: #6c6c6c; /* slightly darker than body's #4c4c4c */
+  color: #6c6c6c; /* slightly lighter than body's #4c4c4c */
 
 }
 
@@ -285,4 +285,32 @@ strong {
 /* no indentation on *first* ul */
 #toc-content > ul, #toc-content > ol {
   padding: 0;
+}
+
+/* Tables */
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  max-width: 95%;
+  margin: auto;
+}
+
+th {
+  font-weight: 400;
+  background-color: #e0e0e0;
+}
+
+tr:nth-child(odd) {
+  background-color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #eee;
+}
+
+td, th {
+  /* t r b l */
+  padding: 5px 12px 5px 12px;
+  border: 1px solid #ddd;
 }
