@@ -1,6 +1,8 @@
 ---
 title: Welcome
 layout: tweet
+createtoc: false
+parnumbers: false
 ---
 
 My Ph.D. thesis

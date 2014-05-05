@@ -25,8 +25,8 @@
       Misc.auto_anchors = {
         start_level : 2,
         use_names : true,
-        prepend_numbers : true,
-        create_toc : true
+        prepend_numbers : {% if page.parnumbers == false %}{{page.parnumbers}}{% else %}true{% endif %},
+        create_toc : {% if page.createtoc == false %}{{page.createtoc}}{% else %}true{% endif %},
       };
       $(document).ready( Misc.init );
     </script>
