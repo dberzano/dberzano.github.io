@@ -361,8 +361,7 @@ td, th {
 
 #itemcontent > ul {
   list-style-type: none;
-  /*list-style-position: inside;*/
-  padding: 0 0 0 0px;
+  padding: 0 0 0 0;
 }
 
 #itemcontent > ul > li {

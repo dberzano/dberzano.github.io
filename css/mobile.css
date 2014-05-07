@@ -32,3 +32,35 @@ html > body {
 .default {
   display: none;
 }
+
+/* ======================== */
+/* Style for the title page */
+/* ======================== */
+
+#mainmenu > ul {
+  display: block;
+  margin-bottom: 20px; /* space between sections */
+  /*background-color: yellow;*/
+  padding: 0;
+}
+
+#mainmenu > ul > li {
+  width: 100%;
+  display: block;
+}
+
+#mainmenu > ul > li > #itemtitle,
+#mainmenu > ul > li > #itemcontent {
+  width: auto;
+  display: block;
+}
+
+#mainmenu > ul > li > #itemtitle {
+  width: auto;
+}
+
+#mainmenu > ul > li > #itemcontent {
+  width: auto;
+  border-left: 0;
+  border-top: 4px solid #ddd;
+}
