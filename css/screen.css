@@ -361,15 +361,18 @@ td, th {
 
 #itemcontent > ul {
   list-style-type: none;
-  padding: 0 0 0 0;
+  padding: 0 0 0 14px;
+  text-indent: -14px;
 }
 
 #itemcontent > ul > li {
+  /*       t   r b   l */
   padding: 5px 0 5px 0;
+  text-align: left;
 }
 
 #itemcontent > ul > li::before {
-  content: '> ';
+  content: '» ';
 }
 
 #itemcontent > p {

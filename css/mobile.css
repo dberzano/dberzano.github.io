@@ -37,6 +37,11 @@ html > body {
 /* Style for the title page */
 /* ======================== */
 
+#mainmenu {
+  width: 95%;
+  margin: auto;
+}
+
 #mainmenu > ul {
   display: block;
   margin-bottom: 20px; /* space between sections */
@@ -63,4 +68,15 @@ html > body {
   width: auto;
   border-left: 0;
   border-top: 4px solid #ddd;
+}
+
+/* Inside the item content */
+
+#itemcontent > ul > li {
+  padding: 2px 0 2px 0;
+}
+
+#itemcontent > p {
+  margin: 0 0 10px 0;
+  line-height: 1.45;
 }
