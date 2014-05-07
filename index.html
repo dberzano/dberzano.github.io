@@ -7,72 +7,6 @@ createtoc: false
 parnumbers: false
 ---
 
-<style>
-
-#mainmenu {}
-
-/*#content {
-  border: 1px solid green;
-}*/
-
-#mainmenu #itemtitle {}
-#mainmenu #itemcontent {}
-
-#mainmenu > ul {
-  display: table;
-  width: 100%;
-  margin: auto;
-  padding: 0;
-  margin-bottom: 40px;
-}
-
-#mainmenu > ul > li {
-  display: table-row;
-}
-
-#mainmenu > ul > li > #itemtitle,
-#mainmenu > ul > li > #itemcontent {
-  display: table-cell;
-  padding: 10px;
-}
-
-#itemtitle {
-  width: 40%;
-  vertical-align: middle;
-  text-align: center;
-
-/*  color: white;
-  background-color: #2B7598;*/
-
-  color: #2B7598;
-  font-weight: 300;
-  font-size: 120%;
-}
-
-#itemcontent {
-  width: 60%;
-  vertical-align: middle;
-  border-left: 4px solid #ddd;
-}
-
-/* Inside the item content */
-
-#itemcontent > ul {
-  list-style-type: none;
-  /*list-style-position: inside;*/
-  padding: 0 0 0 0px;
-}
-
-#itemcontent > ul > li {
-  padding: 5px 0 5px 0;
-}
-
-#itemcontent > ul > li::before {
-  content: '> ';
-}
-
-</style>
-
 <div id="mainmenu">
 
   <ul>
@@ -103,7 +37,7 @@ parnumbers: false
     <li>
       <div id="itemtitle">My Ph.D. thesis</div>
       <div id="itemcontent">
-        <i>A ground-up approach to High Throughput Cloud Computing in High-Energy Physics</i>
+        <p><i>A ground-up approach to High Throughput Cloud Computing in High-Energy Physics</i></p>
         <ul>
           <li><a href="#">Thesis</a></li>
           <li><a href="#">Slides</a></li>
