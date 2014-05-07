@@ -61,9 +61,11 @@
 
     <div id="box">
 
+      {% if page.printtitle != false %}
       <div id="pagetitle">
         <h1>{{ page.title }}</h1>
       </div>
+      {% endif %}
 
       <div id="toc">
         <h2>Table of contents</h2>
