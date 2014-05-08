@@ -2,12 +2,13 @@
 title: "AliRoot installation"
 layout: tweet
 
-
+parnumbers: false
+createtoc: false
 ---
 
 
-Use AliRoot without compiling
------------------------------
+Use AliRoot without compiling it
+--------------------------------
 
 All the available Grid AliRoot versions (and correct dependencies) will be
 automatically available when using them from a
