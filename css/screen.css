@@ -169,6 +169,12 @@ blockquote {
 
   /*font-style: italic;*/
 
+  /*
+   * == original ==
+   * dark yellow:   #febf04;
+   * bright yellow: #ffd65e;
+   */
+
   /* background gradient */
   /* generated with http://www.colorzilla.com/gradient-editor/ */
   background: #ffd65e; /* Old browsers */
