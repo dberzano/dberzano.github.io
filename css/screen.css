@@ -205,9 +205,15 @@ blockquote {
   position: relative;
 
   color: #363636;
+  font-weight: 400; /* "normal" instead of "light" */
 
 }
 
+blockquote strong {
+  font-weight: 600; /* "bold" instead of "normal" */
+}
+
+/* the star on the left of the block */
 blockquote:before {
   display: block;
   position: absolute;
