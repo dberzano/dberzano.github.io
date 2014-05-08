@@ -18,8 +18,14 @@ body {
 }
 
 img {
-  max-width: 600px;
-  margin: 0px auto;
+  max-width: 95%;
+  margin: 0 auto;
+  display: block;
+
+  /* glow effect */
+  -moz-box-shadow: 0 0 15px #aaaaaa;
+  -webkit-box-shadow: 0 0 15px #aaaaaa;
+  box-shadow: 0px 0px 15px #aaaaaa;
 }
 
 a img {
@@ -167,7 +173,7 @@ blockquote {
   margin: 20px 0 20px 0; /* same as code blocks */
   padding-left: 0.75em;
 
-  color: #6c6c6c; /* slightly lighter than body's #4c4c4c */
+  color: #6c6c6c; /* slightly brighter than body's #4c4c4c */
 
 }
 
