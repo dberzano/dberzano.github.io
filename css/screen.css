@@ -4,7 +4,7 @@
   http://192.168.2.106:3000/themes/paperplanes/stylesheets/screen.css
 */
 
-@import url(//fonts.googleapis.com/css?family=Open+Sans:300italic,300,400,600|Inconsolata:400,700);
+@import url(//fonts.googleapis.com/css?family=Open+Sans:300italic,300,400italic,400,600italic,600|Inconsolata:400,700);
 
 /* General */
 
@@ -167,14 +167,53 @@ br {
 
 blockquote {
 
-  font-style: italic;
+  /*font-style: italic;*/
 
-  border-left: 4px solid #ddd;
+  /* background gradient */
+  /* generated with http://www.colorzilla.com/gradient-editor/ */
+  background: #ffd65e; /* Old browsers */
+  background: -moz-linear-gradient(top,  #ffd65e 0%, #febf04 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffd65e), color-stop(100%,#febf04)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ffd65e 0%,#febf04 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ffd65e 0%,#febf04 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ffd65e 0%,#febf04 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ffd65e 0%,#febf04 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd65e', endColorstr='#febf04',GradientType=0 ); /* IE6-9 */
+  /* end of background gradient */
+
+  border-radius: 6px;
+  border: 1px solid #febf04;
+  border-left: 25px solid #febf04;
+
   margin: 20px 0 20px 0; /* same as code blocks */
-  padding-left: 0.75em;
 
-  color: #6c6c6c; /* slightly brighter than body's #4c4c4c */
+  /*       t   r    b   l   */
+  /*padding: 0 0.75em 0 32px;*/
+  padding: 0 0.75em 0 0.75em;
 
+  /* glow effect */
+  -moz-box-shadow: 0 0 15px #ffd65e;
+  -webkit-box-shadow: 0 0 15px #ffd65e;
+  box-shadow: 0px 0px 15px #ffd65e;
+
+  position: relative;
+
+  color: #363636;
+
+}
+
+blockquote:before {
+  display: block;
+  position: absolute;
+  left: -19px;
+  top: 9px;
+  content: "★";
+  color: #FFF0C3;
+  font-size: 15px;
+}
+
+blockquote > p {
+  margin: 5px 0 5px 0;
 }
 
 #content ul, #content ol {
