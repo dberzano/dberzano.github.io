@@ -80,3 +80,17 @@ html > body {
   margin: 0 0 10px 0;
   line-height: 1.45;
 }
+
+/* http://www.javascriptkit.com/dhtmltutors/cssmediaqueries2.shtml */
+@media screen and (max-device-width: 480px) and (orientation: portrait) {
+
+  html > body {
+    font-size: 18px;
+  }
+
+  /* don't justify text on small mobiles */
+  #content p, #content li, #toc li {
+    text-align: left;
+  }
+
+}
