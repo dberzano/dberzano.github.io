@@ -7,6 +7,7 @@ createtoc: false
 ---
 
 
+<!--
 Use AliRoot without compiling it
 --------------------------------
 
@@ -15,7 +16,7 @@ will be automatically available when using them from a
 [CernVM Virtual Machine](http://cernvm.cern.ch/).
 
 * [Use AliRoot from CernVM](cernvm)
-
+-->
 
 Compile AliRoot from source
 ---------------------------
@@ -28,6 +29,9 @@ the **prerequisites**:
 * [Ubuntu](prereq-ubuntu) *(and derivatives)* 12.04 LTS, 12.10, 13.04,
   13.10, 14.04 LTS
 * [OS X](prereq-osx) Mountain Lion (10.8) and Mavericks (10.9)
+
+> Your operating system's version has to be considered as **not
+> supported** unless it is **explicitly** mentioned in the above list.
 
 Two installation options are possible:
 

@@ -34,6 +34,16 @@ You can subscribe from [CERN e-groups](https://e-groups.cern.ch/).
 **Please** don't write personal emails. Mailing list makes support
 more efficient as other users might benefit from a single reply.
 
+> When requesting support, please **always** attach the output file
+> produced by the following command:
+>
+> ```bash
+> bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
+> ```
+>
+> Note that you **must** run this command from the same directory
+> containing the `alice-env.sh` script in use.
+
 
 Prepare your environment
 ------------------------
@@ -43,12 +53,14 @@ Prepare your environment
 
 Supported operating systems have different prerequisites:
 
-* [Ubuntu](../prereq-ubuntu) *(and derivatives)* 12.04 LTS, 12.10, 13.04,
-  13.10, 14.04 LTS
-* [OS X](../prereq-osx) Mountain Lion (10.8) and Mavericks (10.9)
+* [Ubuntu](../prereq-ubuntu) *(and derivatives)*
+* [OS X](../prereq-osx)
 
-> Your operating system has to be considered as **not supported**
-> unless it is **explicitly** mentioned in the above list.
+You can find [here](..#compile_aliroot_from_source) the detailed list
+of compatible operating systems.
+
+> If your operating system (with version) is not listed explicitly,
+> **no support will be provided for it**.
 
 
 ### Configure your shell environment
