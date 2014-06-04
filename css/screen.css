@@ -269,6 +269,12 @@ blockquote > p {
 
 }
 
+/* Code block, in the yellow blockquotes */
+#content blockquote pre {
+  background-color: rgba(250,250,250,0.5);
+  border: 1px solid #ECB400;
+}
+
 #content pre > code, /* code inside the code blocks */
 #content p code, #content li code, #content blockquote code /* code inline */ {
   font-weight: 400;
@@ -276,7 +282,7 @@ blockquote > p {
 }
 
 /* Inline code */
-#content p code, #content li code, #content blockquote code {
+#content p code, #content li code, #content blockquote p code {
   /*color: #2B7598; <-- same as links */
   color: #CA2121;
   background-color: #fafafa;
@@ -284,6 +290,12 @@ blockquote > p {
   border-radius: 3px;
   padding: 3px;
   word-wrap: break-word;
+}
+
+/* Inline code, in the yellow blockquotes */
+#content blockquote p code {
+  background-color: rgba(250,250,250,0.5);
+  border: 1px solid #ECB400;
 }
 
 /* Headers */

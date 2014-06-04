@@ -1,5 +1,5 @@
 ---
-title: "Automatic AliRoot installation"
+title: "Manual AliRoot installation"
 layout: tweet
 
 createtoc: true
@@ -336,10 +336,189 @@ is likely to require external packages not mentioned in this guide.
 **again** the environment script before you can use it!
 
 
+### Geant 3
+
+Create the directory that will contain several Geant 3 versions, then
+cd into it and checkout the version you selected in the triad via
+Subversion:
+
+```bash
+mkdir -p "$GEANT3DIR"
+cd "$GEANT3DIR"
+svn co https://root.cern.ch/svn/geant3/$([ $G3_VER == 'trunk' ] || echo tags/)$G3_VER .
+```
+
+When you are done, compile it:
+
+```bash
+make -j$MJ
+```
+
+Once again, **you need to re-source `alice-env.sh`** for using Geant 3
+and before building AliRoot.
+
+
+### AliRoot
+
+#### AliRoot and Git
+
+[Git](http://git-scm.com) is a popular Distributed Version Control
+System used by many important projects, notably the
+[Linux Kernel](https://git.kernel.org): both Git and the Linux Kernel
+were in fact conceived by
+[the same person](http://en.wikipedia.org/wiki/Linus_Torvalds).
+
+AliRoot is now available on Git to allow for a more agile development
+paradigm.
+
+There is a [guide](http://aliceinfo.cern.ch/Offline/node/2912)
+covering the migration from SVN to Git in detail: as a reference, the
+method used in this wiki is the **git-new-workdir method**.
+described in that documentation. This is the one I recommend, but
+feel free to use the one you prefer.
+
+New to Git? Before fearing or (worse) hating it, bear in mind that:
+
+* there is **no actual equivalent between SVN and Git**: they are
+  based on two completely different paradigms; trying to make
+  comparisons is misleading and dangerous;
+* once again, **Git is no SVN and it is no evolution of SVN**: SVN is
+  a Version Control System, while Git is a *Distributed* VCS;
+* Git and SVN have **different paradigms and workflows**, so it's
+  better to forget about SVN when learning Git;
+* the [ALICE documentation](http://aliceinfo.cern.ch/Offline/node/2912)
+  maintains a list of useful resources concerning Git.
+
+In any case, if you do not need to develop code for AliRoot, just
+follow carefully this guide and you will be (mostly) safe.
+
+
+#### Source and build directories
+
+The suggested setup uses two directories, stored in two corresponding
+environment variables:
+
+* the `$ALICE_ROOT` variable points to the source code directory: all
+  Git operations (like `git pull –rebase` or `git checkout`) shall
+  occur here;
+* the `$ALICE_BUILD` variable points to the build directory: this is
+  where the results from compilation will be stored, and where `make`
+  is performed.
+
+
+#### Clone and configure your Git repository
+
+First of all you should create a Git clone of the remote AliRoot
+repository: for simplicity, consider it as a place containing all the
+AliRoot versions ever made. This operation must be done **only once
+for all**:
+
+```bash
+[ ! -d "$ALICE_PREFIX"/aliroot/git ] && git clone http://git.cern.ch/pub/AliRoot "$ALICE_PREFIX"/aliroot/git
+```
+
+You also need to set your Git username and email; plus, if you want, for
+your convenience you can enable colors in Git output:
+
+```bash
+cd "$ALICE_PREFIX"/aliroot/git
+git config user.name "your_cern_username"
+git config user.email "your.email@cern.ch"
+git config color.ui true
+```
+
+> Set your `user.name` to match your CERN username: your commits will
+> be refused when pushing if you do not set it correctly.
+
+Update the list of remote branches and tags:
+
+```bash
+cd "$ALICE_PREFIX"/aliroot/git
+git remote update origin
+```
+
+Create a Git source directory based on the local Git clone, using the
+[git-new-workdir](https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir)
+utility (which must be in your `$PATH`):
+
+```bash
+git-new-workdir "$ALICE_PREFIX"/aliroot/git "$ALICE_ROOT" "$ALICE_VER"
+```
+
+As for ROOT, the old SVN *trunk* is now called the *master* branch.
+
+The clone URL will not work if you need to **push (*i.e.*, publish)
+your commits**: if you need to do it, execute:
+
+```bash
+cd "$ALICE_ROOT"
+git remote set-url origin https://git.cern.ch/reps/AliRoot
+```
+
+All the repositories created using `git-new-workdir` will
+automatically use the new URL as the remote repository's URL.
+
+> Use this method only if you have access rights: you will be asked
+> for your CERN username and password for doing every operation.
 
 
 
+#### Configure and build AliRoot
 
+Once you are done creating the local clone, create the build
+directory (whose name is stored in the `$ALICE_BUILD` variable):
+
+```bash
+mkdir -p "$ALICE_BUILD"
+cd "$ALICE_BUILD"
+```
+
+Now, tell CMake to get the source files from the proper directories
+and to use the same compilers configured with ROOT: this procedure
+has to be run only once.
+
+On **OS X**:
+
+```bash
+cmake "$ALICE_ROOT" \
+  -DCMAKE_C_COMPILER=`root-config --cc` \
+  -DCMAKE_CXX_COMPILER=`root-config --cxx` \
+  -DCMAKE_Fortran_COMPILER=`root-config --f77`
+```
+
+On **Ubuntu**:
+
+```bash
+cmake "$ALICE_ROOT" \
+  -DCMAKE_C_COMPILER=`root-config --cc` \
+  -DCMAKE_CXX_COMPILER=`root-config --cxx` \
+  -DCMAKE_Fortran_COMPILER=`root-config --f77` \
+  -DCMAKE_MODULE_LINKER_FLAGS='-Wl,--no-as-needed' \
+  -DCMAKE_SHARED_LINKER_FLAGS='-Wl,--no-as-needed' \
+  -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed'
+```
+
+After configuring, build it:
+
+```bash
+make -j$MJ
+```
+
+If you don't want to build in parallel, run `make` without any
+switches. CMake provides you with a percentage of completion of your
+build.
+
+If the build is successful, do:
+
+```bash
+ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
+```
+
+This is needed because header files are now copied inside
+`$ALICE_BUILD/include`, yet some analysis macros still search for them
+inside `$ALICE_ROOT/include`.
+
+When you are finished you can finally start using AliRoot.
 
 
 
