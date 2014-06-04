@@ -37,3 +37,6 @@ Two installation options are possible:
 
 * [Automatic installation](auto) *(recommended for beginners)*
 * [Manual installation](manual)
+
+> **OS X Mavericks users:** the minimum ROOT version you can use is
+> **v5-34-18**. Older versions will not compile.
