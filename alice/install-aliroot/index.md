@@ -10,8 +10,8 @@ createtoc: false
 Use AliRoot without compiling it
 --------------------------------
 
-All the available Grid AliRoot versions (and correct dependencies) will be
-automatically available when using them from a
+All the available Grid AliRoot versions (and correct dependencies)
+will be automatically available when using them from a
 [CernVM Virtual Machine](http://cernvm.cern.ch/).
 
 * [Use AliRoot from CernVM](cernvm)

@@ -15,6 +15,7 @@ body {
   color: #4c4c4c;
   background-color: #f5f5f5;
   text-align: center;
+  /* http://subtlepatterns.com/ */
   background: url(/images/background.png);
 }
 
