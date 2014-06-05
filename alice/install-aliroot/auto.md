@@ -29,6 +29,29 @@ lines of this script are shown.
 > in order to facilitate the support procedure.
 
 
+In trouble? Ask for support!
+----------------------------
+
+For any form of support, contact the following mailing list:
+
+* <alice-project-analysis-task-force@cern.ch>
+
+You can subscribe from [CERN e-groups](https://e-groups.cern.ch/).
+
+**Please** don't write personal emails. Mailing list makes support
+more efficient as other users might benefit from a single reply.
+
+> When requesting support, please **always** attach the output file
+> produced by the following command:
+>
+> ```bash
+> bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
+> ```
+>
+> Note that you **must** run this command from the same directory
+> containing the `alice-env.sh` script in use.
+
+
 Quickstart: install (or upgrade) everything
 -------------------------------------------
 
