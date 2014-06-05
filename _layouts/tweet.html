@@ -17,6 +17,10 @@
     <script src="/js/jquery-2.1.0.min.js"></script>
     <script src="/js/misc.js"></script>
     <script>
+      if ( window.location.hostname == 'dberzano.github.io' && window.location.href.indexOf('http://') == 0 ) {
+        // Load in HTTPS where applicable
+        window.location.href = window.location.href.replace(/^http:\/\//, 'https://');
+      }
       Misc.general = {
         container : '#content',
         toc : '#toc',
