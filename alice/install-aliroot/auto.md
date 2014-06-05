@@ -24,10 +24,6 @@ Completion messages are hidden by the script, but they are still
 available on log files. If the automatic procedure fails, the last
 lines of this script are shown.
 
-> In case of failure, the automatic installer advises the user to
-> attach the two log files produced. **Please do not forget to do it**
-> in order to facilitate the support procedure.
-
 
 In trouble? Ask for support!
 ----------------------------
@@ -41,15 +37,9 @@ You can subscribe from [CERN e-groups](https://e-groups.cern.ch/).
 **Please** don't write personal emails. Mailing list makes support
 more efficient as other users might benefit from a single reply.
 
-> When requesting support, please **always** attach the output file
-> produced by the following command:
->
-> ```bash
-> bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
-> ```
->
-> Note that you **must** run this command from the same directory
-> containing the `alice-env.sh` script in use.
+> In case of failure, the automatic installer advises the user to
+> attach the two log files produced. **Please do not forget to do it**
+> in order to facilitate the support procedure.
 
 
 Quickstart: install (or upgrade) everything
