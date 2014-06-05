@@ -330,6 +330,10 @@ On **Ubuntu**:
   --disable-bonjour
 ```
 
+**Note:** you may need to use different `--enable-` or `--disable-`
+switches to suit your needs: bear in mind that enabling some switches
+is likely to require external packages not mentioned in this guide.
+
 After configuring it, make sure that the list of "enabled features"
 contains **opengl**. You can quickly check with:
 
@@ -338,11 +342,11 @@ $> root-config --features | grep -q opengl && echo OK
 OK
 ```
 
-If `OK` is displayed, then you are good to go.
+If `OK` is displayed, then you are good to go for building it:
 
-**Note:** you may need to use different `--enable-` or `--disable-`
-switches to suit your needs: bear in mind that enabling some switches
-is likely to require external packages not mentioned in this guide.
+```bash
+make -j$MJ
+```
 
 **Very important!** When you're done compiling ROOT, you must source
 **again** the environment script before you can use it!
