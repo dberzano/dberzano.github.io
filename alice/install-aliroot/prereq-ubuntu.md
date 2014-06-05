@@ -40,8 +40,14 @@ names.
 Required packages
 -----------------
 
-The following command installs all the required packages *(warning: it
-is a long line)*:
+First, update the list of available packages:
+
+```sh
+sudo apt-get update
+```
+
+Then install all the required packages with a single command *(please
+note that it is a long line)*:
 
 ```sh
 sudo apt-get install curl build-essential gfortran subversion cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl-dev libxml2-dev libtool automake git unzip libcgal-dev
