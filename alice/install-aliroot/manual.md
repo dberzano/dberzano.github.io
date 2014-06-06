@@ -374,6 +374,85 @@ Once again, **you need to re-source `alice-env.sh`** for using Geant 3
 and before building AliRoot.
 
 
+### FastJet (optional)
+
+You can define a fourth element in the triad corresponding to the
+[FastJet](http://fastjet.fr/) version you would like to use.
+**Compiling FastJet is optional.**
+
+Source the `alice-env.sh` script. Then, create the FastJet source
+directory and move into it:
+
+```bash
+mkdir -p "$FASTJET"/src
+cd "$FASTJET"/src
+```
+
+Download the tarball corresponding to the desired version:
+
+```bash
+curl -Lo source.tar.gz http://fastjet.fr/repo/fastjet-"$FASTJET_VER".tar.gz
+```
+
+Unpack it, and move into the directory containing the unpacked code:
+
+```bash
+tar xzf source.tar.gz
+cd fastjet-"$FASTJET_VER"
+```
+
+FastJet code (all versions) needs to be patched in order to make CINT
+understand the `fastjet` namespace. Copy and paste the following
+snippet:
+
+```bash
+find . -name '*.h' -or -name '*.hh' | \
+  while read F; do
+    sed -e 's|^FASTJET_BEGIN_NAMESPACE.*|namespace fastjet {|' \
+        -e 's|^FASTJET_END_NAMESPACE.*|} // end "fastjet" namespace|' \
+        -e 's|^#define FASTJET_BEGIN_NAMESPACE.*||' \
+        -e 's|^#define FASTJET_END_NAMESPACE.*||' \
+        "$F" > "$F.0" && mv "$F.0" "$F"
+  done
+```
+
+> **OS X with FastJet < 3:** you need to apply an additional "patch"
+> to make it compile correctly. Copy and paste the following:
+>
+> ```bash
+> find . -name '*.h' -or -name '*.hh' | \
+>   while read F; do
+>     echo '#include <cstdlib>' > "$F.0" && \
+>       cat "$F" | grep -v '#include <cstdlib>' >> "$F.0" && \
+>       mv "$F.0" "$F"
+>   done
+> ```
+
+When you are done patching, configure FastJet by copying and pasting
+the lines below.
+
+On **OS X**:
+
+```bash
+( CXXFLAGS='-lgmp' ./configure --enable-cgal --prefix="$FASTJET" )
+```
+
+On **Ubuntu**:
+
+```bash
+( CXXFLAGS='-Wl,--no-as-needed -lgmp' ./configure --enable-cgal --prefix="$FASTJET" )
+```
+
+Note that **enabling CGAL is optional**.
+
+If the configuration succeeded, compile FastJet with the usual
+command:
+
+```bash
+make -j$MJ install
+```
+
+
 ### AliRoot
 
 #### AliRoot and Git
