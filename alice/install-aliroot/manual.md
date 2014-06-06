@@ -406,7 +406,7 @@ understand the `fastjet` namespace. Copy and paste the following
 snippet:
 
 ```bash
-find . -name '*.h' -or -name '*.hh' | \
+find include/fastjet -maxdepth 2 -name '*.h' -or -name '*.hh' | \
   while read F; do
     sed -e 's|^FASTJET_BEGIN_NAMESPACE.*|namespace fastjet {|' \
         -e 's|^FASTJET_END_NAMESPACE.*|} // end "fastjet" namespace|' \
