@@ -416,7 +416,7 @@ find include/fastjet -maxdepth 2 -name '*.h' -or -name '*.hh' | \
   done
 ```
 
-> **OS X with FastJet < 3:** you need to apply an additional "patch"
+> **OS X with FastJet 2:** you need to apply an additional "patch"
 > to make it compile correctly. Copy and paste the following:
 >
 > ```bash
@@ -427,6 +427,8 @@ find include/fastjet -maxdepth 2 -name '*.h' -or -name '*.hh' | \
 >       mv "$F.0" "$F"
 >   done
 > ```
+>
+> **No patch** is needed for FastJet 3 *(from v3.0.6)*.
 
 When you are done patching, configure FastJet by copying and pasting
 the lines below.

@@ -38,5 +38,26 @@ Two installation options are possible:
 * [Automatic installation](auto) *(recommended for beginners)*
 * [Manual installation](manual)
 
-> **OS X Mavericks users:** the minimum ROOT version you can use is
-> **v5-34-18**. Older versions will not compile.
+
+Compatibility grid
+------------------
+
+Some components of the ALICE framework might have compatibility
+problems with certain operating systems: the following grid
+illustrates such special cases and indicates the correct version range
+of the component compatible with each operating system.
+
+|            | ROOT      | FastJet 2           | FastJet 3 |
+| ---------- |:---------:|:-------------------:|:---------:|
+| **Ubuntu** |           | ≥ 2.4.5             |           |
+| **OS X**   | ≥ 5.34.18 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
+
+### Notes
+
+<sup>†</sup> On OS X you need to patch FastJet 2 before compiling it: the
+[manual](manual) installation procedure explains you how. The
+[automatic](auto) procedure does it for you.
+
+See the
+[release notes of FastJet](http://fastjet.fr/all-releases.html) for
+more detailed explanations.
