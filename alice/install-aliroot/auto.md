@@ -138,3 +138,33 @@ A single file is produced and should be sent out for seeking support.
 > The script warns you that the produced file **may contain sensitive
 > information** that you do not wish to share. You can strip this
 > information before sending it to others.
+
+
+Extra download options
+----------------------
+
+The automatic installation has two options for controlling the
+software download:
+
+* `--download-only`: software is downloaded and updated, but no build
+  is launched;
+* `--no-download`: software is only compiled, but not updated or
+  downloaded.
+
+Such options are useful if you want to download all the software
+before going offline, for compiling it at a later time with no
+connectivity.
+
+For instance, when you are online you can fetch the newest AliRoot
+updates:
+
+```bash
+bash <(curl -fsSL http://cern.ch/go/NcS7) --download-only --aliroot
+```
+
+When you are offline, you can compile what you have previously
+downloaded:
+
+```bash
+bash <(curl -fsSL http://cern.ch/go/NcS7) --no-download --aliroot
+```
