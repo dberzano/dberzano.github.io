@@ -52,6 +52,7 @@ of the component compatible with each operating system.
 | **Ubuntu** |           | ≥ 2.4.5             |           |
 | **OS X**   | ≥ 5.34.18 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
 
+
 ### Notes
 
 <sup>†</sup> On OS X you need to patch FastJet 2 before compiling it: the

@@ -55,6 +55,13 @@ Then, only the first time:
 bash <(curl -fsSL http://cern.ch/go/NcS7) --prepare
 ```
 
+If you are installing in a system directory, you must first run this
+command (and this command **only**) with root privileges instead:
+
+```bash
+sudo su -c 'bash <(curl -fsSL http://cern.ch/go/NcS7) --prepare'
+```
+
 To install all using all the available cores:
 
 ```bash
