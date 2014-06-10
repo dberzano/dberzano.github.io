@@ -247,8 +247,7 @@ directory and update the list of remote branches:
 
 ```bash
 cd "$ALICE_PREFIX/root/git"
-git remote update origin
-git remote prune origin
+git remote update --prune origin
 ```
 
 Checkout your desired ROOT version:
@@ -531,7 +530,7 @@ Update the list of remote branches and tags:
 
 ```bash
 cd "$ALICE_PREFIX"/aliroot/git
-git remote update origin
+git remote update --prune origin
 ```
 
 Create a Git source directory based on the local Git clone, using the
