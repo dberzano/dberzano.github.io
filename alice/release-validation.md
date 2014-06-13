@@ -273,3 +273,108 @@ separate lines.
 **Note:** there is an example file available at
 `PWGPP/benchmark/benchmark.config.d/50cloud.config.example`.
 
+
+Run the Release Validation
+--------------------------
+
+Go to the release validation directory, where you can find the
+appropriate tool:
+
+```bash
+cd PWGPP/benchmark
+```
+
+You will use the `alirelval` command to control everything.
+
+
+### Configure the validation
+
+The `benchmark.config` file contains every configuration variable of
+the validation process. Please refer to it for the meaning of the
+configuration variables.
+
+You can add files to the `benchmark.config.d` directory: they will be
+appended to the main configuration file. Files must end with
+`.config`.
+
+There is an example "extra" configuration file for running the
+validation on the cloud: `50cloud.config.example`. You can copy it by
+removing the `.example` extension and edit it to your needs.
+
+
+### Run and control the validation
+
+#### Mode 1: launch with a single command
+
+Syntax:
+
+```bash
+alirelval [--prepare|--launch] --aliroot <aliroot_tag>
+```
+
+A new "session" is created to validate the specified AliRoot tag.
+
+Options:
+
+ * `--prepare`: prepares the session directory containing the files
+   needed for the validation
+ * `--launch`: launches the full validation process: prepares session,
+   runs the virtual machine, launches the validation program
+ * `--aliroot`: the AliRoot tag to validate, in the form
+   `vAN-20140610`
+
+
+#### Mode 2: control the validation
+
+Syntax:
+
+```bash
+alirelval [--runvm|--validate|--shell|--status] --session <session_tag>
+```
+
+Runs the validation step by step after a session is created with
+`--prepare`, and runs other actions on a certain session.
+
+ * `--session`: session identifier, *e.g.*
+   `vAN-20140610_20140612-123047-utc`: if no session is specified an
+   interactive prompt is presented
+ * `--runvm`: instantiates the head node of the validation cluster on
+   the cloud
+ * `--validate`: runs the validation script on the head node for the
+   current session. Head node must be already up, or it should be
+   created with `--runvm`. If validation is running already, connects
+   to the existing validation shell
+ * `--attach`: attach a currently running validation screen; remember
+   to detach with Ctrl+A+D (and *not* Ctrl-C)
+ * `--shell`: does SSH on the head node
+ * `--status`: returns the status of the validation
+
+
+### Usage examples
+
+Run the validation of AliRoot tag `vAN-20140610`:
+
+```bash
+alirelval --aliroot vAN-20140610 --launch
+```
+
+Do the same thing step-by-step:
+
+```bash
+alirelval --aliroot vAN-20140610 --prepare
+alirelval --runvm
+alirelval --validate
+```
+
+Check the status (pick session interactively, *i.e.* no `--session`
+switch used):
+
+```console
+$> ./alirelval --status
+Available sessions (most recent first):
+   1. vAN-20140610_20140612-123047-utc
+Pick one: 1
+You chose session vAN-20140610_20140612-123047-utc
+Waiting for the VM to accept SSH connections...ok
+Status: validation still running
+```
