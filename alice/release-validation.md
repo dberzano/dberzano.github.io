@@ -102,6 +102,24 @@ export EC2_URL='http://your/ec2/api/url/'
 prefix numbers override lower numbers.
 
 
+### Install euca2ools
+
+[euca2ools](https://www.eucalyptus.com/download/euca2ools) are the
+client tools you need to access any EC2-compatible cloud.
+
+On an **Ubuntu** machine:
+
+```bash
+apt-get install euca2ools
+```
+
+On **OS X** with [Homebrew](http://brew.sh):
+
+```bash
+brew install euca2ools
+```
+
+
 ### CernVM 3
 
 You need to register the CernVM 3 image to your cloud, and have its
@@ -129,3 +147,12 @@ A modal window opens:
    get it from the download links provided
  * select **Raw** from the **Format** field
  * press the blue **Create Image** button
+
+After the image has been created, find out the AMI ID from a console:
+
+```bash
+euca-describe-instances
+```
+
+The AMI ID will be something like `ami-01234567` on the line
+corresponding to your image.
