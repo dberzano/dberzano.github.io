@@ -41,6 +41,9 @@ var Misc = {
         level = parseInt(m[1]);
         if (level >= Misc.auto_anchors.start_level) {
           level_counters[level]++;
+          for (i=level+1; i<level_counters.length; i++) {
+            level_counters[i]=0;
+          }
           level_str = ''
 
           for (i=Misc.auto_anchors.start_level; i<=level; i++) {
