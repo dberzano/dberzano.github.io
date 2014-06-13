@@ -156,3 +156,120 @@ euca-describe-instances
 
 The AMI ID will be something like `ami-01234567` on the line
 corresponding to your image.
+
+
+Create a Cluster profile on CernVM Online
+-----------------------------------------
+
+First of all, go to [CernVM Online](https://cernvm-online.cern.ch) and
+log in with your CERN credentials.
+
+
+### Get Head node and Worker node templates
+
+Go to the **Marketplace** and choose the **ALICE** category. You will
+find two virtual machine definitions
+
+ * ALICE Release Validation Head Node
+ * ALICE Release Validation Worker Node
+
+You must select both, and "clone" them to your dashboard. When
+cloning, you can edit the definitions. The things you need to set are:
+
+ * In the **EOS** section, paste a valid proxy certificate in PEM
+   format. This is required to access EOS. You can create the proxy on
+   your machine (be sure that it lasts enough time) and find it in
+   `/tmp/x509_u$UID`.
+ * In **CVMFS Configuration** you might want to set a HTTP proxy to
+   speed up data access.
+ * In the **Condor Batch** section you can change the "shared secret".
+
+There is likely nothing else you need to modify.
+
+**Note:** make the same modifications in the head node and worker node
+definitions! For instance, if the Condor shared secret is not the
+same, worker nodes will not be able to connect to the head node.
+
+> Please **encrypt** your context as it contains sensitive information
+> (such as a Grid proxy and the Condor secret): you can set a password
+> under the **General** section.
+>
+> **Do not underestimate** the consequences of not encrypting!
+
+
+### Create the Cluster profile
+
+You are going to create a cluster capable of expanding and shrinking
+automatically, *i.e.* changing its the number of virtual worker nodes.
+
+Go to the **Dashboard** of CernVM Online: under **Your cluster
+definitions**, press the green button **Create new cluster**.
+
+ * **EC2 credentials**: use the EC2 environment variables you have
+   found out previously
+ * **Configuration of the CernVM Virtual Machines**: type in your AMI
+   ID you have found out after registering your image. The **Flavour**
+   field is the profile of resources associated to all your VMs and
+   its definition and name depend on your cloud: it is usually
+   something like `m1.large`
+ * **Automatic elasticity configuration**: the default parameters
+   should work well: you should configure properly the **Number of
+   jobs per VM** according to the number of CPUs associated to the
+   selected profile
+ * **Cluster size limit:** it is safe to leave the minimum number to
+   zero; change the maximum number to an appropriate value
+ * **Context for the Head/Worker node:** select the contexts you have
+   modified: remember to provide their passwords if you have encrypted
+   them
+
+Save the cluster definition when finished.
+
+> Please **encrypt** the cluster definition as it contains your EC2
+> credentials, which should be kept private.
+
+
+### Get the cluster profile
+
+On the CernVM Online **Dashboard**, press the green **Deploy** button
+for your cluster definition: a password may be asked if you have
+encrypted the context.
+
+Go to the **user-data** tab: there will be a short text file similar
+to:
+
+```ini
+[amiconfig]
+plugins=cernvm
+[cernvm]
+contextualization_key=cbe41cfaa6b746feb0e645f587203f42:password
+[ucernvm-begin]
+resize_rootfs=true
+cvmfs_branch=cernvm-prod.cern.ch
+cvmfs_tag=cernvm-system-3.3.0.3
+[ucernvm-end]
+```
+
+Edit the `PWGPP/benchmark/benchmark.config.d/50cloud.config` file and
+paste it as the `cloudUserData` variable, like this:
+
+```bash
+cloudUserData=(cat <<_EoF_
+[amiconfig]
+plugins=cernvm
+[cernvm]
+contextualization_key=cbe41cda9650467eb0e645f587203f42:password
+[ucernvm-begin]
+resize_rootfs=true
+cvmfs_branch=cernvm-prod.cern.ch
+cvmfs_tag=cernvm-system-3.3.0.3
+[ucernvm-end]
+_EoF_
+)
+```
+
+The marker `_EoF_` and the closed parenthesis `)` must stay on
+separate lines.
+
+**Note:** there is an example file available at
+`PWGPP/benchmark/benchmark.config.d/50cloud.config.example`.
+
