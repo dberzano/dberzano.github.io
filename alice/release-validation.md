@@ -49,6 +49,7 @@ You will obtain a .zip file containing all your credentials. Do:
 
 ```bash
 mkdir ec2_creds
+cd ec2_creds
 unzip <path_to_archive.zip>
 ```
 
