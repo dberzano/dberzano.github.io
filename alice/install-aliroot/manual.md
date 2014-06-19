@@ -374,11 +374,30 @@ Once again, **you need to re-source `alice-env.sh`** for using Geant 3
 and before building AliRoot.
 
 
-### FastJet (optional)
+### FastJet and FastJet contrib (optional)
 
 You can define a fourth element in the triad corresponding to the
-[FastJet](http://fastjet.fr/) version you would like to use.
-**Compiling FastJet is optional.**
+[FastJet](http://fastjet.fr/) version you would like to use. If you
+wish, you can also include a
+[FastJet contrib](http://fastjet.hepforge.org/contrib/) package of
+your choice.
+
+**Compiling FastJet is optional, and FastJet contrib are not required
+to use FastJet.**
+
+If you want to use FastJet only (no contrib), you can specify a fourth
+element to the "triad" like this:
+
+```bash
+TRIAD[1]="<root> v1-15a master 3.0.6" # with FastJet only
+```
+
+If you want FastJet contrib as well, specify its version after the
+FastJet version, separated with an underscore:
+
+```bash
+TRIAD[1]="<root> v1-15a master 3.0.6_1.012" # with FastJet and FJ contrib
+```
 
 Source the `alice-env.sh` script. Then, create the FastJet source
 directory and move into it:
@@ -388,25 +407,32 @@ mkdir -p "$FASTJET"/src
 cd "$FASTJET"/src
 ```
 
-Download the tarball corresponding to the desired version:
+Download the tarball corresponding to the desired FastJet version:
 
 ```bash
 curl -Lo source.tar.gz http://fastjet.fr/repo/fastjet-"$FASTJET_VER".tar.gz
 ```
 
-Unpack it, and move into the directory containing the unpacked code:
+Download the tarball corresponding to the desired FastJet contrib
+version:
+
+```bash
+curl -Lo contrib.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJCONTRIB_VER".tar.gz
+```
+
+Unpack FastJet and the optional contrib:
 
 ```bash
 tar xzf source.tar.gz
-cd fastjet-"$FASTJET_VER"
+tar xzf contrib.tar.gz
 ```
 
-FastJet code (all versions) needs to be patched in order to make CINT
-understand the `fastjet` namespace. Copy and paste the following
-snippet:
+FastJet code and contrib (all versions) need to be patched in order
+to make CINT understand the `fastjet` namespace. Copy and paste the
+following snippet with confidence:
 
 ```bash
-find include/fastjet -maxdepth 2 -name '*.h' -or -name '*.hh' | \
+find . -name '*.h' -or -name '*.hh' -or -name '*.cc' -or -name '*.icc' | \
   while read F; do
     sed -e 's|^FASTJET_BEGIN_NAMESPACE.*|namespace fastjet {|' \
         -e 's|^FASTJET_END_NAMESPACE.*|} // end "fastjet" namespace|' \
@@ -430,6 +456,12 @@ find include/fastjet -maxdepth 2 -name '*.h' -or -name '*.hh' | \
 >
 > **No patch** is needed for FastJet 3 *(from v3.0.6)*.
 
+Now, move to the FastJet source directory:
+
+```bash
+cd "$FASTJET/src/fastjet-$FASTJET_VER"
+```
+
 When you are done patching, configure FastJet by copying and pasting
 the lines below.
 
@@ -452,6 +484,19 @@ command:
 
 ```bash
 make -j$MJ install
+```
+
+For installing FastJet contrib, **source the environment variables
+once again**, then move to the contrib source directory:
+
+```bash
+cd "$FASTJET/src/fjcontrib-$FJCONTRIB_VER"
+```
+
+Now configure, build and install it:
+
+```bash
+./configure && make -j"$MJ" install
 ```
 
 
