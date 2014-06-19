@@ -496,7 +496,9 @@ cd "$FASTJET/src/fjcontrib-$FJCONTRIB_VER"
 Now configure, build and install it:
 
 ```bash
-./configure && make -j"$MJ" install
+./configure
+make -j"$MJ" install
+make -j"$MJ" fragile-shared-install
 ```
 
 
