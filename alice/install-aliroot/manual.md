@@ -438,7 +438,7 @@ find . -name '*.h' -or -name '*.hh' -or -name '*.cc' -or -name '*.icc' | \
         -e 's|^FASTJET_END_NAMESPACE.*|} // end "fastjet" namespace|' \
         -e 's|^#define FASTJET_BEGIN_NAMESPACE.*||' \
         -e 's|^#define FASTJET_END_NAMESPACE.*||' \
-        "$F" > "$F.0" && mv "$F.0" "$F"
+        "$F" > "$F.0" && \mv -f "$F.0" "$F"
   done
 ```
 
@@ -450,7 +450,7 @@ find . -name '*.h' -or -name '*.hh' -or -name '*.cc' -or -name '*.icc' | \
 >   while read F; do
 >     echo '#include <cstdlib>' > "$F.0" && \
 >       cat "$F" | grep -v '#include <cstdlib>' >> "$F.0" && \
->       mv "$F.0" "$F"
+>       \mv -f "$F.0" "$F"
 >   done
 > ```
 >
