@@ -427,21 +427,6 @@ tar xzf source.tar.gz
 tar xzf contrib.tar.gz
 ```
 
-FastJet code and contrib (all versions) need to be patched in order
-to make CINT understand the `fastjet` namespace. Copy and paste the
-following snippet with confidence:
-
-```bash
-find . -name '*.h' -or -name '*.hh' -or -name '*.cc' -or -name '*.icc' | \
-  while read F; do
-    sed -e 's|^FASTJET_BEGIN_NAMESPACE.*|namespace fastjet {|' \
-        -e 's|^FASTJET_END_NAMESPACE.*|} // end "fastjet" namespace|' \
-        -e 's|^#define FASTJET_BEGIN_NAMESPACE.*||' \
-        -e 's|^#define FASTJET_END_NAMESPACE.*||' \
-        "$F" > "$F.0" && \mv -f "$F.0" "$F"
-  done
-```
-
 > **OS X with FastJet 2:** you need to apply an additional "patch"
 > to make it compile correctly. Copy and paste the following:
 >
