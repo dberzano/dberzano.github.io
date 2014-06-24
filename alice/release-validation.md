@@ -324,9 +324,9 @@ Options:
  * `--aliroot`: the AliRoot tag to validate, in the form
    `vAN-20140610`
 
-Arbitrary options (in the form variable=value) can be specified after
-the double dash `--` and will override the corresponding options in
-any of the configuration files.
+Arbitrary options (in the form `variable=value`) can be specified
+after the double dash `--` and will override the corresponding options
+in any of the configuration files.
 
 
 #### Mode 2: control the validation
