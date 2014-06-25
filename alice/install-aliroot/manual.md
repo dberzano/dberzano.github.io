@@ -83,7 +83,8 @@ You need to change only the "triads" section, which looks like this:
 
 ```bash
 # Triads in the form "ROOT Geant3 AliRoot [FastJet[_FJContrib]]". Indices
-# start from 1 not 0. The FastJet entry is optional, and so is FJContrib.
+# start from 1 not 0. The FastJet entry is optional. FJ Contrib is optional
+# with FastJet 2 and mandatory with FastJet 3.
 # More information: http://aliceinfo.cern.ch/Offline/AliRoot/Releases.html
 TRIAD[1]="v5-34-11 v1-15a master" # no FastJet
 TRIAD[2]="v5-34-11 v1-15a master 2.4.5" # with FastJet
@@ -377,22 +378,25 @@ and before building AliRoot.
 ### FastJet and FastJet contrib (optional)
 
 You can define a fourth element in the triad corresponding to the
-[FastJet](http://fastjet.fr/) version you would like to use. If you
-wish, you can also include a
+[FastJet](http://fastjet.fr/) version you would like to use. You might
+need an additional
 [FastJet contrib](http://fastjet.hepforge.org/contrib/) package of
-your choice.
+your choice, depending on your needs and configuration.
 
-**Compiling FastJet is optional, and FastJet contrib are not required
-to use FastJet.**
+> Compiling FastJet is optional. FastJet contrib is:
+>
+> * optional if using FastJet 2
+> * **mandatory** if using FastJet 3 (AliRoot won't compile without
+>   it)
 
-If you want to use FastJet only (no contrib), you can specify a fourth
-element to the "triad" like this:
+If you do not need FastJet contrib, you can specify a fourth element
+to the "triad" like this:
 
 ```bash
-TRIAD[1]="<root> v1-15a master 3.0.6" # with FastJet only
+TRIAD[1]="<root> v1-15a master 2.4.5" # with FastJet only
 ```
 
-If you want FastJet contrib as well, specify its version after the
+If you need FastJet contrib as well, specify its version after the
 FastJet version, separated with an underscore:
 
 ```bash
@@ -420,7 +424,7 @@ version:
 curl -Lo contrib.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJCONTRIB_VER".tar.gz
 ```
 
-Unpack FastJet and the optional contrib:
+Unpack both tarballs:
 
 ```bash
 tar xzf source.tar.gz
