@@ -190,7 +190,9 @@ which is pretty large!
 > Never touch the `.git` directory as a general rule!
 
 
-### Commits, history and references
+### Commits history and references
+
+#### Commits
 
 In Git, every single bunch of modifications is called a **commit**.
 Each commit is identified univocally by:
@@ -200,7 +202,7 @@ Each commit is identified univocally by:
 * its predecessor(s)
 
 The fact that each commit has a predecessor links all the commits
-together, forming the **history**.
+together, constituting the **history**.
 
 An example of commits linked together is represented in the following
 image:
@@ -258,11 +260,14 @@ index 0000000..a2a67bb
 
 > The hash is 40 chars long: it is rather common to "abbreviate" it using only
 > the first chars (commonly 7 or 10), when we have no ambiguities. The above
-> command would become:
+> command would become, for instance:
 >
 > ```bash
 > git show 1c2f9ef
 > ```
+
+
+#### Branches
 
 At any point in the history, developers might decide to create a
 "development line" distinct from the main one. Each development line
