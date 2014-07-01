@@ -321,6 +321,99 @@ We currently have only the **master** branch which corresponds, once again, to
 **origin/master**, indicated in square brackets.
 
 
+#### Tags
+
+We have seen how Git commits can be referred to as hashes, even shortened, such
+as `1c2f9ef`.
+
+More friendly names can be assigned to commits: such nicknames are the **tags**.
+Considering that a tag commonly corresponds to a "release" in our software, this
+makes sense: after all, the tag translates to the full history of modifications
+up to a certain point, the last modification being the commit the tag points to.
+
+Check the list of available tags in the test repository:
+
+```console
+$> git tag -n
+v0.0.1          Test modified
+v0.1.2          Script to generate bogus commits
+```
+
+To see what commit corresponds to a certain tag:
+
+```console
+$> git rev-parse v0.1.2
+1c2f9efb8ca9fc146f272cd60eda445848e2824e
+```
+
+
+#### References: summary
+
+Commits, branches and tags are called **references**, because they all refer to
+a certain point in our software's history.
+
+Commits and tags are *static* references: they point to a specific and immutable
+point in the history.
+
+All branches contain a special "nickname" called `HEAD`: this is a *dynamic*
+reference always pointing to the latest commit of the branch. Quite often, when
+referring to a branch we are actually referring to the `HEAD` of the branch.
+
+Finally, *remote* references are distinguished by *local* references as they are
+prefixed with a directory-like name, which is by default `origin`.
+
+Let's update the status of the *remote* repository:
+
+```console
+$> git remote update -p
+Fetching origin
+...
+```
+
+This is often necessary because Git does not download anything unless explicitly
+told to do so. Remote references and history are cached locally: with this
+command we are updating the local cache.
+
+> The `git remote update -p` command updates the cache of the remote references
+> and downloads the new history, but does not touch any file in the working
+> directory, *i.e.* **it will never destroy your work**.
+
+Let's fire up **tig** to have an overview of our current history situation:
+
+```console
+$> tig --all
+```
+
+![References with tig](tig-refs.png)
+
+> Navigate history view in tig:
+> 
+> * **Up** and **Down** arrows to highlight a commit
+> * **Enter** to show the commit
+> * **Q** to exit the commit view and to exit tig
+> * **J** and **K** to scroll up and down the commit view
+
+This is what we understand at a glance by looking at tig:
+
+* The most recent commit is shown on top.
+* By highlighting a commit, its *hash* is shown at the bottom. 
+* The commit with message *"Base "AliRoot-like" structure"* has two successors,
+  which means that after that, the history splits in two.
+* **Local branches** are in square brackets:
+ * `[master]`
+ * `[devel-hlt]`
+* **Remote branches** are in curly brackets:
+ * `{origin/master}`
+ * `{origin/devel-hlt}`
+* **Tags** are in angular brackets:
+ * `<v0.0.1>`
+ * `<v0.1.2>`
+
+More importantly: we notice that our *local* branches are more updated than
+their corresponding *remote* branches. We will see in a while how to "publish"
+our updates and "align" them.
+
+
 Resources
 ---------
 
