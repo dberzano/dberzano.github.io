@@ -166,8 +166,8 @@ modifications "encoded" inside a hidden directory: `.git`.
 #### What does Git hide from my eyes?
 
 To see what we mean, this is the space taken by a full AliRoot clone
-*(don't actually do it, it will take a while to download, just consider
-the example)*:
+*(don't actually do it, it will take a while to download, just
+consider the example)*:
 
 ```console
 $> mkdir your_aliroot_clone
@@ -188,6 +188,132 @@ $> du -shx .git/objects/
 which is pretty large!
 
 > Never touch the `.git` directory as a general rule!
+
+
+### Commits, history and references
+
+In Git, every single bunch of modifications is called a **commit**.
+Each commit is identified univocally by:
+
+* its content
+* some "metadata" (like the author's name and the commit date)
+* its predecessor(s)
+
+The fact that each commit has a predecessor links all the commits
+together, forming the **history**.
+
+An example of commits linked together is represented in the following
+image:
+
+![Simple history](git-history.png)
+
+You can have a look at the current history by using `git log` (most
+recent commit on top):
+
+```console
+$> git log
+commit 8fa4f7b1d3eb4c041dfeb50462f57e34c73c5a3b
+Author: dberzano <dario.berzano@cern.ch>
+Date:   Tue Jul 1 16:26:07 2014 +0200
+
+    Base "AliRoot-like" structure
+
+commit 1c2f9efb8ca9fc146f272cd60eda445848e2824e
+Author: dberzano <dario.berzano@cern.ch>
+Date:   Tue Jul 1 14:30:48 2014 +0200
+
+    Script to generate bogus commits
+
+...
+```
+
+See those long hexadecimal strings? All the information that univocally
+identifies the commit is "digested" to create that *hash*.
+
+We will use the *hash* to refer to a commit. To see what changed in the commit
+with comment "*Script to generate bogus commits*", we do:
+
+```console
+$> git show 1c2f9efb8ca9fc146f272cd60eda445848e2824e
+commit 1c2f9efb8ca9fc146f272cd60eda445848e2824e
+Author: dberzano <dario.berzano@cern.ch>
+Date:   Tue Jul 1 14:30:48 2014 +0200
+
+    Script to generate bogus commits
+
+diff --git a/immutable/generate-commits.sh b/immutable/generate-commits.sh
+new file mode 100755
+index 0000000..a2a67bb
+--- /dev/null
++++ b/immutable/generate-commits.sh
+@@ -0,0 +1,48 @@
++#!/bin/bash
++cd `dirname "$0"`
++while ! [ -d .git ] ; do
++  cd ..
++  [ "$PWD" == / ] && exit 1
++done
+...
+```
+
+> The hash is 40 chars long: it is rather common to "abbreviate" it using only
+> the first chars (commonly 7 or 10), when we have no ambiguities. The above
+> command would become:
+>
+> ```bash
+> git show 1c2f9ef
+> ```
+
+At any point in the history, developers might decide to create a
+"development line" distinct from the main one. Each development line
+is called a **branch**, and the main development line is
+conventionally called the **master** branch:
+
+![Branches](git-branches.png)
+
+You can see the branch currently selected with the command:
+
+```console
+$> git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+nothing to commit, working directory clean
+```
+
+The output gives you two important pieces of information:
+
+* your current *local* branch: **master**
+* the corresponding *remote* branch: **origin/master**
+
+By default there is a single remote repository and it is called **origin**, and
+in general every *local* branch created from the *remote* **origin/branch** will
+be named **branch**.
+
+It is also possible to have local branches not linked to any remote branch.
+
+> A remote and local branch might be linked, but they are not kept in sync
+> automatically.
+
+You can list the available *remote* branches:
+
+```console
+$> git branch -r
+  origin/HEAD -> origin/master
+  origin/devel-hlt
+  origin/master
+```
+
+You can also list all the *local* branches, along with their corresponding
+*remote* branch:
+
+```console
+$> git branch -vv
+* master 8fa4f7b [origin/master] Base "AliRoot-like" structure
+```
+
+We currently have only the **master** branch which corresponds, once again, to
+**origin/master**, indicated in square brackets.
 
 
 Resources
