@@ -46,8 +46,7 @@ such as the workflows, but on the other hand it is very simple to
 understand the basics and keep your code safe.
 
 > Bear in mind that this guide favors *avoiding* disasters over
-> *recovering* from them. Stick to the examples and nothing bad will
-> happen.
+> *recovering* from them. If in doubt, stick to the examples.
 
 
 ### Git workflows
@@ -103,6 +102,92 @@ On Mac (with [Homebrew](http://brew.sh/)):
 ```bash
 brew install tig
 ```
+
+
+Git principles
+--------------
+
+We have said already that every used has the full copy of the central
+repository.
+
+Such copy is called a **clone**, and it is created in practice via
+the `git clone` command.
+
+> We have prepared a Git "scratch" area for this tutorial, accessible
+> using your CERN account: use it for your tryouts with no fear.
+
+Let's then start by cloning the scratch repository somewhere on your
+computer:
+
+```console
+$> mkdir alice-git-tutorial
+$> cd alice-git-tutorial
+$> git clone https://git.cern.ch/reps/alice-git-tutorial .
+Cloning into '.'...
+remote: Counting objects: 13, done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 13 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (13/13), done.
+Checking connectivity... done.
+```
+
+
+### What does Git store on my computer?
+
+What do we have inside the just-cloned repository?
+
+```console
+$> ls -l
+total 16
+drwxr-xr-x  3 yabba  staff  102 Jul  1 16:01 ANALYSIS
+drwxr-xr-x  3 yabba  staff  102 Jul  1 16:01 HLT
+drwxr-xr-x  3 yabba  staff  102 Jul  1 16:01 PWGPP
+-rw-r--r--  1 yabba  staff   40 Jul  1 15:58 README
+drwxr-xr-x  3 yabba  staff  102 Jul  1 16:01 STEER
+drwxr-xr-x  3 yabba  staff  102 Jul  1 16:01 TPC
+drwxr-xr-x  3 yabba  staff  102 Jul  1 15:58 immutable
+-rw-r--r--  1 yabba  staff   39 Jul  1 15:58 test
+```
+
+The files and directories you are seeing constitute your **working
+directory**. This is:
+
+* the directory where you work (*i.e.* manipulate files and
+  directories)
+* the "snapshot" of a certain "version" of the full repository
+
+The working directory is a true *scratch space*: you can modify
+whatever you want and undo it if you want (later on we will see how).
+
+This is because Git keeps all your local and remote history of
+modifications "encoded" inside a hidden directory: `.git`.
+
+
+#### What does Git hide from my eyes?
+
+To see what we mean, this is the space taken by a full AliRoot clone
+*(don't actually do it, it will take a while to download, just consider
+the example)*:
+
+```console
+$> mkdir your_aliroot_clone
+$> cd your_aliroot_clone
+$> git clone . http://git.cern.ch/pub/AliRoot
+...
+$> du -shx .
+4,0G	.
+```
+
+and this is the space taken by the "hidden" database of all versions:
+
+```console
+$> du -shx .git/objects/
+2,7G	.git/objects/
+```
+
+which is pretty large!
+
+> Never touch the `.git` directory as a general rule!
 
 
 Resources
