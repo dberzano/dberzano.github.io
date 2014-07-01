@@ -68,17 +68,22 @@ var Misc = {
           }
 
           // Creating TOC?
-          if (toc_level !== undefined) {
+          if (toc_level !== undefined && level >= Misc.auto_anchors.start_level) {
 
-            if (level > prev_level) {
-              new_toc_level = $('<ul></ul>');
-              toc_level.append( new_toc_level );
-              toc_level = new_toc_level;
-            }
-            else if (level < prev_level) {
-              toc_level = toc_level.parent();
-            }
+            ldiff = level - prev_level;
 
+            if (ldiff > 0) {
+              for (l=0; l<ldiff; l++) {
+                new_toc_level = $('<ul></ul>');
+                toc_level.append( new_toc_level );
+                toc_level = new_toc_level;
+              }
+            }
+            else if (ldiff < 0) {
+              for (l=ldiff; l<0; l++) {
+                toc_level = toc_level.parent();
+              }
+            }
 
             li = $('<li></li>').append(
               $('<a></a>')
