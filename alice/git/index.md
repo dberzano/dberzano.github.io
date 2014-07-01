@@ -31,8 +31,7 @@ If you are reading this tutorial, you are probably a beginner to Git.
 
 What you want to attain sounds simple:
 
-* keep your software's local copy up-to-date with other people's
-  changes
+* keep your software's local copy up-to-date with other people's changes
 * write your own code
 * make your code public
 
@@ -412,6 +411,96 @@ This is what we understand at a glance by looking at tig:
 More importantly: we notice that our *local* branches are more updated than
 their corresponding *remote* branches. We will see in a while how to "publish"
 our updates and "align" them.
+
+
+Workflow
+--------
+
+### Configure your Git clone
+
+* `user.name`, `user.email`, `color.ui`, `push.default`
+* cache your password: OS X (the Keychain), Ubuntu
+
+
+### Basics
+
+The suggested workflow uses two branches:
+
+* the **main branch** where you want your commits to end up in:
+ * in our example it is `master`
+ * its corresponding remote branch is `origin/master`
+ * we will never work on it directly
+* a **working branch** where, well, we do our work
+ * in our example it is `master-workdir`
+ * we follow the convention: `<mainbranch>-workdir`
+ * it does not have a remote branch
+
+
+### Start working
+
+Go inside your local Git clone. Be sure you are in your main branch, *i.e.* the
+branch where you want to publish your changes. In most cases this is `master`:
+
+```console
+$> cd alice-git-tutorial
+$> git remote update -p
+Fetching origin
+...
+$> git checkout master
+Switched to branch 'master'
+```
+
+Double-check: `git status` will always be your friend:
+
+```console
+$> git status
+On branch master
+Your branch is behind 'origin/master' by 3 commits, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+
+nothing to commit, working directory clean
+```
+
+From the command, we now know that:
+
+* our local copy is outdated: 3 new commits have been added remotely
+* in order to update it, we can run `git pull`
+
+> Read carefully the output of Git commands: in most cases they suggest exactly
+> what you probably need to do next.
+
+Let's then download the updates in the current working directory:
+
+```console
+$> git pull
+From origin
+ * branch            master     -> FETCH_HEAD
+Updating 8b24f3e..4baec6c
+Fast-forward
+ ANALYSIS/README               |  9 +++++++++
+ HLT/README                    |  1 +
+ PWGPP/README                  |  1 +
+ README                        |  1 +
+ STEER/README                  |  1 +
+ TPC/README                    |  1 +
+ immutable/generate-commits.sh | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ test                          |  9 +++++++++
+ 8 files changed, 71 insertions(+)
+ create mode 100644 ANALYSIS/README
+ create mode 100644 HLT/README
+ create mode 100644 PWGPP/README
+ create mode 100644 README
+ create mode 100644 STEER/README
+ create mode 100644 TPC/README
+ create mode 100755 immutable/generate-commits.sh
+ ```
+
+A summary of what has changed is shown.
+
+> Once again: we will **not** work on the `master` branch directly. If you
+> follow this suggestion, you will never run into troubles when downloading the
+> updates.
+
 
 
 Resources
