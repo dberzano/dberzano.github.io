@@ -489,6 +489,30 @@ $> git config --global credential.helper store
 are available as well.
 
 
+### Suggested workflow
+
+Git makes it simple and inexpensive to create additional *local branches*.
+Branches are a good and clean way to:
+
+* keep your work separated from other people's
+* make a backup of your work
+* revert your repository on a clean state
+
+Our suggested workflow (which is *not* a real workflow, but rather a series of
+examples for making you familiarize with Git) consists of working on **two
+branches**:
+
+* a **"read-only"** *local* branch, corresponding to a certain *remote* branch:
+ * you **don't do your work** in this branch
+ * there, you **download updates** from the remote
+ * *e.g.*: `master` *(local)*, corresponding to `origin/master` *(remote)*
+* a **read-write** *local-only* branch, with *no remote correspondent*:
+ * you will **only work** in this branch
+ * you can have **as many** local branches of this kind **as you want**
+ * your work remains **private** until you **explicitly publish**
+ * you will **keep your work safe** while switching branches
+
+
 ### Basics
 
 The suggested workflow uses two branches:
