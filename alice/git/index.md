@@ -895,6 +895,185 @@ first line:
 > other people's work.
 
 
+### Get updates from upstream to your working branch
+
+As you develop code, other people will do it as well: this part explains you how
+to download updates safely and without losing your work.
+
+This is probably the most complicated part of Git, as it involves many commands
+and because other people might have edited the same files you have changed,
+resulting in *conflicts* you need to solve.
+
+> Don't leave your development branch behind: **incorporate changes once or
+> twice per day**. Doing that **minimizes the risk of conflicts** and saves you
+> lots of time!
+
+Conflicts are dealt with in a separate section. The flowchart of the Git
+**pull** (this is how "getting updates" is called in Git) is presented.
+
+![Get updates in your working branch](flow-pull.png)
+
+We are assuming you are working in your development branch, which we called
+**devel-hlt** in our examples.
+
+Your branch **must be clean**: before getting the updates from the **master**,
+you **must** commit everything, following the directions of the previous
+section.
+
+If there are changes you don't want to commit, Git has a special area where you
+can store them temporarily, to restore them at a later time. This area is called
+the **stash**.
+
+So, let's assume this is the situation of your current branch:
+
+```
+$> git status
+On branch devel-hlt
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	i-dont-want-to-commit-this.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+Put this file aside with `git stash`:
+
+```console
+$> git stash -u
+Saved working directory and index state WIP on devel-hlt: ca305d6 Added HLT analysis macro
+HEAD is now at ca305d6 Added HLT analysis macro
+```
+
+The `-u` switch stashes *untracked* (*i.e.*, new) files as well. The final
+result is a clean working directory:
+
+```console
+$> git status
+On branch devel-hlt
+nothing to commit, working directory clean
+```
+
+Have a look at your stash:
+
+```console
+$> git stash list
+stash@{0}: WIP on devel-hlt: ca305d6 Added HLT analysis macro
+```
+
+Or you can use `tig stash` to have an interactive look at them. You will notice
+that your modifications are no longer in the working directory, but they are
+hidden "somewhere".
+
+Once your development branch is clean, move to the **master** branch: if you
+have followed the workflow, you are treating the master branch as **read-only**
+and you are using it only for getting updates from the others.
+
+```console
+$> git remote update -p
+...
+$> git checkout master
+Switched to branch 'master'
+Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+```
+
+Now update as suggested and remember: "fast-forward" means that everything will
+run smoothly:
+
+```console
+$> git pull
+remote: Counting objects: 5, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From https://git.cern.ch/reps/alice-git-tutorial
+   8fa4f7b..ac58ce2  master     -> origin/master
+Updating 8fa4f7b..ac58ce2
+Fast-forward
+ README | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+Move now back to the development branch, and **make a backup** of it:
+
+```console
+$> git checkout devel-hlt
+Switched to branch 'devel-hlt'
+$> git branch devel-hlt-bak000
+$> git log -1 --oneline --decorate
+ca305d6 (HEAD, devel-hlt-bak000, devel-hlt) Added HLT analysis macro
+$> git status
+On branch devel-hlt
+nothing to commit, working directory clean
+```
+
+You are on **devel-hlt** and your **devel-hlt-bak000** branch is for now
+identical. Everything you will change will **not** affect your backup branch,
+which can be then used to restore your work if you have made some mistake.
+Backup and restore branches are explained in a separate chapter.
+
+If you use tig, it will show you graphically how your branch diverged from the
+main development line. Use:
+
+```console
+$> tig master devel-hlt
+2014-07-03 00:06 dberzano o [master] {origin/master} Updated main README file
+2014-07-02 22:46 dberzano │ o [devel-hlt] [devel-hlt-bak000] Added HLT analysis macro
+2014-07-01 16:26 dberzano o─┘ {origin/devel-hlt} Base "AliRoot-like" structure
+2014-07-01 14:30 dberzano o Script to generate bogus commits
+2014-07-01 12:34 dberzano o Forbidden file
+2014-07-01 12:32 dberzano o Test modified
+2014-07-01 11:44 dberzano I Added test file
+```
+
+You want to make it a straight line. Just do:
+
+```console
+$> git pull --rebase . master
+From .
+ * branch            master     -> FETCH_HEAD
+First, rewinding head to replay your work on top of it...
+Applying: Added HLT analysis macro
+```
+
+Don't forget the **dot**: you are telling Git to pull from a *local* branch (the
+dot means *local*) called **master**, instead of pulling from a *remote*.
+
+Let's assume that everything went right, *i.e.* with **no conflicts**. Fire tig,
+and it will show the development line straight again, with your commits on top
+of the others:
+
+```console
+$> tig master devel-hlt
+2014-07-02 22:46 dberzano o [devel-hlt] Added HLT analysis macro
+2014-07-03 00:06 dberzano o [master] {origin/master} Updated main README file
+2014-07-01 16:26 dberzano o {origin/devel-hlt} Base "AliRoot-like" structure
+2014-07-01 14:30 dberzano o Script to generate bogus commits
+2014-07-01 12:34 dberzano o Forbidden file
+2014-07-01 12:32 dberzano o Test modified
+2014-07-01 11:44 dberzano I Added test file
+```
+
+Remember the **stash**? If you have stashed something, it is time to get it
+back. Use:
+
+```console
+$> git stash pop
+Already up-to-date!
+On branch devel-hlt
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	i-dont-want-to-commit-this.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+Dropped refs/stash@{0} (1ef5cb6b908c66f21155f58949005eb64747b9cd)
+```
+
+You can resume your work, with an updated branch.
+
+
 Resources
 ---------
 
