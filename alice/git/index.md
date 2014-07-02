@@ -1303,6 +1303,39 @@ $> git checkout devel-hlt
 > Important: do not **ever** work on the **same** branch in two different
 > working directories created with this tool!
 
+
+### Backup a branch and restore it
+
+To backup a branch, move to it and "branch" it:
+
+```console
+$> git checkout mybranch
+$> git checkout mybranch-backup
+```
+
+Branches **mybranch** and **mybranch-backup** are now identical. Now, do some
+work on **mybranch**: at some point you want to revert it.
+
+Do:
+
+```console
+$> git reset --hard
+$> git checkout mybranch-backup
+...
+$> git branch -m mybranch mybranch-failed
+$> git branch mybranch-backup mybranch
+$> git checkout mybranch
+```
+
+You have:
+
+* eliminated all your changes in your working directory
+* moved to the backup branch
+* renamed the "failed" branch properly (you can also delete it with `-D`
+  instead)
+* re-created the original branch from the backup
+* moved to the original branch
+
 Resources
 ---------
 
