@@ -1336,6 +1336,53 @@ You have:
 * re-created the original branch from the backup
 * moved to the original branch
 
+
+### Undo your commits
+
+You can reset the status of your local branch to a certain commit in the
+history.
+
+If you are sure of what you are doing, go for a **"hard" reset**:
+
+```console
+$> git reset --hard HEAD^^^
+HEAD is now at 1c2f9ef Script to generate bogus commits
+```
+
+In the example above, `HEAD^^^` is equivalent to `HEAD~3` and means "get rid of
+the latest 3 commits".
+
+> With the hard reset, discarded commits are **lost forever** (unless you have
+> **backed up** your branch)!
+
+You can also go for a **"soft" reset**: the latest 3 commits will disappear from
+the history, but their changes will still be staged in the working directory:
+
+```console
+$> git reset --soft HEAD^^^
+$> git status
+On branch devel-hlt
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   ANALYSIS/README
+	new file:   HLT/Analysis.cxx
+	new file:   HLT/README
+	new file:   PWGPP/README
+	modified:   README
+	new file:   STEER/README
+	new file:   TPC/README
+```
+
+If you just want to get rid of all your modifications and restore the working
+directory to the latest commit:
+
+```console
+$> git reset --hard
+```
+
+with no additional options.
+
 Resources
 ---------
 
