@@ -1270,6 +1270,39 @@ Applying: A new change in the README file
 
 > Note: the use of patch files is strongly discouraged.
 
+
+### Create one directory per branch
+
+If you work on different branches at the same time, you might find very
+inconvenient to move between them using `git checkout`: the problem is that you
+always need to commit or stash between moving.
+
+Do not create two separate clones for that: clones are very expensive in terms
+of disk space.
+
+You can simply use `git-new-workdir`.
+
+Suppose you have your clone in `alice-git-tutorial`: that directory contains
+the a *working directory* for a single branch, plus the entire *database of
+the history*, as we have seen.
+
+You only need a new working directory, not a new clone. Do:
+
+```console
+$> git-new-workdir alice-git-tutorial/ my-new-working-directory/
+```
+
+You can then move to it and do whatever you want:
+
+```console
+$> cd my-new-working-directory
+$> git checkout devel-hlt
+...
+```
+
+> Important: do not **ever** work on the **same** branch in two different
+> working directories created with this tool!
+
 Resources
 ---------
 
