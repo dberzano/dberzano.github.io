@@ -1057,6 +1057,13 @@ nothing added to commit but untracked files present (use "git add" to track)
 Dropped refs/stash@{0} (1ef5cb6b908c66f21155f58949005eb64747b9cd)
 ```
 
+If you feel safe, you can remove your backup branch:
+
+```
+$> git branch -d devel-hlt-bak000
+Deleted branch devel-hlt-bak000 (was 12b98e6).
+```
+
 You can resume your work, with an updated branch.
 
 
