@@ -540,58 +540,63 @@ summarized in the following table.
 | **Push**   | `git push`                   |
 
 
+### Start a new development
 
+Whenever you start a new development, we suggest to work on a different local
+branch and to write changes in the development branch only.
 
-### Start working
+The summary of operations is represented in the following flow chart, and
+described afterwards.
 
-Go inside your local Git clone. Be sure you are in your main branch, *i.e.* the
-branch where you want to publish your changes. In most cases this is `master`:
+![Start a new development](flow-start.png)
+
+First of all, **move to the master branch** (or your reference branch). This is
+done by running:
 
 ```console
-$> cd alice-git-tutorial
-$> git remote update -p
-Fetching origin
-...
 $> git checkout master
 Switched to branch 'master'
-```
-
-Double-check: `git status` will always be your friend:
-
-```console
-$> git status
-On branch master
 Your branch is behind 'origin/master' by 3 commits, and can be fast-forwarded.
   (use "git pull" to update your local branch)
-
-nothing to commit, working directory clean
 ```
 
-From the command, we now know that:
+> Git frequently suggest you what to do. Always take your time to read the
+> output of Git commands.
 
-* our local copy is outdated: 3 new commits have been added remotely
-* in order to update it, we can run `git pull`
+The `git checkout` command is used to "move" to a branch. Moving to a branch
+means that Git changes the files in your working directory to the latest
+available version in your local copy of the branch.
 
-> Read carefully the output of Git commands: in most cases they suggest exactly
-> what you probably need to do next.
+In this case, the message tells you some important information:
 
-Let's then download the updates in the current working directory:
+* you are now on branch **master**
+* such branch corresponds to the remote **origin/master**
+* your local branch is outdated, and exactly 3 commits behind
+* it can be "fast-forwarded", *i.e.* there is no conflict between your current
+  branch and the remote branch
+
+Do as suggested, and update it:
 
 ```console
 $> git pull
-From origin
- * branch            master     -> FETCH_HEAD
-Updating 8b24f3e..4baec6c
+remote: Counting objects: 5, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 0), reused 4 (delta 0)
+Unpacking objects: 100% (4/4), done.
+From https://git.cern.ch/reps/alice-git-tutorial
+   1c2f9ef..8fa4f7b  master     -> origin/master
+ * [new branch]      devel-hlt  -> origin/devel-hlt
+Updating b380aaf..8fa4f7b
 Fast-forward
- ANALYSIS/README               |  9 +++++++++
+ ANALYSIS/README               |  1 +
  HLT/README                    |  1 +
  PWGPP/README                  |  1 +
  README                        |  1 +
  STEER/README                  |  1 +
  TPC/README                    |  1 +
  immutable/generate-commits.sh | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- test                          |  9 +++++++++
- 8 files changed, 71 insertions(+)
+ test                          |  2 +-
+ 8 files changed, 55 insertions(+), 1 deletion(-)
  create mode 100644 ANALYSIS/README
  create mode 100644 HLT/README
  create mode 100644 PWGPP/README
@@ -599,13 +604,63 @@ Fast-forward
  create mode 100644 STEER/README
  create mode 100644 TPC/README
  create mode 100755 immutable/generate-commits.sh
- ```
+```
 
-A summary of what has changed is shown.
+> If you follow closely this workflow and never edit anything in the **master**
+> branch, every update from **origin/master** to **master** will be a
+> "fast-forward", which is Git's speech for "painless".
 
-> Once again: we will **not** work on the `master` branch directly. If you
-> follow this suggestion, you will never run into troubles when downloading the
-> updates.
+Now, create a *local* branch for your modifications and move to it. By default,
+your new branch will be the same as the current `master`. Creating a branch and
+moving to it can be done with a single command:
+
+```console
+$> git checkout -b devel-hlt
+Switched to a new branch 'devel-hlt'
+```
+
+We named our private branch `devel-hlt`. Have a quick look at the latest commits
+to make sure that `master` and `devel-hlt` are in fact the same:
+
+```console
+$> git log -4 --decorate --oneline
+8fa4f7b (HEAD, origin/master, master, devel-hlt) Base "AliRoot-like" structure
+1c2f9ef Script to generate bogus commits
+6670af5 Forbidden file
+8b24f3e Test modified
+```
+
+The above command shows the latest 4 commits (`-4`), one commit per line
+(`--oneline`) and the corresponding branches and tags (`--decorate`). We notice
+that `devel-hlt` and `master` are at the same point, *i.e.* they are for now
+identical.
+
+You could also use tig as explained before for a more interactive and friendly
+inspection:
+
+```console
+$> tig
+```
+
+If you are using the `alice-env.sh` script, you can have constant confirmation
+that you are working on the `devel-hlt` branch:
+
+```console
+git: you are currently on branch devel-hlt
+[AliEnv] yabba@host [alice-git-tutorial] $>
+```
+
+This prevents you from making changes in the `master` branch. In any case you
+can check the status using:
+
+```console
+$> git status
+On branch devel-hlt
+
+nothing to commit, working directory clean
+```
+
+
 
 
 
