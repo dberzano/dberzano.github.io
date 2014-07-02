@@ -418,8 +418,75 @@ Workflow
 
 ### Configure your Git clone
 
-* `user.name`, `user.email`, `color.ui`, `push.default`
-* cache your password: OS X (the Keychain), Ubuntu
+#### Sensible configuration options
+
+Clone the repository. For the scratch repository that you can use for your
+tests:
+
+```console
+$> mkdir alice-git-tutorial ; cd alice-git-tutorial
+$> git clone https://git.cern.ch/reps/alice-git-tutorial .
+Cloning into '.'...
+...
+```
+
+For the AliRoot repository you would do instead:
+
+```console
+$> mkdir AliRoot ; cd AliRoot
+$> git clone https://git.cern.ch/reps/AliRoot .
+Cloning into '.'...
+...
+```
+
+We will configure the repositories using the same configuration options. Git has
+the possibility to set system-wide settings, but we are setting our parameters
+per-repository.
+
+For each repository, move into its directory and:
+
+```console
+$> git config user.name your_cern_username
+$> git config user.email first.last@cern.ch
+$> git config color.ui true
+$> git config push.default simple
+```
+
+> It is extremely important you set your `user.name` to your CERN account. This
+> information will identify each commit. **You will not be able to publish
+> malformed commits to the server!**
+
+The `color.ui` option enables Git colored output. Please to set `push.default`
+to `simple` unless you have a good reason not to do that.
+
+
+#### Save your password
+
+Our repositories need CERN credentials for every download and upload operation.
+By default, credentials must be typed very often, but you have the option to
+save them for good.
+
+We suggest to do, on **OS X**:
+
+```console
+$> git config --global credential.helper osxkeychain
+```
+
+Passwords will be stored securely in your Keychain.
+
+On **Linux**:
+
+```console
+$> git config --global credential.helper store
+```
+
+**Beware:** passwords will be stored *unencrypted* in `~/.git-credentials`.
+
+> When you **change your CERN password** you will be prompted again for the new
+> one which will then be stored.
+
+[Other caching options](https://www.kernel.org/pub/software/scm/git/docs/gitcredentials.html)
+are available as well.
 
 
 ### Basics
