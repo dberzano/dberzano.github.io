@@ -1190,6 +1190,47 @@ $> git reset <file>
 $> git checkout <file>
 ```
 
+
+### Restore files and revert commits
+
+Suppose you have modified a file in your working directory. To undo the
+modifications:
+
+```console
+$> git checkout <file>
+```
+
+If you want to restore a single file to a specific version in the history:
+
+```console
+$> git checkout <reference> <file>
+```
+
+For instance:
+
+```console
+$> git checkout b380aafa15 HLT/Analysis.cxx
+$> git status
+On branch devel-hlt
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	modified:   HLT/Analysis.cxx
+```
+
+As you can see, your modifications are automatically staged for commit (*i.e.*,
+no need to `git add`).
+
+You can revert an entire single commit:
+
+```console
+$> git revert <reference>
+```
+
+> Reverting a commit means to apply a patch that undoes it. If other things
+> happened in the meanwhile, the automatic operation might fail and you'll have
+> to solve the conflicts manually.
+
 Resources
 ---------
 
