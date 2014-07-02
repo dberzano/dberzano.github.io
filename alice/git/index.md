@@ -1231,6 +1231,45 @@ $> git revert <reference>
 > happened in the meanwhile, the automatic operation might fail and you'll have
 > to solve the conflicts manually.
 
+
+### Create patch files and import them
+
+If for some reason you want to create "patch files" for the latest, say, 7
+commits, do:
+
+```console
+$> git format-patch HEAD~7
+0001-Test-modified.patch
+0002-Forbidden-file.patch
+0003-Script-to-generate-bogus-commits.patch
+0004-Base-AliRoot-like-structure.patch
+0005-Updated-main-README-file.patch
+0006-Added-HLT-analysis-macro.patch
+0007-A-new-change-in-the-README-file.patch
+```
+
+The listed `.patch` files are created, and can be sent out, for instance, as
+email attachments. Even binary files are encoded into text files.
+
+> The syntax `<reference>~<number>` always means that `<number>` of commits
+> before `<reference>`. The syntax `<reference>^` means one commit before
+> `<reference>`, while `<reference>^^` means two, etc.
+
+If you receive such files, apply them with `git am`:
+
+```console
+$> git am *.patch
+Applying: Test modified
+Applying: Forbidden file
+Applying: Script to generate bogus commits
+Applying: Base "AliRoot-like" structure
+Applying: Updated main README file
+Applying: Added HLT analysis macro
+Applying: A new change in the README file
+```
+
+> Note: the use of patch files is strongly discouraged.
+
 Resources
 ---------
 
