@@ -489,6 +489,20 @@ $> git config --global credential.helper store
 are available as well.
 
 
+#### What is my current branch?
+
+If you use the [installation instructions](../install-aliroot) you probably have
+already the `alice-env.sh` script used for setting the environment variables.
+
+If you have sourced the script, whenever you are in a Git clone the prompt will
+constantly tell you what is your current branch:
+
+```console
+git: you are currently on branch master
+[AliEnv] yabba@host [alice-git-tutorial] $>
+```
+
+
 ### Suggested workflow
 
 Git makes it simple and inexpensive to create additional *local branches*.
