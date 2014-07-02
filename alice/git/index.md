@@ -1040,23 +1040,9 @@ Applying: Added HLT analysis macro
 Don't forget the **dot**: you are telling Git to pull from a *local* branch (the
 dot means *local*) called **master**, instead of pulling from a *remote*.
 
-Let's assume that everything went right, *i.e.* with **no conflicts**. Fire tig,
-and it will show the development line straight again, with your commits on top
-of the others:
-
-```console
-$> tig master devel-hlt
-2014-07-02 22:46 dberzano o [devel-hlt] Added HLT analysis macro
-2014-07-03 00:06 dberzano o [master] {origin/master} Updated main README file
-2014-07-01 16:26 dberzano o {origin/devel-hlt} Base "AliRoot-like" structure
-2014-07-01 14:30 dberzano o Script to generate bogus commits
-2014-07-01 12:34 dberzano o Forbidden file
-2014-07-01 12:32 dberzano o Test modified
-2014-07-01 11:44 dberzano I Added test file
-```
-
-Remember the **stash**? If you have stashed something, it is time to get it
-back. Use:
+Let's assume that everything went right, *i.e.* with **no conflicts**. Remember
+the **stash**? If you have stashed something, it is time to get it back in the
+working directory. Do:
 
 ```console
 $> git stash pop
@@ -1072,6 +1058,89 @@ Dropped refs/stash@{0} (1ef5cb6b908c66f21155f58949005eb64747b9cd)
 ```
 
 You can resume your work, with an updated branch.
+
+
+### Publish (push) your changes
+
+It is now time to show your work to the rest of the world. If you strictly
+followed this workflow, you will not run into any difficulty.
+
+The flowchart representing the sequence of operations is simple.
+
+![Publish your changes](flow-push.png)
+
+Immediately before pushing **you must follow the workflow in the previous
+section to get the updates** and "rebase" your work on top of them.
+
+> **Always pull before you push:** you cannot push if you haven't pulled before.
+
+After you have pulled (did I mention that you **must** do that, or you will run
+into problems?), check that your new commits are in a straight line above the
+current **master**:
+
+```console
+$> tig master devel-hlt
+2014-07-02 22:46 dberzano o [devel-hlt] Added HLT analysis macro
+2014-07-03 00:06 dberzano o [master] {origin/master} Updated main README file
+2014-07-01 16:26 dberzano o {origin/devel-hlt} Base "AliRoot-like" structure
+2014-07-01 14:30 dberzano o Script to generate bogus commits
+2014-07-01 12:34 dberzano o Forbidden file
+2014-07-01 12:32 dberzano o Test modified
+2014-07-01 11:44 dberzano I Added test file
+```
+
+Great! Now you can simply push.
+
+```console
+$> git push origin devel-hlt:master
+Counting objects: 9, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 523 bytes | 0 bytes/s, done.
+Total 5 (delta 1), reused 0 (delta 0)
+To https://git.cern.ch/reps/alice-git-tutorial
+   ac58ce2..0754757  devel-hlt -> master
+```
+
+Note: this command might fail just because other people have pushed changes in
+the meanwhile. You might see a message like this:
+
+```console
+$> git push origin devel-hlt:master
+To https://git.cern.ch/reps/alice-git-tutorial
+ ! [rejected]        devel-hlt -> master (fetch first)
+error: failed to push some refs to 'https://git.cern.ch/reps/alice-git-tutorial'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+It clearly says that "the remote contains work that you do not have locally", or
+simply some people pushed after you have pulled. Just repeat the pull steps in
+the previous section to get the updates before pushing.
+
+If successful, the command you have just run has written to **origin/master**
+the content of your **devel-hlt** branch. Synchronize once again **master**
+*(local)* with its remote counterpart:
+
+```console
+$> git pull origin master:master
+From https://git.cern.ch/reps/alice-git-tutorial
+   ac58ce2..0754757  master     -> master
+Already up-to-date.
+```
+
+Now, verify that **master**, **origin/master** and **devel-hlt** are at the same
+point:
+
+```console
+$> git log -1 --oneline --decorate
+0754757 (HEAD, origin/master, master, devel-hlt) Added HLT analysis macro
+```
+
+Congratulations, you have just published your commits to Git!
 
 
 Resources
