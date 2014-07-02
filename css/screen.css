@@ -282,7 +282,7 @@ blockquote > p {
 }
 
 /* Inline code */
-#content p code, #content li code, #content blockquote p code {
+#content p code, #content li code, #content blockquote p code, #content td code, #content th code {
   /*color: #2B7598; <-- same as links */
   color: #CA2121;
   background-color: #fafafa;
