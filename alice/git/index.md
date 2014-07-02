@@ -513,18 +513,19 @@ branches**:
  * you will **keep your work safe** while switching branches
 
 
-### Basics
+### Main Git operations
 
-The suggested workflow uses two branches:
+There are four main Git **operations** associated to the suggested workflow,
+summarized in the following table.
 
-* the **main branch** where you want your commits to end up in:
- * in our example it is `master`
- * its corresponding remote branch is `origin/master`
- * we will never work on it directly
-* a **working branch** where, well, we do our work
- * in our example it is `master-workdir`
- * we follow the convention: `<mainbranch>-workdir`
- * it does not have a remote branch
+| Operation  | Associated commands          |
+|------------|------------------------------|
+| **Branch** | `git checkout`, `git branch` |
+| **Commit** | `git commit`                 |
+| **Pull**   | `git pull`                   |
+| **Push**   | `git push`                   |
+
+
 
 
 ### Start working
