@@ -1150,6 +1150,46 @@ $> git log -1 --oneline --decorate
 Congratulations, you have just published your commits to Git!
 
 
+Specific topics
+---------------
+
+### Deleting files and directories
+
+To delete a file:
+
+```console
+$> git rm <file>
+rm '<file>'
+```
+
+The remove operation is automatically staged for commit:
+
+```console
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	deleted:    <file>
+```
+
+If you have deleted a file manually, it will appear as *deleted* but *not
+staged*. To add the remove operation to the stage area, use `git rm` and not
+`git add`.
+
+To delete a directory recursively:
+
+```console
+$> git rm -r <dir>/
+rm '<dir>/<file1>'
+rm '<dir>/<file2>'
+```
+
+If you want to unstage a deleted file, use `tig status` for simplicity. Or:
+
+```console
+$> git reset <file>
+$> git checkout <file>
+```
+
 Resources
 ---------
 
