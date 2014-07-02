@@ -545,8 +545,7 @@ summarized in the following table.
 Whenever you start a new development, we suggest to work on a different local
 branch and to write changes in the development branch only.
 
-The summary of operations is represented in the following flow chart, and
-described afterwards.
+The summary of operations is represented in the following flowchart.
 
 ![Start a new development](flow-start.png)
 
@@ -660,8 +659,190 @@ On branch devel-hlt
 nothing to commit, working directory clean
 ```
 
+### Write code and commit it
+
+When you are in your local development branch you can start developing your
+code: create directories, modify files, delete them, etc.
+
+Whenever you have reached a checkpoint in your work, you should create a commit.
+In general, Git's philosophy is to **create small (even tiny)** commits with a
+meaningful description: so, don't be scared to make your commits small.
+
+> **Small commits make debug quicker**, as it is easier to individuate and
+> fix the commit that introduced a certain bug.
+
+Before we begin, a little note. Whenever you make a commit in Git, you don't
+change any remote repository: everything is **private** and stored in your local
+branch, and **must be explicitly published**. Downloading from and uploading to
+a remote Git repository is covered in the next sections.
+
+The schema of writing and committing code is summarized in the following
+flowchart: details will follow.
+
+![Commit your code](flow-commit.png)
+
+Creating a commit in Git is a two-step procedure:
+
+* you add the files you want to commit to the **index** (which is a temporary
+  "stage area" for the files you wish to commit)
+* you create a commit with a certain descriptive message
+
+In our test repository, imagine we have created a new file, `HLT/Analysis.cxx`,
+and we have modified an existing one, `HLT/README`: we would like to create a
+commit for those modifications.
+
+Let's fire up the ubiquitous status command to see what is going on:
+
+```console
+$> git status
+On branch devel-hlt
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   HLT/README
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+	HLT/Analysis.cxx
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+From the status, we see that:
+
+* the file `HLT/README` has been **modified**, but it is "not staged for commit"
+* the file `HLT/Analysis.cxx` is **untracked**, which means that Git has never
+  seen it before, because it is a new file
+* no change has been added yet to a commit
+
+What did we change? Ask `git diff`:
+
+```console
+$> git diff
+diff --git a/HLT/README b/HLT/README
+index 4169e1c..19c2857 100644
+--- a/HLT/README
++++ b/HLT/README
+@@ -1 +1 @@
+-This is a README file.
++This is a README file for the HLT Analysis Macro.
+```
+
+The `git diff` command tells you what changed on the *tracked* files. Since the
+`HLT/Analysis.cxx` file is not known to Git, it is not shown here.
 
 
+As the `git status` command suggests, let's add the files to the forthcoming
+commit:
+
+```console
+$> git add -v HLT/README HLT/Analysis.cxx
+add 'HLT/README'
+add 'HLT/Analysis.cxx'
+```
+
+Or, since we mean to add every modified and newly created file, we could just
+do:
+
+```console
+$> git add --all -v :/
+add 'HLT/README'
+add 'HLT/Analysis.cxx'
+```
+
+The `-v` (as in *verbose*) option tells us which files are being added and helps
+us preventing adding the wrong files.
+
+Add can be undone by means of the reset command. So, for instance, if you don't
+want to commit `HLT/README` anymore:
+
+```console
+$> git reset HLT/README
+$> git status
+[AliEnv] volpe@qadesh [alice-git-tutorial] $> git status
+On branch devel-hlt
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   HLT/Analysis.cxx
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   HLT/README
+```
+
+Now `git status` is telling you that you have in fact one "change to be
+committed": if you perform the commit now, this file only will be added.
+
+Once a file is staged for commit, `git diff` does not show anymore the
+differences. To see the staged differences, do:
+
+```console
+$> git diff --cached
+```
+
+We have currently seen four different Git commands: `status`, `diff`, `add` and
+`reset`. Typing might be annoying, so we can directly use `tig status` which
+replaces them all:
+
+```console
+$> tig status
+```
+
+![Status with tig](tig-status.png)
+
+> Navigate status view in tig:
+> 
+> * **Up** and **Down** arrows to highlight a file
+> * **U** to add or remove the highlighted file to the commit
+> * **Enter** to show the diff
+> * **Q** to exit the diff view and to exit tig
+> * **J** and **K** to scroll up and down the diff view
+> * **1** to add or remove a single highlighted line in the diff view to the
+>   commit
+
+Now that your files are staged for commit, it is time to do the actual commit.
+
+```
+$> git commit
+```
+
+Your default editor will open: write your commit message and save, and your
+commit will be there. Alternatively, you can provide a commit message on the
+command line directly:
+
+```console
+$> git commit -m 'Added HLT analysis macro'
+[devel-hlt ca305d6] Added HLT analysis macro
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+ ```
+
+If you now look at the Git history, your commit will be there (most recent on
+top), and will constitute the head of your `devel-hlt` branch:
+
+```console
+$> git log -4 --decorate --oneline
+ca305d6 (HEAD, devel-hlt) Added HLT analysis macro
+8fa4f7b (origin/master, origin/devel-hlt, master) Base "AliRoot-like" structure
+1c2f9ef Script to generate bogus commits
+6670af5 Forbidden file
+```
+
+Your working directory will be empty: no modified or untracked files, no files
+staged for commits:
+
+```console
+$> git status
+On branch devel-hlt
+nothing to commit, working directory clean
+```
+
+Repeat this whole procedure every time you have new modifications you would like
+to checkpoint.
 
 
 Resources
