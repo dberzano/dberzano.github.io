@@ -845,6 +845,56 @@ Repeat this whole procedure every time you have new modifications you would like
 to checkpoint.
 
 
+#### Writing appropriate commit messages
+
+A good commit message is concise and **must be long at most 50 chars**. Writing
+long commit messages complicates having a look at the history.
+
+Here is a screenshot showing some good and bad:
+
+![Bad commit messages](bad-commit-messages.png)
+
+* **red** commit messages are too long and force me to open them to read
+  everything
+* the **orange** commit message is too short and we cannot deduce what is it
+  about
+* **green** commit messages are **OK**: in less than 50 chars they summarize the
+  whole story
+
+You can make your commit messages longer than one line. Consider for instance
+the following commit message:
+
+```
+fix summary.log creation:
+
+use the dir (which always is there, as opposed to an output file) to
+extract the run number
+```
+
+* the **first line** is shorter than 50 chars and it will be the only line
+  displayed in summaries (such as `tig` or `git log --oneline`)
+* if you want to know more, you can open the commit and read the rest of the
+  message separated by a blank line
+
+The editor `vim` (although not so user-friendly for beginners), when using
+syntax highlighting, is helpful in writing proper commit messages. Configure it,
+if you wish, as the editor for commit messages with:
+
+```console
+$> git config core.editor vim
+```
+
+Whenever you run `git commit` (without supplying a commit message with `-m`),
+vim will open. This is what happens when you go beyond 50 characters on the
+first line:
+
+![vim showing Git message overflow](git-commit-vim-overflow.png)
+
+> **Please do not overlook this part.** Commit messages are written for other
+> people to understand what you have done. Good commit messages show respect to
+> other people's work.
+
+
 Resources
 ---------
 
