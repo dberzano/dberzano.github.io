@@ -497,7 +497,7 @@ already the `alice-env.sh` script used for setting the environment variables.
 If you have sourced the script, whenever you are in a Git clone the prompt will
 constantly tell you what is your current branch:
 
-```console
+```
 git: you are currently on branch master
 [AliEnv] yabba@host [alice-git-tutorial] $>
 ```
@@ -1390,4 +1390,149 @@ Resources
 * AliRoot CERN Git repository:
  * Read-only: `http://git.cern.ch/pub/AliRoot`
  * Write access: `https://git.cern.ch/reps/AliRoot`
+### Fixing conflicts
+
+**Conflicts** might happen when two persons modify the same file. A conflict
+will need to be solved by editing the files manually.
+
+In our workflow, conflicts might happen when importing remote changes into our
+development branch, *i.e.* when doing:
+
+```console
+$> git checkout devel-hlt
+...
+$> git pull --rebase . master
+From .
+ * branch            master     -> FETCH_HEAD
+First, rewinding head to replay your work on top of it...
+Applying: A conflict is about to happen
+Using index info to reconstruct a base tree...
+M	README
+Falling back to patching base and 3-way merge...
+Auto-merging README
+CONFLICT (content): Merge conflict in README
+Failed to merge in the changes.
+Patch failed at 0001 A conflict is about to happen
+The copy of the patch that failed is found in:
+   /Users/volpe/Devel/alice-git-tutorial/.git/rebase-apply/patch
+
+When you have resolved this problem, run "git rebase --continue".
+If you prefer to skip this patch, run "git rebase --skip" instead.
+To check out the original branch and stop rebasing, run "git rebase --abort".
+```
+
+When we reach this point, there is nothing you can do but fixing the conflict.
+
+You can always go back to the previous state:
+
+```console
+$> git rebase --abort
+```
+
+but you will not incorporate the remote updates, so this is not what you want to
+do.
+
+It is important to check the status of your current branch. If you are using
+the `alice-env.sh` environment script, your prompt tells you something weird:
+
+```
+git: you are not currently on any branch
+[AliEnv] yabba@host [alice-git-tutorial] $>
+```
+
+Check the status with the usual command:
+
+```console
+$> git status
+rebase in progress; onto 14dc7ec
+You are currently rebasing branch 'devel-hlt' on '14dc7ec'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Unmerged paths:
+  (use "git reset HEAD <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+
+	both modified:      README
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+There is a new section called "unmerged paths", where a file is labelled as
+**both modified**: this means that you modified it, but somebody else did it as
+well.
+
+Open the file with an editor to see what is going on.
+
+```
+<<<<<<< HEAD
+This is the main README file.
+=======
+See if we can push the "forbidden" file
+Creating a conflict with a second line
+>>>>>>> A conflict is about to happen
+```
+
+Git has inserted **both** versions of the files in the same file, separating
+them with special markers. There might be several sections like this in the same
+file: go through all of them by searching for `<<<<<<<` and `>>>>>>>` in your
+editor.
+
+The format of such sections is the following:
+
+```
+...non-conflicting part of the text file...
+<<<<<<< HEAD
+...other's version...
+=======
+...my version...
+>>>>>>> Name of my conflicting commit
+...another non-conflicting part of the text file...
+```
+
+There is no recipe that tells you what to do. You should interpret the intention
+of the original programmer, and rewrite the conflicting section.
+
+In our case, we do this:
+
+```
+This is the main README file.
+Creating a conflict with a second line
+```
+
+The final file **must not have** any `<<<<<<<`, `=======` and `>>>>>>>` markers
+anymore. It must be the new file as you would like it to be after solving the
+conflict.
+
+Save your fixed file. You then need to add it to the commit, and continuing with
+the rebase operation:
+
+```console
+$> git add README
+$> git rebase --continue
+Applying: A conflict is about to happen
+```
+
+Your original commit (named *"A conflict is about to happen"* in this case) has
+been modified and it does no longer conflict with the upstream modifications.
+
+**Note:** after you have resolved a conflict, another might appear. The rebase
+operation will be finished only when the latest conflict has been resolved.
+
+> Resolving conflicts is frustrating, so you should minimize them in the first
+> place. **Update your devel branch very often:** the more you stay "behind",
+> the more you are likely to run into conflicts.
+>
+> If you pospone updating because "you might break something", you are making
+> your problems bigger for later: **bite the bullet and update often**.
+>
+> Remember: you can always **[backup](#backup_a_branch_and_restore_it) your
+> branch** before updating.
+
+Finally, keep in mind that conflicts might happen when doing various operations,
+not only `git pull --rebase`. For instance they can happen when doing
+`git stash pop` (or `git stash apply`). Whenever Git encounters a conflict, it
+will tell you and produce text files containing the conflicting parts.
+
  * [Web interface](https://git.cern.ch/web/AliRoot.git)
