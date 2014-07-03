@@ -1383,13 +1383,7 @@ $> git reset --hard
 
 with no additional options.
 
-Resources
----------
 
-* [SVN basic commands to Git commands](http://aliceinfo.cern.ch/Offline/node/2912)
-* AliRoot CERN Git repository:
- * Read-only: `http://git.cern.ch/pub/AliRoot`
- * Write access: `https://git.cern.ch/reps/AliRoot`
 ### Fixing conflicts
 
 **Conflicts** might happen when two persons modify the same file. A conflict
@@ -1535,4 +1529,25 @@ not only `git pull --rebase`. For instance they can happen when doing
 `git stash pop` (or `git stash apply`). Whenever Git encounters a conflict, it
 will tell you and produce text files containing the conflicting parts.
 
+
+<!--Todo
+----
+
+* Editing commits (rebase -i)
+* What if my commits are rejected?-->
+
+
+Additional Git documentation
+----------------------------
+
+* [Git Best Practices](http://indico.cern.ch/event/288437/) from
+  Joaquim Rocha *(CERN IT-DSS-TD)*
+
+
+ALICE Git pointers
+------------------
+
+* AliRoot repository:
+ * Read-only Git: `http://git.cern.ch/pub/AliRoot`
+ * Write access Git: `https://git.cern.ch/reps/AliRoot`
  * [Web interface](https://git.cern.ch/web/AliRoot.git)
