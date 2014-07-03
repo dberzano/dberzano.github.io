@@ -1530,6 +1530,35 @@ not only `git pull --rebase`. For instance they can happen when doing
 will tell you and produce text files containing the conflicting parts.
 
 
+### Change the latest commit
+
+You have just committed something: your commit has not been pushed yet, and you
+want to change something.
+
+Here's what you should do: first of all, do your changes. Then add them to the
+stage area:
+
+```console
+$> git add <file>
+```
+
+Then, "amend" the latest commit:
+
+```console
+$> git commit --amend
+```
+
+An editor will open, showing your latest commit message. You can even change
+your message only. When you save and exit, your latest commit will include your
+amending changes.
+
+What if you want to change the *author* of the latest commit?
+
+```console
+$> git commit --amend --author="your_cern_username <first.last@cern.ch>"
+```
+
+
 <!--Todo
 ----
 
