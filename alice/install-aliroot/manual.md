@@ -504,26 +504,7 @@ were in fact conceived by
 AliRoot is now available on Git to allow for a more agile development
 paradigm.
 
-There is a [guide](http://aliceinfo.cern.ch/Offline/node/2912)
-covering the migration from SVN to Git in detail: as a reference, the
-method used in this wiki is the **git-new-workdir method**.
-described in that documentation. This is the one I recommend, but
-feel free to use the one you prefer.
-
-New to Git? Before fearing or (worse) hating it, bear in mind that:
-
-* there is **no actual equivalent between SVN and Git**: they are
-  based on two completely different paradigms; trying to make
-  comparisons is misleading and dangerous;
-* once again, **Git is no SVN and it is no evolution of SVN**: SVN is
-  a Version Control System, while Git is a *Distributed* VCS;
-* Git and SVN have **different paradigms and workflows**, so it's
-  better to forget about SVN when learning Git;
-* the [ALICE documentation](http://aliceinfo.cern.ch/Offline/node/2912)
-  maintains a list of useful resources concerning Git.
-
-In any case, if you do not need to develop code for AliRoot, just
-follow carefully this guide and you will be (mostly) safe.
+> New to Git? Check out [our ALICE Git tutorial](../../git)!
 
 
 #### Source and build directories
@@ -558,6 +539,7 @@ cd "$ALICE_PREFIX"/aliroot/git
 git config user.name "your_cern_username"
 git config user.email "your.email@cern.ch"
 git config color.ui true
+git config push.default simple
 ```
 
 > Set your `user.name` to match your CERN username: your commits will
