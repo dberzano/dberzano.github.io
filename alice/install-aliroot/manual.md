@@ -355,8 +355,8 @@ make -j$MJ
 
 ### Geant 3
 
-> Geant 3 has been moved from SVN to Git recently. One practical
-> implication: *trunk* does not exist anymore, use *master* instead.
+> Geant 3 has been moved from SVN to Git. One practical implication:
+> *trunk* does not exist anymore, use *master* instead.
 
 First off, **load your environment variables**.
 
