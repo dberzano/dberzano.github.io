@@ -355,19 +355,40 @@ make -j$MJ
 
 ### Geant 3
 
-Create the directory that will contain several Geant 3 versions, then
-cd into it and checkout the version you selected in the triad via
-Subversion:
+> Geant 3 has been moved from SVN to Git recently. One practical
+> implication: *trunk* does not exist anymore, use *master* instead.
+
+First off, **load your environment variables**.
+
+The first time you install Geant 3 you need to create the local Git
+clone. Do:
 
 ```bash
-mkdir -p "$GEANT3DIR"
-cd "$GEANT3DIR"
-svn co https://root.cern.ch/svn/geant3/$([ $G3_VER == 'trunk' ] || echo tags/)$G3_VER .
+mkdir -p "$ALICE_PREFIX/geant3/git"
+cd "$ALICE_PREFIX/geant3/git"
+git clone http://root.cern.ch/git/geant3.git .
 ```
 
-When you are done, compile it:
+If you have already created the Geant 3 clone, immediately skip to the
+next step.
+
+Update your Git clone:
 
 ```bash
+cd "$ALICE_PREFIX/geant3/git"
+git remote update --prune
+```
+
+Checkout your desired version (you need `git-new-workdir` for that):
+
+```bash
+git-new-workdir "$ALICE_PREFIX/geant3/git" "$GEANT3DIR" "$G3_VER"
+```
+
+Move to it and build:
+
+```bash
+cd "$GEANT3DIR"
 make -j$MJ
 ```
 
