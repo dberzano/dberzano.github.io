@@ -12,7 +12,7 @@ Current status
 
 | node     | type    | status            |
 |----------|---------|-------------------|
-| **cn43** | head    | *configured*    |
+| **cn43** | head    | *configured*      |
 | **cn44** | compute | *unconfigured*    |
 | **cn45** | compute | *not accessible?* |
 | **cn46** | compute | *unconfigured*    |
@@ -102,7 +102,7 @@ and see what happens.
 Enable the Yum priorities plugin:
 
 ```bash
-yum install yum-priorities-plugin
+yum install yum-plugin-priorities
 ```
 
 Configure the RDO repo:
@@ -116,7 +116,8 @@ of lines:
 
 ```ini
 baseurl=http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/fedora-20/
-priority=1 # highest
+# highest prio
+priority=1
 ```
 
 We now need a hack: Fedora has a *python-oslo-config* package which is
@@ -602,6 +603,50 @@ keystone endpoint-create \
   --adminurl=http://cn43.internal:8774/v2/%\(tenant_id\)s
 ```
 
+Go back to your root console:
+
+```bash
+service openstack-nova-api start
+service openstack-nova-cert start
+service openstack-nova-consoleauth start
+service openstack-nova-scheduler start
+service openstack-nova-conductor start
+service openstack-nova-novncproxy start
+chkconfig openstack-nova-api on
+chkconfig openstack-nova-cert on
+chkconfig openstack-nova-consoleauth on
+chkconfig openstack-nova-scheduler on
+chkconfig openstack-nova-conductor on
+chkconfig openstack-nova-novncproxy on
+```
+
+### Firewall
+
+Install a graphical tool to ease this pain:
+
+```bash
+yum install firewall-config
+```
+
+The full list of ports is shown
+[here](http://docs.openstack.org/icehouse/config-reference/content/firewalls-default-ports.html).
+
+| Port      | Service           | Head | Work |
+|:---------:|-------------------|:----:|:----:|
+| 8776      | Block storage     |   ?  |      |
+| 8774      | Compute endpoints |   X  |      |
+| 8773,8775 | Compute API       |   X  |      |
+| 5900-5999 | VNC               |      |   X  |
+| 6080      | novnc browser     |   ?  |      |
+| 6081      | Normal VNC proxy  |   ?  |      |
+| 6082      | Compute HTML5 pxy |   ?  |   ?  |
+| 35357     | Keystone admin    |   ?  |      |
+| 5000      | Keystone public   |   X  |      |
+| 9292      | Glance API        |   X  |      |
+| 9191      | Glance registry   |   ?  |   ?  |
+| 9696      | Neutron           |   ?  |   ?  |
+| 5672      | Qpid              |   X  |      |
+
 
 Workers configuration
 ---------------------
@@ -611,10 +656,99 @@ installation targets *cn44.internal*.
 
 This installation should be automated using Puppet.
 
+We are using KVM as hypervisor.
 
+Configure the RDO repo:
 
+```bash
+yum install http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/rdo-release-icehouse-3.noarch.rpm
+```
 
+Open the `/etc/yum.repos.d/rdo-release.repo` file and change a couple
+of lines:
 
+```ini
+baseurl=http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/fedora-20/
+# highest prio
+priority=1
+```
+
+We now need a hack: Fedora has a *python-oslo-config* package which is
+outdated (1.1.X). We need at least 1.2. Download the RPM from
+[here](http://www.rpmfind.net//linux/RPM/fedora/20/x86_64/p/python-oslo-config-1.2.0-0.5.a3.fc20.noarch.html)
+([this](http://www.rpmfind.net/linux/rpm2html/search.php?query=python-oslo-config&submit=Search+...&system=fedora&arch=) was the corresponding search).
+
+The direct link to the RPM is contained in the following long command:
+
+```bash
+wget ftp://fr2.rpmfind.net/linux/fedora/linux/releases/20/Everything/x86_64/os/Packages/p/python-oslo-config-1.2.0-0.5.a3.fc20.noarch.rpm
+yum localinstall python-oslo-config*
+```
+
+Now install the compute service and utilities:
+
+```bash
+yum install openstack-nova-compute openstack-config --disablerepo=slc6-*
+```
+
+**Note:** we had to disable all the slc6 repositories because they
+cause problems. They are actually hosted on *head.internal*, but some
+files can just not be found.
+
+```bash
+openstack-config --set /etc/nova/nova.conf database connection mysql://nova:<NOVA_DBPASS>@cn43.internal/nova
+openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_uri http://cn43.internal:5000
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_host cn43.internal
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_user nova
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_password <NOVA_PASS>
+```
+
+Remember that Qpid is our broker. Set it:
+
+```bash
+openstack-config --set /etc/nova/nova.conf DEFAULT rpc_backend qpid
+openstack-config --set /etc/nova/nova.conf DEFAULT qpid_hostname cn43.internal
+```
+
+Get the Compute node IP, then:
+
+```bash
+THIS_IP=10.162.128.64
+openstack-config --set /etc/nova/nova.conf DEFAULT my_ip $THIS_IP
+openstack-config --set /etc/nova/nova.conf DEFAULT vnc_enabled True
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_listen 0.0.0.0
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_proxyclient_address $THIS_IP
+openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_base_url http://cn43.internal:6080/vnc_auto.html
+```
+
+And for the image service:
+
+```bash
+openstack-config --set /etc/nova/nova.conf DEFAULT glance_host cn43.internal
+```
+
+Configure this node as a QEmu node:
+
+```bash
+openstack-config --set /etc/nova/nova.conf libvirt virt_type qemu
+```
+
+Start services:
+
+```
+service libvirtd start
+service dbus start
+service openstack-nova-compute start
+chkconfig libvirtd on
+chkconfig dbus on
+chkconfig openstack-nova-compute on
+```
+
+**Note:** dbus will complain, but it should not be a problem.
 
 
 
@@ -640,6 +774,7 @@ Questions
 * DHCP: configure address class for the VMs
 * Install spare disks for LVM block storage
 * IPMI access: I have to touch the network
+* IPv4 / IPv6?
 
 
 Resources
