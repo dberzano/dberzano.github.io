@@ -21,6 +21,8 @@ Current status
 **OS:** Fedora 19. Will become CentOS 7 or similar in production.
 RHEL 7 is derived from Fedora 19.
 
+The */home* partition is exported via NFS.
+
 
 ### Network
 
@@ -299,6 +301,250 @@ keystone tenant-create --name=service --description="Service Tenant"
 ```
 
 That is it.
+
+
+#### Define services and API URLs
+
+> For the following commands to work, just like the previous step, we
+> need the `OS_SERVICE_TOKEN` environment variable set to the
+> `<ADMIN_TOKEN>`.
+
+OpenStack is made of intercommunicating *services*. Each service needs
+to authenticate to the *identity service*, and has a HTTP-based API
+with an appropriate URL endpoint.
+
+The **identity service** itself is a service that must be registered:
+
+```bash
+keystone service-create --name=keystone --type=identity --description="OpenStack Identity"
+```
+
+The **endpoint URL for the API** must be manually created:
+
+```bash
+keystone endpoint-create \
+  --service-id=$(keystone service-list | awk '/ identity / {print $2}') \
+  --publicurl=http://cn43.internal:5000/v2.0 \
+  --internalurl=http://cn43.internal:5000/v2.0 \
+  --adminurl=http://cn43.internal:35357/v2.0
+```
+
+> *cn43.internal* is the FQDN of the test controller node in the HLT
+> network. `hostname -f` correctly works.
+
+To test whether the identity service works:
+
+```bash
+unset OS_SERVICE_TOKEN OS_SERVICE_ENDPOINT
+keystone --os-username=admin --os-password=<ADMIN_PASS> --os-auth-url=http://cn43.internal:35357/v2.0 token-get
+```
+
+You can try with the wrong `<ADMIN_PASS>` to make sure it *does not*
+work in such case:
+
+```console
+$> keystone --os-username=admin --os-password=THISISTHEWRONGPASSWORD --os-auth-url=http://cn43.internal:35357/v2.0 token-get
+The request you have made requires authentication. (HTTP 401)
+```
+
+You don't need to be root to contact the services. We create a small
+template script to enter the appropriate environment (let's call it
+`enter-openstack.sh`:
+
+```bash
+#!/bin/bash
+
+function pe() {
+  echo -e "\033[1m$1\033[m"
+}
+
+if [ "$1" == '' ] ; then
+  pe "Usage: $0 <OpenStackProfileName>"
+  exit 1
+fi
+
+# common exports
+export OS_AUTH_URL=http://cn43.internal:35357/v2.0
+
+case "$1" in
+
+  admin)
+    export OS_USERNAME=admin
+    export OS_PASSWORD=<ADMIN_PASS>
+    export OS_TENANT_NAME=admin
+  ;;
+
+  *)
+    pe "Unknown profile: $1"
+    exit 2
+  ;;
+
+esac
+
+pe 'Your shell has the OpenStack environment. Exit it to purge OpenStack variables.'
+exec bash --rcfile <( cat ~/.bashrc ; echo -e "\nexport PS1=\"user:$OS_USERNAME / tenant:$OS_TENANT_NAME\n[OpenStack] \$PS1\"\n" )
+```
+
+Then, as normal user, we enter the environment and check that we have
+admin permissions for real:
+
+```bash
+$> enter-openstack.sh admin
+Your shell has the OpenStack environment. Exit it to purge OpenStack variables.
+user:admin / tenant:admin
+
+$> keystone user-list
+...
+
+$> keystone user-role-list --user admin --tenant admin
+...
+```
+
+
+### Glance: the image service
+
+The image service (Glance) is a registry of the available images. We
+are configuring Glance to use:
+
+* MySQL as the database for metadata
+* NFS as storage for the images
+
+It is convenient to use NFS because it is already there. On the head
+node:
+
+```bash
+yum install openstack-glance python-glanceclient
+```
+
+Generate a password with the usual command: we are going to use it as
+`<GLANCE_DBPASS>` for the MySQL database access of the Glance service:
+
+```bash
+openssl rand -hex 10
+```
+
+Configure the MySQL database:
+
+```bash
+mysql -u root -p
+```
+
+Then at the `mysql>` prompt:
+
+```mysql
+CREATE DATABASE glance ;
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY '<GLANCE_DBPASS>' ;
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY '<GLANCE_DBPASS>' ;
+```
+
+Store credentials in the configuration files of Glance:
+
+```bash
+openstack-config --set /etc/glance/glance-api.conf database connection mysql://glance:<GLANCE_DBPASS>@localhost/glance
+openstack-config --set /etc/glance/glance-registry.conf database connection mysql://glance:<GLANCE_DBPASS>@localhost/glance
+```
+
+*Note:* we are using *localhost* for the connections to the database.
+We don't need the full host name *(cn43.internal)*.
+
+Just like Keystone, Glance has its user. Create the tables:
+
+```bash
+su -s /bin/sh -c "glance-manage db_sync" glance
+```
+
+Now create a new password for a *glance* user in OpenStack. We will
+refer to it as `<GLANCE_PASS>`, which is different from the database
+password `<GLANCE_DBPASS>`.
+
+As **normal** Unix user, in the OpenStack environment for *admin*:
+
+```bash
+keystone user-create --name=glance --pass=<GLANCE_PASS> --email=dario.berzano@cern.ch
+keystone user-role-add --user=glance --tenant=service --role=admin
+```
+
+Then, we need to run this very long list of commands, as root. Just
+replace:
+
+* `cn43.internal` with the controller's FQDN
+* `<GLANCE_PASS>` with the OpenStack password for the *glance* user
+
+```bash
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken auth_uri http://cn43.internal:5000
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken auth_host cn43.internal
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken admin_user glance
+openstack-config --set /etc/glance/glance-api.conf keystone_authtoken admin_password <GLANCE_PASS>
+openstack-config --set /etc/glance/glance-api.conf paste_deploy flavor keystone
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken auth_uri http://cn43.internal:5000
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken auth_host cn43.internal
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken admin_user glance
+openstack-config --set /etc/glance/glance-registry.conf keystone_authtoken admin_password <GLANCE_PASS>
+openstack-config --set /etc/glance/glance-registry.conf paste_deploy flavor keystone
+```
+
+We need now to create the Image Service in OpenStack. As *normal* user
+with the *admin* token:
+
+```bash
+keystone service-create --name=glance --type=image \
+  --description="OpenStack Image Service"
+```
+
+If it goes right:
+
+```bash
+keystone endpoint-create \
+  --service-id=$(keystone service-list | awk '/ image / {print $2}') \
+  --publicurl=http://cn43.internal:9292 \
+  --internalurl=http://cn43.internal:9292 \
+  --adminurl=http://cn43.internal:9292
+```
+
+We now need to start the Glance services and tell the system to start
+them at boot as well. As root:
+
+```bash
+service openstack-glance-api start
+service openstack-glance-registry start
+chkconfig openstack-glance-api on
+chkconfig openstack-glance-registry on
+```
+
+As suggested on the upstream guide,
+[verify the Image Service](http://docs.openstack.org/icehouse/install-guide/install/yum/content/glance-verify.html) by registering a new image:
+
+```bash
+wget http://cdn.download.cirros-cloud.net/0.3.2/cirros-0.3.2-x86_64-disk.img
+glance image-create --name='CirrOS Test Image' --disk-format='qcow2' --container-format='bare' --is-public='true' < cirros-0.3.2-x86_64-disk.img
+```
+
+Please note that by default the image ends up in
+`/var/lib/glance/images/`.
+
+> We will set it up to use NFS instead (probably).
+
+
+Client node configuration
+-------------------------
+
+Clients can be installed on any machine that can access the head node
+(currently, *cn43.internal*).
+
+We are going to install them on the head node itself for starters.
+
+```bash
+yum install python-novaclient python-glanceclient
+```
+
+Verify that the package you are explicitly installing is being
+obtained from the *openstack-icehouse* repository.
 
 
 Questions
