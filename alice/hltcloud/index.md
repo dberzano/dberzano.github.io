@@ -12,7 +12,7 @@ Current status
 
 | node     | type    | status            |
 |----------|---------|-------------------|
-| **cn43** | head    | *unconfigured*    |
+| **cn43** | head    | *configured*    |
 | **cn44** | compute | *unconfigured*    |
 | **cn45** | compute | *not accessible?* |
 | **cn46** | compute | *unconfigured*    |
@@ -529,6 +529,93 @@ Please note that by default the image ends up in
 `/var/lib/glance/images/`.
 
 > We will set it up to use NFS instead (probably).
+
+
+### Compute: Nova management
+
+The Compute service needs a controller on the head node:
+
+```bash
+yum install openstack-nova-api openstack-nova-cert openstack-nova-conductor \
+  openstack-nova-console openstack-nova-novncproxy openstack-nova-scheduler \
+  python-novaclient
+```
+
+Once again, generate a new `<NOVA_PASS>` with the corresponding
+OpenStack user, and a `<NOVA_DBPASS>` for the database support.
+
+```bash
+NOVA_PASS=$( openssl rand -hex 10 )
+NOVA_DBPASS=$( openssl rand -hex 10 )
+THIS_IP=10.162.128.63
+
+echo NOVA_PASS=$NOVA_PASS
+echo NOVA_DBPASS=$NOVA_DBPASS
+
+openstack-config --set /etc/nova/nova.conf database connection mysql://nova:${NOVA_DBPASS}@localhost/nova
+
+openstack-config --set /etc/nova/nova.conf DEFAULT rpc_backend qpid
+openstack-config --set /etc/nova/nova.conf DEFAULT qpid_hostname localhost
+
+openstack-config --set /etc/nova/nova.conf DEFAULT my_ip $THIS_IP
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_listen $THIS_IP
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_proxyclient_address $THIS_IP
+
+T=$(mktemp)
+cat > $T <<EOF
+CREATE DATABASE nova ;
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$NOVA_DBPASS';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$NOVA_DBPASS' ;
+SELECT host,user,password from mysql.user ;
+EOF
+cat $T
+
+mysql -u root -p < $T
+
+rm -f $T
+unset T
+
+su -s /bin/sh -c "nova-manage db sync" nova
+
+openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_uri http://cn43.internal:5000
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_host cn43.internal
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_user nova
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_password $NOVA_PASS
+```
+
+Now, time to become unprivileged. Load the admin environment of
+OpenStack, then:
+
+```bash
+keystone user-create --name=nova --pass=<NOVA_PASS> --email=dario.berzano@cern.ch
+keystone user-role-add --user=nova --tenant=service --role=admin
+
+keystone service-create --name=nova --type=compute --description="OpenStack Compute"
+keystone endpoint-create \
+  --service-id=$(keystone service-list | awk '/ compute / {print $2}') \
+  --publicurl=http://cn43.internal:8774/v2/%\(tenant_id\)s \
+  --internalurl=http://cn43.internal:8774/v2/%\(tenant_id\)s \
+  --adminurl=http://cn43.internal:8774/v2/%\(tenant_id\)s
+```
+
+
+Workers configuration
+---------------------
+
+Workers are called the Compute nodes, in OpenStack's speech. Sample
+installation targets *cn44.internal*.
+
+This installation should be automated using Puppet.
+
+
+
+
+
+
 
 
 Client node configuration
