@@ -372,6 +372,7 @@ table {
 th {
   font-weight: 400;
   background-color: #e0e0e0;
+  text-align: center;
 }
 
 tr:nth-child(odd) {
