@@ -10,10 +10,10 @@ parnumbers: true
 Current status
 --------------
 
-| node     | type    | status            |
+| Node     | Type    | Status            |
 |----------|---------|-------------------|
 | **cn43** | head    | *configured*      |
-| **cn44** | compute | *unconfigured*    |
+| **cn44** | compute | *in progress*     |
 | **cn45** | compute | *not accessible?* |
 | **cn46** | compute | *unconfigured*    |
 | **cn47** | compute | *unconfigured*    |
@@ -28,6 +28,12 @@ The */home* partition is exported via NFS.
 
 * **10.162.128.X**: 1 GbE
 * **10.162.130.X**: InfiniBand
+
+DNS resolutions (IPv4):
+
+* **cnXX.internal**: Ethernet interfaces
+* **cnXX-mgmt.internal**: IPMI (remote management)
+* **cnXX-ib.internal**: InfiniBand
 
 
 Getting started
@@ -634,18 +640,44 @@ The full list of ports is shown
 | Port      | Service           | Head | Work |
 |:---------:|-------------------|:----:|:----:|
 | 8776      | Block storage     |   ?  |      |
-| 8774      | Compute endpoints |   X  |      |
-| 8773,8775 | Compute API       |   X  |      |
-| 5900-5999 | VNC               |      |   X  |
+| 8774      | Compute endpoints |   ✔  |      |
+| 8773,8775 | Compute API       |   ✔  |      |
+| 5900-5999 | VNC               |      |   ✔  |
 | 6080      | novnc browser     |   ?  |      |
 | 6081      | Normal VNC proxy  |   ?  |      |
 | 6082      | Compute HTML5 pxy |   ?  |   ?  |
 | 35357     | Keystone admin    |   ?  |      |
-| 5000      | Keystone public   |   X  |      |
-| 9292      | Glance API        |   X  |      |
+| 5000      | Keystone public   |   ✔  |      |
+| 9292      | Glance API        |   ✔  |      |
 | 9191      | Glance registry   |   ?  |   ?  |
 | 9696      | Neutron           |   ?  |   ?  |
-| 5672      | Qpid              |   X  |      |
+| 5672      | Qpid              |   ✔  |      |
+
+* **✔**: needed and in place
+* **?**: not sure if needed
+* *(empty)*: not needed and not in place
+
+
+### Legacy networking
+
+This is the controller part for the legacy networking. "Legacy" means
+that it is *not* handled by OpenStack, but it relies mostly on the
+existing hardware infrastructure.
+
+To enable legacy networking, edit the configuration files as **root**:
+
+```bash
+openstack-config --set /etc/nova/nova.conf DEFAULT network_api_class nova.network.api.API
+openstack-config --set /etc/nova/nova.conf DEFAULT security_group_api nova
+```
+
+Then restart (always as **root**) the Compute services:
+
+```bash
+service openstack-nova-api restart
+service openstack-nova-scheduler restart
+service openstack-nova-conductor restart
+```
 
 
 Workers configuration
@@ -657,6 +689,9 @@ installation targets *cn44.internal*.
 This installation should be automated using Puppet.
 
 We are using KVM as hypervisor.
+
+
+### The Compute service
 
 Configure the RDO repo:
 
@@ -749,6 +784,292 @@ chkconfig openstack-nova-compute on
 ```
 
 **Note:** dbus will complain, but it should not be a problem.
+
+
+### Legacy networking
+
+Legacy networking is handled mostly by the hypervisors.
+
+> Our configuration will have a bridge named **br100** on the Ethernet
+> network (not the InfiniBand one).
+
+
+#### Disable any fancy network managers
+
+Create a root password, and use it to login via a remote management
+console.
+
+Then:
+
+```bash
+service NetworkManager stop
+service network start
+chkconfig NetworkManager off
+chkconfig network on
+```
+
+
+#### Create a network bridge containing the current interface
+
+> The network interface is **em1** and we are not using IPv6.
+
+Disable permanently IPv6. As **root**:
+
+```bash
+echo 'net.ipv6.conf.all.disable_ipv6=1' > /etc/sysctl.d/disable_ipv6.conf
+```
+
+Then reboot. After the reboot, go to `/etc/sysconfig/network-scripts`.
+Make a backup copy of `ifcfg-em1`, just in case.
+
+Create now a new `ifcfg-em1`:
+
+```bash
+UUID=cb6a015a-cc2c-4cd4-bfd9-cff7497c9a05
+DEVICE=em1
+HWADDR=00:30:48:C9:A2:4A
+ONBOOT=yes
+BOOTPROTO=none
+TYPE=Ethernet
+USERCTL=no
+PEERDNS=yes
+IPV6INIT=no
+BRIDGE=br100
+DEFROUTE=no
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+NAME="System em1"
+```
+
+Now, for the bridge, `ifcfg-br100`:
+
+```
+DEVICE=br100
+TYPE=Bridge
+ONBOOT=Yes
+BOOTPROTO=dhcp
+PERSISTENT_DHCLIENT=1
+IPV6INIT=no
+```
+
+Do, **not from a SSH terminal**:
+
+```bash
+service network restart
+```
+
+Check that everything went right. The interface **em1** should have no
+IP address, while the bridge **br100** should have one.
+
+```console
+#> for i in em1 br100 ; do ifconfig $i ; done
+em1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        ether 00:30:48:c9:a2:4a  txqueuelen 1000  (Ethernet)
+        RX packets 4390  bytes 1373553 (1.3 MiB)
+        RX errors 0  dropped 14  overruns 0  frame 0
+        TX packets 4607  bytes 823184 (803.8 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        device memory 0xfbc60000-fbc80000
+
+br100: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.162.128.64  netmask 255.255.255.0  broadcast 10.162.128.255
+        ether 00:30:48:c9:a2:4a  txqueuelen 0  (Ethernet)
+        RX packets 1672  bytes 160577 (156.8 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 2025  bytes 277462 (270.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+
+#### OpenStack daemons
+
+**Remember:** our network bridge is **br100** while the physical
+interface is called **em1** (and it is part of the bridge). The
+following configuration will use those values, substitute them to
+match your configuration!
+
+Install some required packages:
+
+```bash
+yum install openstack-nova-network openstack-nova-api
+```
+
+On the compute node, edit the configuration files as **root**:
+
+```bash
+openstack-config --set /etc/nova/nova.conf DEFAULT network_api_class nova.network.api.API
+openstack-config --set /etc/nova/nova.conf DEFAULT security_group_api nova
+openstack-config --set /etc/nova/nova.conf DEFAULT network_manager nova.network.manager.FlatDHCPManager
+openstack-config --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.libvirt.firewall.IptablesFirewallDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT network_size 254
+openstack-config --set /etc/nova/nova.conf DEFAULT allow_same_net_traffic False
+openstack-config --set /etc/nova/nova.conf DEFAULT multi_host True
+openstack-config --set /etc/nova/nova.conf DEFAULT send_arp_for_ha True
+openstack-config --set /etc/nova/nova.conf DEFAULT share_dhcp_address True
+openstack-config --set /etc/nova/nova.conf DEFAULT force_dhcp_release True
+openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_bridge br100
+openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface em1
+openstack-config --set /etc/nova/nova.conf DEFAULT public_interface em1
+```
+
+Start the services:
+
+```bash
+service openstack-nova-network start
+service openstack-nova-metadata-api start
+chkconfig openstack-nova-network on
+chkconfig openstack-nova-metadata-api on
+```
+
+
+#### Create a demo network
+
+Go to **cn43.internal** as **normal** user and load the OpenStack
+**admin** environment.
+
+Run:
+
+```bash
+nova network-create demo-net --bridge br100 --multi-host T --fixed-range-v4 203.0.113.24/29
+```
+
+This creates a demo network named **demo-neet** with the following
+features:
+
+* it expects to have bridges named **br100** on the hypervisors
+* it uses a load-balancing feature called multi-host
+* it gives IPv4 addresses from **203.0.113.24** to **203.0.113.32**
+
+Check:
+
+```console
+$> nova network-list
++--------------------------------------+----------+-----------------+
+| ID                                   | Label    | Cidr            |
++--------------------------------------+----------+-----------------+
+| 59a8f0d2-d2da-4473-a82e-3e45e47fdb9a | demo-net | 203.0.113.24/29 |
++--------------------------------------+----------+-----------------+
+```
+
+
+#### Run your first virtual machine
+
+As your **normal** user, create a keypair:
+
+```bash
+ssh-keygen
+nova keypair-add --pub-key demo-key.pub demo-key
+```
+
+Launch the VM:
+
+```bash
+nova boot \
+  --flavor m1.tiny \
+  --image 'CirrOS Test Image' \
+  --nic net-id='59a8f0d2-d2da-4473-a82e-3e45e47fdb9a' \
+  --security-group default \
+  --key-name demo-key demo-inst1
+```
+
+The VM will (hopefully) successfully launch. For two VMs:
+
+```console
+$> nova list
++--------------------------------------+------------+--------+------------+-------------+-----------------------+
+| ID                                   | Name       | Status | Task State | Power State | Networks              |
++--------------------------------------+------------+--------+------------+-------------+-----------------------+
+| 58df4a92-b97a-4a2a-baa9-afdf5a9d230d | demo-inst1 | ACTIVE | -          | Running     | demo-net=203.0.113.27 |
+| d25f36db-bc16-496f-a8be-d438c2da77f8 | demo-inst2 | ACTIVE | -          | Running     | demo-net=203.0.113.26 |
++--------------------------------------+------------+--------+------------+-------------+-----------------------+
+```
+
+What happened to the network? Log in to the Compute node (for the
+moment, it's only **cn44.internal**) and run:
+
+```console
+#> # for i in em1 br100 ; do ip address list $i ; done
+2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master br100 state UP qlen 1000
+    link/ether 00:30:48:c9:a2:4a brd ff:ff:ff:ff:ff:ff
+7: br100: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+    link/ether 00:30:48:c9:a2:4a brd ff:ff:ff:ff:ff:ff
+    inet 203.0.113.25/29 brd 203.0.113.31 scope global br100
+       valid_lft forever preferred_lft forever
+    inet 10.162.128.64/24 brd 10.162.128.255 scope global br100
+       valid_lft forever preferred_lft forever
+```
+
+> *ifconfig* will not show you all the addresses associated to a
+> certain network interface and it is considered "legacy".
+
+You can see that:
+
+* your interface **em1** has been left untouched
+* the interface **br100** has *two* IP addresses:
+ * the hypervisor's address: **10.162.128.64**
+ * the VM gateway's address: **203.0.113.25**
+
+Ok, can we ping the VMs? We are still on the Compute node:
+
+```console
+#> ping 203.0.113.26
+PING 203.0.113.26 (203.0.113.26) 56(84) bytes of data.
+64 bytes from 203.0.113.26: icmp_seq=1 ttl=64 time=0.859 ms
+...
+```
+
+Seems so! Let's have a look at the routing tables:
+
+```console
+#> route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.162.128.1    0.0.0.0         UG    0      0        0 br100
+10.162.128.0    0.0.0.0         255.255.255.0   U     0      0        0 br100
+10.162.130.0    0.0.0.0         255.255.255.0   U     0      0        0 ib0
+169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 ib0
+192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
+203.0.113.24    0.0.0.0         255.255.255.248 U     0      0        0 br100
+```
+
+The last entry is the interesting one.
+
+What about **isolation**?
+
+```console
+#> ebtables -L
+Bridge table: filter
+
+Bridge chain: INPUT, entries: 1, policy: ACCEPT
+-p ARP -i em1 --arp-ip-dst 203.0.113.25 -j DROP
+
+Bridge chain: FORWARD, entries: 0, policy: ACCEPT
+
+Bridge chain: OUTPUT, entries: 1, policy: ACCEPT
+-p ARP -o em1 --arp-ip-src 203.0.113.25 -j DROP
+```
+
+Seems quite right and clean.
+
+Now log in to the virtual machine via a noVNC console. On the normal
+user's console, obtain a token:
+
+```console
+$> nova get-vnc-console demo-inst2 novnc
++-------+------------------------------------------------------------------------------------+
+| Type  | Url                                                                                |
++-------+------------------------------------------------------------------------------------+
+| novnc | http://cn43.internal:6080/vnc_auto.html?token=0ec8dfda-6f16-4a02-ade7-0a381dd49c09 |
++-------+------------------------------------------------------------------------------------+
+```
+
+Use the URL in a browser (with appropriate tunnels!) to access the
+VM's console.
+
+We have launched a CirrOS image which has a user and password by
+default (indicated on-screen). We notice from inside the VM that it
+obtained the IP address correctly via DHCP. We also notice that we can
+communicate between VMs, and with the hypervisor.
 
 
 
