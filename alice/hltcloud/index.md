@@ -13,8 +13,8 @@ Current status
 | Node     | Type    | Status            |
 |----------|---------|-------------------|
 | **cn43** | head    | *configured*      |
-| **cn44** | compute | *in progress*     |
-| **cn45** | compute | *not accessible?* |
+| **cn44** | compute | *configured*      |
+| **cn45** | compute | *configured*      |
 | **cn46** | compute | *unconfigured*    |
 | **cn47** | compute | *unconfigured*    |
 
@@ -33,7 +33,7 @@ DNS resolutions (IPv4):
 
 * **cnXX.internal**: Ethernet interfaces
 * **cnXX-mgmt.internal**: IPMI (remote management)
-* **cnXX-ib.internal**: InfiniBand
+* **cnXX-ib.internal**: InfiniBand **(does not work yet)**
 
 
 Getting started
@@ -723,7 +723,7 @@ yum localinstall python-oslo-config*
 Now install the compute service and utilities:
 
 ```bash
-yum install openstack-nova-compute openstack-config --disablerepo=slc6-*
+yum install openstack-nova-compute openstack-utils --disablerepo=slc6-*
 ```
 
 **Note:** we had to disable all the slc6 repositories because they
@@ -1071,6 +1071,11 @@ default (indicated on-screen). We notice from inside the VM that it
 obtained the IP address correctly via DHCP. We also notice that we can
 communicate between VMs, and with the hypervisor.
 
+> Every hypervisor will have the **same** IP address associated as
+> gateway, *i.e.* **203.0.113.25** in our case, but *ebtables*
+> prevents any mess from happening. So, every VM, wherever it is, will
+> see its own hypervisor as gateway, with the same IP address on the
+> whole cluster, also allowing for migration.
 
 
 Client node configuration
@@ -1094,8 +1099,6 @@ Questions
 
 * DHCP: configure address class for the VMs
 * Install spare disks for LVM block storage
-* IPMI access: I have to touch the network
-* IPv4 / IPv6?
 
 
 Resources
@@ -1104,3 +1107,4 @@ Resources
 * [OpenStack Icehouse with RPMs](http://docs.openstack.org/icehouse/install-guide/install/yum/content/)
 * [OpenStack releases](https://wiki.openstack.org/wiki/Releases)
 * [Install OpenStack Icehouse from CERN IT](http://information-technology.web.cern.ch/book/cern-cloud-infrastructure-user-guide/advanced-topics/installing-openstack#icehouse)
+* [OpenStack Operations Guide](http://docs.openstack.org/ops/)
