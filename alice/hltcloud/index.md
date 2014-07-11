@@ -693,6 +693,9 @@ while we are going to use:
 * a single NIC
 * a single head and computing node
 
+
+#### Neutron on the controller node
+
 Usual database setup. First, create a `<NEUTRON_DBPASS>` and a
 `<NEUTRON_PASS>` password:
 
@@ -818,6 +821,172 @@ Start and configure the Neutron service:
 ```bash
 service neutron-server start
 chkconfig neutron-server on
+```
+
+
+#### Neutron on the Network node
+
+Sysctl:
+
+```bash
+cat > /etc/sysctl.d/99-openstack.conf <<EOF
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+EOF
+```
+
+Load the changes immediately:
+
+```bash
+sysctl -p /etc/sysctl.d/99-openstack.conf
+```
+
+Install packages (note: some packages were already installed, since
+we are doing everything on a single node):
+
+```bash
+yum install openstack-neutron openstack-neutron-ml2 openstack-neutron-openvswitch
+```
+
+You may **skip the following part** if you have a single head node:
+
+```bash
+openstack-config --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://controller:5000
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_host controller
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_user neutron
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_password NEUTRON_PASS
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT rpc_backend neutron.openstack.common.rpc.impl_qpid
+openstack-config --set /etc/neutron/neutron.conf DEFAULT qpid_hostname $CONTROLLER
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+```
+
+You can **increase the verbosity** to debug better:
+
+```bash
+openstack-config --set /etc/neutron/neutron.conf DEFAULT verbose True
+```
+
+Level-3 (IP) traffic handler:
+
+```bash
+openstack-config --set /etc/neutron/l3_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
+openstack-config --set /etc/neutron/l3_agent.ini DEFAULT use_namespaces True
+```
+
+DHCP service:
+
+```bash
+openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver neutron.agent.linux.interface.OVSInterfaceDriver
+openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
+openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT use_namespaces True
+openstack-config --set /etc/neutron/dhcp_agent.ini DEFAULT verbose True
+```
+
+Now for the metadata proxy create another password with the usual
+command, then:
+
+```bash
+CONTROLLER=cn43.internal
+NEUTRON_PASS=<NEUTRON_PASS>
+METADATA_SECRET=<METADATA_SECRET>
+
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT auth_url http://$CONTROLLER:5000/v2.0
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT auth_region regionOne
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT admin_tenant_name service
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT admin_user neutron
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT admin_password $NEUTRON_PASS
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_ip $CONTROLLER
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret $METADATA_SECRET
+openstack-config --set /etc/neutron/metadata_agent.ini DEFAULT verbose True
+```
+
+**On the controller node** (which in our case is the **same**):
+
+```bash
+METADATA_SECRET=<METADATA_SECRET>
+
+openstack-config --set /etc/nova/nova.conf DEFAULT service_neutron_metadata_proxy true
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_metadata_proxy_shared_secret $METADATA_SECRET
+service openstack-nova-api restart
+```
+
+> Now the following part is **critical**. We are going a single
+> interface, **em1**, and provide its IP address as the address used
+> for the tunnels. **Maybe this will cause troubles: we will see.**
+
+Now go back to the **network** node. Do:
+
+```
+INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS=10.162.128.63
+
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers openvswitch
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre tunnel_id_ranges 1:1000
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs local_ip $INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs tunnel_type gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs enable_tunneling True
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_security_group True
+```
+
+Start Open vSwitch:
+
+```bash
+service openvswitch start
+chkconfig openvswitch on
+```
+
+Add the integration and external bridges:
+
+```bash
+ovs-vsctl add-br br-int
+ovs-vsctl add-br br-ex
+```
+
+Verify with `ip addr list` that they exist. No need for `brctl`.
+
+Now, add the interface with external connectivity (it is **em1** in
+our case) to the external bridge. **Beware: use the appropriate
+interface name here!**
+
+```bash
+ovs-vsctl add-port br-ex em1
+```
+
+> Look at the note saying to do:
+> `ethtool -K INTERFACE_NAME gro off`
+
+Now create the symlink (it should exist already):
+
+ln -s plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+
+**The following fix is not needed on Fedora 19 with Icehouse:**
+
+```bash
+cp /etc/init.d/neutron-openvswitch-agent /etc/init.d/neutron-openvswitch-agent.orig
+sed -i 's,plugins/openvswitch/ovs_neutron_plugin.ini,plugin.ini,g' /etc/init.d/neutron-openvswitch-agent
+```
+
+Services:
+
+```bash
+service neutron-openvswitch-agent start
+service neutron-l3-agent start
+service neutron-dhcp-agent start
+service neutron-metadata-agent start
+chkconfig neutron-openvswitch-agent on
+chkconfig neutron-l3-agent on
+chkconfig neutron-dhcp-agent on
+chkconfig neutron-metadata-agent on
 ```
 
 
