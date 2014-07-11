@@ -643,7 +643,7 @@ The full list of ports is shown
 | 8774      | Compute endpoints |   ✔  |      |
 | 8773,8775 | Compute API       |   ✔  |      |
 | 5900-5999 | VNC               |      |   ✔  |
-| 6080      | novnc browser     |   ?  |      |
+| 6080      | novnc browser     |   ✔  |      |
 | 6081      | Normal VNC proxy  |   ?  |      |
 | 6082      | Compute HTML5 pxy |   ?  |   ?  |
 | 35357     | Keystone admin    |   ?  |      |
@@ -654,7 +654,7 @@ The full list of ports is shown
 | 5672      | Qpid              |   ✔  |      |
 
 * **✔**: needed and in place
-* **?**: not sure if needed
+* **?**: not sure if needed, kept closed for the moment
 * *(empty)*: not needed and not in place
 
 
@@ -922,6 +922,43 @@ chkconfig openstack-nova-metadata-api on
 ```
 
 
+#### Prevent losing bridge configuration
+
+In our setup we use a single bridge interface named **br100** with
+multiple IP addresses:
+
+* the main management address of the hypervisor *(e.g. 10.162.128.64)*
+* any other gateway address for the OpenStack Flat Network
+  configuration *(e.g. 203.0.113.25)*
+
+The additional addresses are eliminated when no more VMs needing that
+network run there.
+
+The primary address in our setup is assigned via a DHCP: so it has to
+be renewed from time to time.
+
+Whenever you restart the network:
+
+```bash
+service network restart
+```
+
+or whenever the DHCP lease is renewed, *all other IP addresses other
+than the DHCP one are eliminated from the interface*.
+
+To work around that, we create a hook for dhclient:
+
+```bash
+echo 'systemctl restart openstack-nova-network.service' > /etc/dhcp/dhclient-exit-hooks
+chmod +x /etc/dhcp/dhclient-exit-hooks
+```
+
+The appropriate network configuration will be restored as soon as a
+new DHCP address is obtained.
+
+> **Note:** this solution blocks the boot process!
+
+
 #### Create a demo network
 
 Go to **cn43.internal** as **normal** user and load the OpenStack
@@ -1094,11 +1131,29 @@ Verify that the package you are explicitly installing is being
 obtained from the *openstack-icehouse* repository.
 
 
+Recipes
+-------
+
+### Kill Switch
+
+To remove one node from the Compute service, do as **root** on that
+node:
+
+```bash
+service openstack-nova-compute stop
+service openstack-nova-network stop
+service openstack-nova-metadata-api stop
+```
+
+
 Questions
 ---------
 
 * DHCP: configure address class for the VMs
 * Install spare disks for LVM block storage
+* We can't have multiple IP addresses on the same interface, if the
+  main one is DHCP: whenever a renewal occurs, all other IP addresses
+  are removed instantly
 
 
 Resources
