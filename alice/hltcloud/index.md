@@ -680,6 +680,147 @@ service openstack-nova-conductor restart
 ```
 
 
+### Neutron networking
+
+We are attempting to set up Neutron on the head node. The proposed
+configuration has:
+
+* multiple NICs
+* separated head node and computing node
+
+while we are going to use:
+
+* a single NIC
+* a single head and computing node
+
+Usual database setup. First, create a `<NEUTRON_DBPASS>` and a
+`<NEUTRON_PASS>` password:
+
+```bash
+openssl rand -hex 10
+```
+
+Then start a MySQL shell (no need to be root):
+
+```bash
+mysql -u root -p
+```
+
+Then:
+
+```bash
+CREATE DATABASE neutron ;
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'NEUTRON_DBPASS' ;
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'NEUTRON_DBPASS' ;
+```
+
+Create the service:
+
+```bash
+keystone user-create --name neutron --pass <NEUTRON_PASS> --email dario.berzano.cern.ch
+keystone user-role-add --user neutron --tenant service --role admin
+keystone service-create --name neutron --type network --description "OpenStack Networking"
+keystone endpoint-create \
+  --service-id $(keystone service-list | awk '/ network / {print $2}') \
+  --publicurl http://cn43.internal:9696 \
+  --adminurl http://cn43.internal:9696 \
+  --internalurl http://cn43.internal:9696
+```
+
+Install the appropriate packages, as **root**:
+
+```bash
+yum install openstack-neutron openstack-neutron-ml2 python-neutronclient
+```
+
+Configure the Networking server component. You must be **root** and
+replace the passwords and *cn43.internal* properly (the `keystone`
+command should be given in the appropriate OpenStack environment):
+
+```bash
+NEUTRON_PASS=<NEUTRON_PASS>
+NEUTRON_DBPASS=<NEUTRON_DBPASS>
+CONTROLLER=cn43.internal
+KEYSTONE_TENANT_ID=$( keystone tenant-list | awk '/ service / { print $2 }' )
+
+openstack-config --set /etc/neutron/neutron.conf database connection mysql://neutron:$NEUTRON_DBPASS@$CONTROLLER/neutron
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://$CONTROLLER:5000
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_host $CONTROLLER
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_user neutron
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_password $NEUTRON_PASS
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT rpc_backend neutron.openstack.common.rpc.impl_qpid
+openstack-config --set /etc/neutron/neutron.conf DEFAULT qpid_hostname $CONTROLLER
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes True
+openstack-config --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes True
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_url http://$CONTROLLER:8774/v2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_username nova
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_tenant_id $KEYSTONE_TENANT_ID
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_password NOVA_PASS
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_auth_url http://$CONTROLLER:35357/v2.0
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+```
+
+Now we configure the ML2 plugin with Open vSwitch:
+
+```bash
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers openvswitch
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre tunnel_id_ranges 1:1000
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_security_group True
+```
+
+Reconfigure the Compute service to use Neutron: these lines are valid
+also if migrating from the "legacy" networking method:
+
+```bash
+NEUTRON_PASS=<NEUTRON_DBPASS>
+CONTROLLER=cn43.internal
+
+openstack-config --set /etc/nova/nova.conf DEFAULT network_api_class nova.network.neutronv2.api.API
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_url http://$CONTROLLER:9696
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_tenant_name service
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_username neutron
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_password $NEUTRON_PASS
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_auth_url http://$CONTROLLER:35357/v2.0
+openstack-config --set /etc/nova/nova.conf DEFAULT linuxnet_interface_driver nova.network.linux_net.LinuxOVSInterfaceDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT security_group_api neutron
+```
+
+Create a symbolic link:
+
+```bash
+ln -s plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+```
+
+Restart the Compute service:
+
+```bash
+service openstack-nova-api restart
+service openstack-nova-scheduler restart
+service openstack-nova-conductor restart
+```
+
+Start and configure the Neutron service:
+
+```bash
+service neutron-server start
+chkconfig neutron-server on
+```
+
+
 Workers configuration
 ---------------------
 
