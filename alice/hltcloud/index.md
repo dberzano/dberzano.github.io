@@ -1504,6 +1504,139 @@ communicate between VMs, and with the hypervisor.
 > whole cluster, also allowing for migration.
 
 
+### Neutron on the Compute node
+
+As for the Head Node (but with **IP forwarding off**):
+
+```bash
+cat > /etc/sysctl.d/99-openstack.conf <<EOF
+net.ipv4.ip_forward=0
+net.ipv4.conf.all.rp_filter=0
+net.ipv4.conf.default.rp_filter=0
+EOF
+sysctl -p /etc/sysctl.d/99-openstack.conf
+```
+
+Install packages:
+
+```bash
+yum install openstack-neutron-ml2 openstack-neutron-openvswitch
+```
+
+Neutron and the Identity Service:
+
+```bash
+NEUTRON_PASS=<NEUTRON_PASS>
+
+openstack-config --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_uri http://cn43.internal:5000
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_host cn43.internal
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_protocol http
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_port 35357
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_tenant_name service
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_user neutron
+openstack-config --set /etc/neutron/neutron.conf keystone_authtoken admin_password $NEUTRON_PASS
+```
+
+Neutron and the message broker (Qpid):
+
+```bash
+openstack-config --set /etc/neutron/neutron.conf DEFAULT rpc_backend neutron.openstack.common.rpc.impl_qpid
+openstack-config --set /etc/neutron/neutron.conf DEFAULT qpid_hostname cn43.internal
+```
+
+Neutron and ML2:
+
+```bash
+openstack-config --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
+openstack-config --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+openstack-config --set /etc/neutron/neutron.conf DEFAULT verbose True
+```
+
+Configure ML2: use the correct IP address for the GRE tunnels. In our
+case it is the sole IP address available:
+
+```bash
+INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS=10.162.128.64
+
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers openvswitch
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_gre tunnel_id_ranges 1:1000
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs local_ip $INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs tunnel_type gre
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini ovs enable_tunneling True
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+openstack-config --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_security_group True
+```
+
+Now for Open vSwitch, let's make our modifications persistent. Since
+we are touching the networking very badly, we **must** use a local
+terminal for this, no SSH!
+
+So, turn off the firewall:
+
+```bash
+yum remove firewalld
+```
+
+**Remove any other legacy bridge, like br100.** A clean configuration
+will have only:
+
+* **em1** as the sole external interface (GRE tunnels will pass
+  through it)
+* **br-in** as the sole Open vSwitch interface (VMs will be attached
+  to it)
+
+**No external network is needed here.** Connectivity is provided by
+the Network node, which will create a route (bridge) appropriately.
+
+Create the following file:
+
+```bash
+DEVICE=br-in
+ONBOOT=yes
+BOOTPROTO=none
+DEVICETYPE=ovs
+TYPE=OVSBridge
+IPV6INIT=no
+DELAY=0
+HOTPLUG=no
+```
+
+Now reconfigure the networking to use Neutron instead of the legacy
+networking:
+
+```bash
+NEUTRON_PASS=<NEUTRON_PASS>
+
+openstack-config --set /etc/nova/nova.conf DEFAULT network_api_class nova.network.neutronv2.api.API
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_url http://cn43.internal:9696
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_tenant_name service
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_username neutron
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_password $NEUTRON_PASS
+openstack-config --set /etc/nova/nova.conf DEFAULT neutron_admin_auth_url http://cn43.internal:35357/v2.0
+openstack-config --set /etc/nova/nova.conf DEFAULT linuxnet_interface_driver nova.network.linux_net.LinuxOVSInterfaceDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+openstack-config --set /etc/nova/nova.conf DEFAULT security_group_api neutron
+```
+
+Fix a missing symlink:
+
+```bash
+ln -s plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini
+```
+
+Install and start the services
+
+```bash
+systemctl restart openstack-nova-compute
+systemctl start neutron-openvswitch-agent
+systemctl enable neutron-openvswitch-agent
+```
+
+
 Client node configuration
 -------------------------
 
@@ -1525,6 +1658,11 @@ Recipes
 
 ### Kill Switch
 
+Used to reclaim HLT resources.
+
+
+#### Compute node
+
 To remove one node from the Compute service, do as **root** on that
 node:
 
@@ -1534,6 +1672,30 @@ service openstack-nova-network stop
 service openstack-nova-metadata-api stop
 ```
 
+
+#### Controller and Network node
+
+This should be **never** performed by HLT operators.
+
+```
+services=(
+  neutron-dhcp-agent
+  neutron-l3-agent
+  neutron-metadata-agent
+  neutron-openvswitch-agent
+  neutron-server
+  openstack-glance-api
+  openstack-glance-registry
+  openstack-keystone
+  openstack-nova-api
+  openstack-nova-cert
+  openstack-nova-conductor
+  openstack-nova-consoleauth
+  openstack-nova-novncproxy
+  openstack-nova-scheduler
+)
+for s in ${services[@]} ; do sysconfig stop $i ; done
+```
 
 Questions
 ---------
