@@ -1637,6 +1637,58 @@ systemctl enable neutron-openvswitch-agent
 ```
 
 
+#### Test networks
+
+> Concepts: **networks**, **subnets** and **routers**.
+
+Go on the head node, use the OpenStack environment as **admin**.
+Create an external **network**:
+
+```bash
+neutron net-create ext-net --shared --router:external=True
+```
+
+Now create a **subnet** (adjust your parameters): you can make up your
+IP addresses!
+
+```bash
+neutron subnet-create ext-net --name ext-subnet \
+  --allocation-pool start=203.0.113.101,end=203.0.113.200 \
+  --disable-dhcp --gateway 203.0.113.1 203.0.113.0/24
+```
+
+Create a **tenant network**:
+
+```bash
+neutron net-create demo-net
+```
+
+Create an internal network (subnet) for the tenant:
+
+```bash
+neutron subnet-create demo-net --name demo-subnet \
+  --gateway 192.168.55.1 192.168.55.0/24
+```
+
+Create a router:
+
+```bash
+neutron router-create demo-router
+```
+
+Attach the router to the tenant subnet:
+
+```bash
+neutron router-interface-add demo-router demo-subnet
+```
+
+Attach the router to the external network:
+
+```bash
+neutron router-gateway-set demo-router ext-net
+```
+
+
 Client node configuration
 -------------------------
 
@@ -1715,3 +1767,4 @@ Resources
 * [Install OpenStack Icehouse from CERN IT](http://information-technology.web.cern.ch/book/cern-cloud-infrastructure-user-guide/advanced-topics/installing-openstack#icehouse)
 * [OpenStack Operations Guide](http://docs.openstack.org/ops/)
 * [Open vSwitch and network scripts on Fedora](http://dtucker.co.uk/hack/installing-kvm-libvirt-openvswitch-on-fedora.html)
+* [Open vSwitch and Fedora 19](http://blog.mapstrata.com/openvswitch-and-fedora-19/)
