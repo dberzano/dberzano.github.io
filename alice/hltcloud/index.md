@@ -945,22 +945,101 @@ service openvswitch start
 chkconfig openvswitch on
 ```
 
-Add the integration and external bridges:
+Now **don't do the following:**:
 
 ```bash
 ovs-vsctl add-br br-int
 ovs-vsctl add-br br-ex
-```
-
-Verify with `ip addr list` that they exist. No need for `brctl`.
-
-Now, add the interface with external connectivity (it is **em1** in
-our case) to the external bridge. **Beware: use the appropriate
-interface name here!**
-
-```bash
 ovs-vsctl add-port br-ex em1
 ```
+
+We would rather make our modifications permanent! Create **three
+files**. Go to `/etc/sysconfig/network-scripts`.
+
+The **external** bridge, `ifcfg-br-ex`:
+
+```bash
+DEVICE=br-ex
+ONBOOT=yes
+BOOTPROTO=dhcp
+OVSBOOTPROTO=dhcp
+OVSDHCPINTERFACES=em1
+DEVICETYPE=ovs
+TYPE=OVSBridge
+IPV6INIT=no
+DELAY=0
+HOTPLUG=no
+```
+
+The **physical** interface, `ifcfg-em1` (leave `UUID` and `HWADDR`
+alone):
+
+```bash
+UUID=ce15404a-6d0a-4104-b153-665d7b47eef8
+HWADDR=00:30:48:C9:B4:B2
+
+DEVICETYPE=ovs
+TYPE=OVSPort
+OVS_BRIDGE=br-ex
+
+DEVICE=em1
+ONBOOT=yes
+BOOTPROTO=none
+
+USERCTL=no
+PEERDNS=yes
+IPV6INIT=no
+DEFROUTE=no
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+NAME="System em1"
+```
+
+The **internal** bridge, `ifcfg-br-in`:
+
+```bash
+DEVICE=br-in
+ONBOOT=yes
+BOOTPROTO=none
+DEVICETYPE=ovs
+TYPE=OVSBridge
+IPV6INIT=no
+DELAY=0
+HOTPLUG=no
+```
+
+Now restart networking and check that everything is fine:
+
+```bash
+#> systemctl restart network
+#> ovs-vsctl show
+642d5aab-a3a3-4c0e-b9ef-7102ba987a6e
+    Bridge br-ex
+        Port "em1"
+            Interface "em1"
+        Port br-ex
+            Interface br-ex
+                type: internal
+    Bridge br-in
+        Port br-in
+            Interface br-in
+                type: internal
+    ovs_version: "2.0.1"
+```
+
+We can see both bridges, and the external one has **em1**. Moreover,
+the IP address is fine, just keep in mind that now the interface
+having the IP address is **br-ex** (which inherits the MAC address
+from **em1**):
+
+```bash
+#> ip addr list br-ex
+14: br-ex: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
+    link/ether 00:30:48:c9:b4:b2 brd ff:ff:ff:ff:ff:ff
+    inet 10.162.128.63/24 brd 10.162.128.255 scope global br-ex
+       valid_lft forever preferred_lft forever
+```
+
 
 > Look at the note saying to do:
 > `ethtool -K INTERFACE_NAME gro off`
@@ -1473,3 +1552,4 @@ Resources
 * [OpenStack releases](https://wiki.openstack.org/wiki/Releases)
 * [Install OpenStack Icehouse from CERN IT](http://information-technology.web.cern.ch/book/cern-cloud-infrastructure-user-guide/advanced-topics/installing-openstack#icehouse)
 * [OpenStack Operations Guide](http://docs.openstack.org/ops/)
+* [Open vSwitch and network scripts on Fedora](http://dtucker.co.uk/hack/installing-kvm-libvirt-openvswitch-on-fedora.html)
