@@ -88,6 +88,7 @@ we have just extracted the latter. To extract the private key:
 
 ```sh
 openssl pkcs12 -nocerts -in ~/certkey.p12 -out userkey.pem
+chmod 0400 userkey.pem
 ```
 
 When exporting the key, you are asked for two passwords:
