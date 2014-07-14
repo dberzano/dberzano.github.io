@@ -738,9 +738,11 @@ yum install openstack-neutron openstack-neutron-ml2 python-neutronclient
 
 Configure the Networking server component. You must be **root** and
 replace the passwords and *cn43.internal* properly (the `keystone`
-command should be given in the appropriate OpenStack environment):
+command should be given in the appropriate OpenStack environment).
+Mind setting also the `<NOVA_PASS>` since you need it:
 
 ```bash
+NOVA_PASS=<NOVA_PASS>
 NEUTRON_PASS=<NEUTRON_PASS>
 NEUTRON_DBPASS=<NEUTRON_DBPASS>
 CONTROLLER=cn43.internal
@@ -765,7 +767,7 @@ openstack-config --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_dat
 openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_url http://$CONTROLLER:8774/v2
 openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_username nova
 openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_tenant_id $KEYSTONE_TENANT_ID
-openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_password NOVA_PASS
+openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_password $NOVA_PASS
 openstack-config --set /etc/neutron/neutron.conf DEFAULT nova_admin_auth_url http://$CONTROLLER:35357/v2.0
 
 openstack-config --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
@@ -1768,3 +1770,4 @@ Resources
 * [OpenStack Operations Guide](http://docs.openstack.org/ops/)
 * [Open vSwitch and network scripts on Fedora](http://dtucker.co.uk/hack/installing-kvm-libvirt-openvswitch-on-fedora.html)
 * [Open vSwitch and Fedora 19](http://blog.mapstrata.com/openvswitch-and-fedora-19/)
+* [Verify DHCP with Neutron](https://ask.openstack.org/en/question/29621/icehouse-instances-dont-get-ip/)
