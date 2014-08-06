@@ -59,8 +59,12 @@ If you are installing in a system directory, you must first run this
 command (and this command **only**) with root privileges instead:
 
 ```bash
-sudo su -c 'bash <(curl -fsSL http://cern.ch/go/NcS7) --prepare'
+sudo su root -c 'bash <(curl -fsSL http://cern.ch/go/NcS7) --prepare'
 ```
+
+> It is recommended **not** to install in a system directory! You can
+> set, for instance, `$ALICE_PREFIX` to `$HOME/Alice` and you shall not
+> need superuser privileges.
 
 To install all using all the available cores:
 
