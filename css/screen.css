@@ -163,6 +163,26 @@ h1 a:hover {
     text-decoration: underline;
 }
 
+/* List of posts */
+
+p.postdate {
+  color: #2B7598;
+  margin-top: -10px;
+  font-size: 90%;
+  font-style: italic;
+}
+
+div.postdivider {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-image: url(/images/divider.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 50px;
+  opacity: 0.5;
+}
+
 /* Misc */
 
 br {

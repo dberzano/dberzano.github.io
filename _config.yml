@@ -3,7 +3,8 @@ description: "My personal page"
 
 url: "dberzano.github.io"
 
-paginate: 10
+paginate: 3
+paginate_path: archive/page:num
 
 #markdown: rdiscount
 markdown: redcarpet
