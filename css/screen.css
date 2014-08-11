@@ -129,6 +129,10 @@ a img {
   text-decoration: underline;
 }
 
+#head h1 > a {
+  text-decoration: none;
+}
+
 #head a:hover {
   text-decoration: none;
 }
