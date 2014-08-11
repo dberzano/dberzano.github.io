@@ -468,7 +468,7 @@ td, th {
 #mainmenu > ul > li > #itemcontent {
   width: 60%;
   vertical-align: middle;
-  border-left: 4px solid #ddd;
+  border-left: 3px solid #ddd;
 }
 
 /* Inside the item content */
