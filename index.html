@@ -51,7 +51,7 @@ parnumbers: false
 </div>
 
 {% if paginator.posts %}
-<div id="postsummary">
+<div id="posts">
 {% for post in paginator.posts %}
 <h1 class="posttitle"><a href="{{ post.url }}">{{ post.title }}</a></h1>
 <p class="postdate">{{ post.date | date: "%A, %b %d, %Y" }}</p>
