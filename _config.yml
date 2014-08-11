@@ -14,3 +14,12 @@ redcarpet:
   extensions: [ "tables" ]
 
 pygments: true
+
+defaults:
+  -
+    scope:
+      path: "" # empty string for all files
+    values:
+      layout: tweet
+      createtoc: false
+      parnumbers: false
