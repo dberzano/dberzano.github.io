@@ -9,7 +9,7 @@
   margin-right: 0;
 }
 
-#pagetitle, #toc, #content {
+#pagetitle, #toc, #content, .pagination {
   margin-left: 0.5em;
   margin-right: 0.5em;
 }

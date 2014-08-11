@@ -79,6 +79,7 @@ a img {
   /*background-color: #2B7598;*/
   /*background-color: rgba(43, 117, 152, 0.5);*/
   background-color: rgba(0, 112, 165, 0.6);
+  overflow: hidden;
   text-align: left;
 }
 
@@ -200,6 +201,35 @@ div.postdivider + h1 {
   background-repeat: no-repeat;
   background-position: center top;
   padding-top: 55px;
+}
+
+/* Pagination */
+.pagination {
+  margin: 40px 20px 30px 20px;
+  /*background-color: red;*/
+  height: 30px;
+  font-style: italic;
+  text-align: center;
+}
+
+.pagination > span {
+  /*border: 1px solid blue;*/
+  display: inline-block;
+}
+
+.pagination > .prev {
+  float: left;
+  text-align: left;
+}
+
+.pagination > .pagenum {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pagination > .next {
+  float: right;
+  text-align: right;
 }
 
 /* Misc */
