@@ -14,6 +14,7 @@
     <link href="/css/screen.css" media="screen" rel="stylesheet" title="paperplanes" type="text/css" />
     <link rel="stylesheet" type="text/css" href="/css/mobile.css" media="handheld, only screen and (max-device-width: 960px)" />
     <!-- <script src="//code.jquery.com/jquery-2.1.0.min.js"></script> -->
+    <!-- <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" /> -->
     <script src="/js/jquery-2.1.0.min.js"></script>
     <script src="/js/misc.js"></script>
     <script>
@@ -56,13 +57,13 @@
 
             <!-- Normal devices -->
             <div class="default">
-              <h1>Hi, I'm Dario Berzano!</h1>
+              <h1><a href="/">Hi, I'm Dario Berzano!</a></h1>
               <p>I work at <a href="http://cern.ch">CERN</a> as Cloud Developer and Sysadmin.</p>
             </div>
 
             <!-- Small devices -->
             <div class="mobile">
-              <h1>Dario Berzano</h1>
+              <h1><a href="/">Dario Berzano</a></h1>
               <p>Cloud Developer and Sysadmin at <a href="http://cern.ch">CERN</a>.</p>
             </div>
 
@@ -76,6 +77,9 @@
       {% if page.printtitle != false %}
       <div id="pagetitle">
         <h1>{{ page.title }}</h1>
+        {% if page.date %}
+        <p class="postdate">{{ page.date | date: "%A, %b %d, %Y" }}</p>
+        {% endif %}
       </div>
       {% endif %}
 
@@ -91,7 +95,7 @@
     </div>
 
     <div id="foot">
-      <div id="footer-content"><p>Made with &hearts; by Dario Berzano.<br class="mobile"/>
+      <div id="footer-content"><p>Made with &hearts; by <a href="http://about.me/dario.berzano">Dario Berzano</a>.<br class="mobile"/>
       Inspired by <a href="http://www.paperplanes.de/">Paperplanes</a>.</p>
       </div>
     </div>

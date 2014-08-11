@@ -49,3 +49,19 @@ parnumbers: false
   </ul>
 
 </div>
+
+{% if paginator.posts %}
+<div id="posts">
+{% for post in paginator.posts %}
+<h1 class="posttitle"><a href="{{ post.url }}">{{ post.title }}</a></h1>
+<p class="postdate">{{ post.date | date: "%A, %b %d, %Y" }}</p>
+{% if post.content.size > 300 %}
+<p>{{ post.excerpt | remove: '<p>' | remove: '</p>' }}</p><p class="postmore"><a href="{{ post.url }}">continue reading...</a></p>
+{% else %}
+{{ post.content }}
+{% endif %}
+<div class="postdivider"></div>
+{% endfor %}
+{% include navbar.html %}
+</div>
+{% endif %}

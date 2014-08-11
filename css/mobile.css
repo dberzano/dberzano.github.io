@@ -67,7 +67,7 @@ html > body {
 #mainmenu > ul > li > #itemcontent {
   width: auto;
   border-left: 0;
-  border-top: 4px solid #ddd;
+  border-top: 3px solid #ddd;
 }
 
 /* Inside the item content */

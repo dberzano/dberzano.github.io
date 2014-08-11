@@ -3,7 +3,9 @@ description: "My personal page"
 
 url: "dberzano.github.io"
 
-paginate: 10
+permalink: /:year/:month/:day/:title
+paginate: 3
+paginate_path: /page:num
 
 #markdown: rdiscount
 markdown: redcarpet
@@ -11,5 +13,13 @@ markdown: redcarpet
 redcarpet:
   extensions: [ "tables" ]
 
-permalink: pretty
-pygments: true
+highlighter: pygments
+
+defaults:
+  -
+    scope:
+      path: "" # empty string for all files
+    values:
+      layout: tweet
+      createtoc: false
+      parnumbers: false
