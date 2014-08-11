@@ -44,6 +44,10 @@ a img {
   clear: both;
   margin-bottom: 25px;
   margin-top: 20px;
+  background-image: url(/images/divider.png);
+  background-repeat: no-repeat;
+  background-position: center top;
+  padding-top: 40px;
 }
 
 #foot p {
@@ -51,7 +55,8 @@ a img {
 }
 
 #footer-content {
-  font-size: 80%;
+  font-size: 70%;
+  font-weight: 400;
   text-align: center;
 }
 
