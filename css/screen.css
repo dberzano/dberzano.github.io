@@ -159,11 +159,31 @@ h1 a:hover {
 
 /* List of posts */
 
+/* Post title in the list of posts: color is dark blue (standard #content h1) */
+h1.posttitle {
+  margin-top: 23px !important;
+}
+
+/* Post date just below the post's title */
 p.postdate {
   color: #2B7598;
-  margin-top: -10px;
+  margin-top: -5px;
   font-size: 90%;
   font-style: italic;
+  /*border-bottom: 1px solid red;*/
+  line-height: 1 !important;
+}
+
+/* Amends for post date just below *page's* title (color is dark grey) */
+#pagetitle > h1 + p.postdate {
+  color: #4C4C4C;
+  margin-top: -16px;
+}
+
+/* Simulate collapse if p is first-child of the #content div */
+#content > p:first-child {
+  margin-top: -12px;
+  /*background-color: red;*/
 }
 
 div.postdivider {
