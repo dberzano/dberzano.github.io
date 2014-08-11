@@ -43,7 +43,7 @@ a img {
   width: 100%;
   clear: both;
   margin-bottom: 25px;
-  margin-top: 20px;
+  margin-top: 70px;
   background-image: url(/images/divider.png);
   background-repeat: no-repeat;
   background-position: center top;
@@ -164,6 +164,18 @@ h1 a:hover {
 }
 
 /* List of posts */
+
+/* Summary of posts */
+#postsummary {
+  margin-top: 70px;
+} 
+
+/* "Continue reading..." */
+p.postmore {
+  margin-top: -15px;
+  font-style: italic;
+  text-align: right !important;
+}
 
 /* Post title in the list of posts: color is dark blue (standard #content h1) */
 h1.posttitle {
