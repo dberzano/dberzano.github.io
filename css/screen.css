@@ -217,7 +217,7 @@ div.postdivider + h1 {
 
 /* Pagination */
 .pagination {
-  margin: 40px 20px 30px 20px;
+  margin: 40px 0 30px 0;
   /*background-color: red;*/
   height: 30px;
   font-style: italic;
