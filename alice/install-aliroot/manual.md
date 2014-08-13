@@ -65,10 +65,11 @@ of compatible operating systems.
 
 ### Configure your shell environment
 
-The environment script helps you setting the environment variables
-needed to build and use different ALICE software combinations
-constituted by "triads" of ROOT, Geant 3 and AliRoot. It is also
-possible to define an optional [FastJet](http://fastjet.fr/) version.
+You will need a script that helps you setting the environment
+variables needed to build and use different ALICE software
+combinations, constituted by "triads" of ROOT, Geant 3 and AliRoot. It
+is also possible to define an optional [FastJet](http://fastjet.fr/)
+version.
 
 > As of **Aug 13, 2014**, the way of configuring the environment has
 > been **slightly changed**:
@@ -86,7 +87,7 @@ ALICE has a script to set the shell environment for running the
 software:
 
 * [alice-env.sh](https://raw.github.com/dberzano/cern-alice-setup/master/alice-env.sh)
-  ([see changes](https://github.com/dberzano/cern-alice-setup/blob/master/alice-env.sh))
+  *([see changes on GitHub](https://github.com/dberzano/cern-alice-setup/blob/master/alice-env.sh))*
 
 Download it into the directory you have just created:
 
