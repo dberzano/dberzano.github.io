@@ -70,6 +70,11 @@ needed to build and use different ALICE software combinations
 constituted by "triads" of ROOT, Geant 3 and AliRoot. It is also
 possible to define an optional [FastJet](http://fastjet.fr/) version.
 
+> As of **Aug 13, 2014**, the way of configuring the environment has
+> been **slightly changed**:
+> [read here](/2014/08/13/alice-env-changes) how to migrate to the new
+> method (it takes less than a minute).
+
 Choose a directory that will contain all ALICE software, *e.g.*
 `~/alicesw`. Create it:
 
