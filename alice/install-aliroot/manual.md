@@ -49,7 +49,7 @@ Prepare your environment
 ------------------------
 
 
-### System-wise prerequisites
+### System-wide prerequisites
 
 Supported operating systems have different prerequisites:
 
@@ -65,41 +65,99 @@ of compatible operating systems.
 
 ### Configure your shell environment
 
-The following script helps you to set the environment variables needed
-in order to build and use AliRoot: it is meant to be slightly edited
-in order to customize the installation prefix and to specify which
-ROOT, Geant 3 and AliRoot "triads" are available on your machine.
+The environment script helps you setting the environment variables
+needed to build and use different ALICE software combinations
+constituted by "triads" of ROOT, Geant 3 and AliRoot. It is also
+possible to define an optional [FastJet](http://fastjet.fr/) version.
 
-It is also possible to include a fourth optional element to the
-"triad", specifying the [FastJet](http://fastjet.fr/) version. FastJet
-is **optional**: if no fourth element is specified, FastJet will not
-be installed or enabled.
-
-Download the environment script:
-
-* [alice-env.sh](https://raw.github.com/dberzano/cern-alice-setup/master/alice-env.sh)
-
-You need to change only the "triads" section, which looks like this:
+Choose a directory that will contain all ALICE software, *e.g.*
+`~/alicesw`. Create it:
 
 ```bash
-# Triads in the form "ROOT Geant3 AliRoot [FastJet[_FJContrib]]". Indices
-# start from 1 not 0. The FastJet entry is optional. FJ Contrib is optional
-# with FastJet 2 and mandatory with FastJet 3.
-# More information: http://aliceinfo.cern.ch/Offline/AliRoot/Releases.html
-TRIAD[1]="v5-34-11 v1-15a master" # no FastJet
-TRIAD[2]="v5-34-11 v1-15a master 2.4.5" # with FastJet
-TRIAD[3]="v5-34-18 v1-15a master 3.0.6_1.012" # with FastJet and FJ contrib
-# ...add more "triads" here without skipping array indices...
+mkdir $HOME/alicesw
 ```
 
-You must "source" this script every time you intend to run or build
-the framework: an interactive menu will be presented, allowing you to
-choose your desired triad.
+ALICE has a script to set the shell environment for running the
+software:
+
+* [alice-env.sh](https://raw.github.com/dberzano/cern-alice-setup/master/alice-env.sh)
+  ([see changes](https://github.com/dberzano/cern-alice-setup/blob/master/alice-env.sh))
+
+Download it into the directory you have just created:
+
+```bash
+cd $HOME/alicesw
+curl -L https://raw.github.com/dberzano/cern-alice-setup/master/alice-env.sh -o alice-env.sh
+```
+
+If you do not have a `alice-env.conf` configuration file in the
+same directory of your `alice-env.sh`, run:
+
+```bash
+source alice-env.sh
+```
+
+Instead of loading the ALICE environment it will create a default
+configuration file named `alice-env.conf`. Open it. You will find
+something like:
+
+```bash
+#!/bin/bash
+
+# Automatically created by alice-env.sh on Wed Aug 13 18:05:29 CEST 2014
+
+#
+# Triads: they start from 1 (not 0) and must be consecutive
+#
+# Format:
+#   TRIAD[n]='ROOT Geant3 AliRoot [FastJet[_FJContrib]]'
+#
+# FastJet is optional. FJ Contrib is optional with FastJet 2 and mandatory with
+# FastJet 3.
+#
+
+# No FastJet
+TRIAD[1]='v5-34-18 v1-15a master'
+
+# FastJet 2
+#TRIAD[2]='v5-34-18 v1-15a master 2.4.5'
+
+# FastJet 3
+#TRIAD[3]='v5-34-18 v1-15a master 3.0.6_1.012'
+
+# You can add more triads
+#TRIAD[4]='...'
+
+# Default triad for automatic installation
+export N_TRIAD=1
+```
+
+In this file you define some **"triads"**: they are combinations of
+ROOT, Geant 3 and AliRoot to use together. Optionally, you can specify
+a fourth element indicating the FastJet (and FastJet Contrib) version:
+
+```bash
+TRIAD[n]='ROOT Geant3 AliRoot [FastJet[_FJContrib]]'
+```
+
+Square braces indicate *optional parameters*.
+
+You must "source" the `alice-env.sh` script every time you intend to
+run or build the framework: an interactive menu will be presented,
+allowing you to choose one of the defined triads.
 
 Every time you re-source the script in the same environment (*i.e.*,
 in the same terminal "window"), the old environment variables are
-wiped out in order to avoid clashes. So, there is no need to open a
-new terminal in order to switch between different AliRoot versions.
+wiped out in order to avoid unpleasant clashes: it is therefore not
+needed to open a new terminal in order to switch between triads.
+
+The `alice-env.sh` script needs to be downloaded only once. You do not
+need to update it: it will periodically update itself automatically.
+Whenever it updates, a message is printed to the user.
+
+> Do not edit the `alice-env.sh`: use the separate `alice-env.conf`
+> for configuring the variables. Automatic updates **destroy your
+> changes** in `alice-env.sh`!
 
 
 #### AliRoot version dependencies
@@ -129,10 +187,10 @@ try to strip the final dash and the number, and try again.
 #### Environment variables syntax
 
 The syntax to source the script is simple. Assuming the full path to
-the script is `/opt/alice/alice-env.sh`, you will do:
+the script is `$HOME/alicesw/alice-env.sh`, you will do:
 
 ```bash
-source /opt/alice/alice-env.sh [-q] [-n] [-c]
+source $HOME/alicesw/alice-env.sh [-q] [-n] [-c] [-k] [-u]
 ```
 
 As you can see, some optional switches are available (squared
@@ -145,9 +203,11 @@ should not type them literally):
   script
 * `-q`: quiet mode. This is useful if you source the script
   automatically from `.bashrc` and you do not want to see the output
-  every time you open a new shell.
+  every time you open a new shell
 * `-c`: cleans environment from previously set ALICE variables without
-  setting an AliRoot version.
+  setting an AliRoot version
+* `-k`: do not check for updates of the environment script
+* `-u`: force update of the environment script
 
 This script also sets a variable, `$MJ`, that you can pass as a
 parameter to `make` in order to set the number of parallel operations:
@@ -172,7 +232,7 @@ editor:
 
 ```bash
 # Load environment variables by simply typing "ali"
-alias ali='source /opt/alice/alice-env.sh'
+alias ali='source $HOME/alicesw/alice-env.sh'
 ```
 
 It will be possible to load the ALICE environment variables by simply
