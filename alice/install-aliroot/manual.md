@@ -193,19 +193,16 @@ the script is `$HOME/alicesw/alice-env.sh`, you will do:
 source $HOME/alicesw/alice-env.sh [-q] [-n] [-c] [-k] [-u]
 ```
 
-As you can see, some optional switches are available (squared
-parentheses conventionally indicate optional arguments and you
-should not type them literally):
+As you can see, some optional switches are available (square braces
+stand for "optional", you should not type them literally):
 
-* `-n`: AliRoot environment is set up non-interactively, meaning that
-  no menu is presented to the user; the preferred "triad" is selected
-  from the variable `$N_TRIAD` that you can change directly inside the
-  script
-* `-q`: quiet mode. This is useful if you source the script
-  automatically from `.bashrc` and you do not want to see the output
-  every time you open a new shell
+* `-n`: AliRoot environment is set up *non-interactively*, meaning
+  that no menu is shown; the triad to pick is indicated
+  by the variable `$N_TRIAD` in your configuration file
+* `-q`: quiet mode. Useful if you source the script from `.bashrc` and
+  you do not want to see the output every time you open a new shell
 * `-c`: cleans environment from previously set ALICE variables without
-  setting an AliRoot version
+  setting any triad
 * `-k`: do not check for updates of the environment script
 * `-u`: force update of the environment script
 
