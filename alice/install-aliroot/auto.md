@@ -24,6 +24,10 @@ Completion messages are hidden by the script, but they are still
 available on log files. If the automatic procedure fails, the last
 lines of this script are shown.
 
+> The way of invoking the script has changed slightly as of Sep 15,
+> 2014:
+> [please have a look at what changed](/2014/09/15/alice-inst-changes).
+
 
 In trouble? Ask for support!
 ----------------------------
