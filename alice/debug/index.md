@@ -60,3 +60,54 @@ What to do
  * IgProf does not need debug symbols and it is used for testing on
    the real architecture
 
+
+Refined version
+---------------
+
+* Prepare your code for debug
+ * What are the "debug symbols"?
+ * How to compile ROOT with debug symbols
+ * How to compile AliRoot with debug symbols
+ * How to compile your analysis with debug symbols
+ * How to check if the code has debug symbols
+
+* Where does my code crash?
+ * "printf/cout" technique: how to do it smartly
+  * The AliRoot way
+  * The generic way
+ * Understand a backtrace and generate one manually
+  * The ROOT way
+  * gdb
+   * set a breakpoint
+   * print value of variable or expression
+   * print the backtrace
+
+* Valgrind
+ * Obtain Valgrind: Linux and OS X
+ * Memory tool and callgrind
+ * Why Valgrind is so slow? (Hint: it is a "deterministic" tool.)
+ * Run an analysis under Valgrind
+  * Analyze Valgrind output
+  * Take appropriate actions
+ * When to use Valgrind (Hint: it is the "last resort".)
+
+* IgProf: the Ignominious Profiler
+ * Obtain IgProf: Linux (not available under OS X)
+ * Memory profiler and performance profiler
+ * Why IgProf is so fast? (Hint: it is a "statistic" tool.)
+ * Run an analysis under IgProf
+  * Analyze IgProf output
+  * Amend your code appropriately
+
+* ROOT's TObjectTable
+ * What is it (Hint: counts every TObject instance)
+ * Turn it on and off, check if it is on
+ * Retrieve results (do it periodically to quickly check for leaks)
+
+* Problems loading libraries
+ * Find libraries needed by other libraries or executables (Linux and
+   OS X: ldd, otool)
+ * List symbols in a library or executable (Linux and OS X: nm)
+  * Meaning of some flags
+ * Loading of library fails because a symbol is missing: how to find
+   which library to load first
