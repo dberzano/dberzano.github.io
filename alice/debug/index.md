@@ -374,6 +374,93 @@ command line without modifying your code.
 > one is trivial and provided as an example.
 
 
+#### The AliRoot way: AliDebug
+
+AliRoot has a logging facility defined in
+`STEER/STEERbase/AliLog.{h,cxx}`: there are different functions
+defined there that allow you to add sensible printouts to your code,
+and you should definitely use them instead of `cout` or `printf`.
+
+The "functions" are preprocessor macros, and there is a variable
+associated to each of them, determining whether the code for the
+printout should be generated or not ar runtime:
+
+| **Function**                 | **Variable**     |
+|------------------------------|------------------|
+| `AliDebug(level, message)`   | `LOG_NO_DEBUG`   |
+| `AliInfo(message)`           | `LOG_NO_INFO`    |
+| `AliWarning(message)`        | `LOG_NO_WARNING` |
+| `AliError(message)`          | *none*           |
+| `AliFatal(message)`          | *none*           |
+
+
+By defining the `LOG_NO_*` variables (through `#define`, for instance)
+it is possible to suppress all the related message outputs, but in a
+way that the generated code is optimized as explained in the previous
+paragraph.
+
+Please note that:
+
+* it is not possible to suppress error and fatal error messages
+* you must use those macros in a class
+* you must include `AliLog.h` for using them
+* you can turn them on and off selectively per class
+
+Consider the following minimal example (save it as `AliLogTest.h`):
+
+```c++
+//#define LOG_NO_INFO
+#include "AliLog.h"
+
+class AliLogTest : public TObject {
+  public:
+    AliLogTest() {
+      AliInfoF("I am %s", "legend");
+    };
+  ClassDef(AliLogTest, 1);
+};
+```
+
+Load it via the following `load.C` macro:
+
+```c++
+{
+  gSystem->AddIncludePath("-I$ALICE_ROOT/include");
+  gROOT->LoadMacro("AliLogTest.h++");
+  AliLogTest a;
+}
+```
+
+Run:
+
+```bash
+aliroot -q load.C
+```
+
+and see what happens if you *uncomment* the `LOG_NO_INFO` definition.
+
+Note that in the above example we have used `AliInfoF()` instead of
+`AliInfo()`. All the debug functions have a `F` version (for
+*formatting*. They accept a format string just like `printf` (for
+instance, `%s` for strings or `%d` for signed integers) and a variable
+number of arguments.
+
+The following functions produce the same output:
+
+```c++
+AliInfoF("I am %s", "legend");
+AliInfo( Form("I am %s", "legend") );
+```
+
+but this does not mean that they are equivalent. For the usual
+optimization reasons, a call to the second function with `LOG_NO_INFO`
+defined would produce indeed *no output* and the code for printout
+would not be generated, but the `Form()` snippet would run in any
+case.
+
+The `AliInfoF()` version instead does not even execute `Form()` if
+the `LOG_NO_INFO` variable is defined.
+
 <!--
 
 brew install homebrew/dupes/gdb
