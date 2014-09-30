@@ -85,7 +85,103 @@ gcc -O0 -g ...
 
 The same flags are used for `clang`.
 
+When seeing a backtrace
 
+
+### Compiling your ALICE code for debug
+
+When compiling the AliRoot framework or your analysis, you never
+directly use the compiler.
+
+
+#### ROOT
+
+When [configuring ROOT](../install-aliroot/manual/#root), you must add
+the `--build debug` flag:
+
+```bash
+cd "$ROOTSYS"
+./configure --build debug \
+  # other config options
+make
+```
+
+> If ROOT has already been compiled **without** the debug option, you
+> **must** run `make clean` before reconfiguring it!
+
+
+#### AliRoot
+
+By default, if you follow
+[the instructions](../install-aliroot/manual/#configure_and_build_aliroot),
+AliRoot is built in debug mode.
+
+For building AliRoot for production (`-O3` optimization and no debug
+symbols, like on the Grid):
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release \
+  # other cmake options
+```
+
+For explicitly setting the debug mode (which, as we have seen, is the
+default):
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=Debug \
+  # other cmake options
+```
+
+AliRoot needs to be recompiled (via `make`) after changing the build
+type.
+
+
+#### Your analysis
+
+Suppose your analysis task is called `AliAnalysisTaskDummyTask`. In
+the macro you use to load the analysis task, you can do:
+
+```c++
+gROOT->LoadMacro("AliAnalysisTaskDummyTask.cxx++g");
+```
+
+The "double plus" forces recompilation, while the appended `g` tells
+ROOT to compile the task with debug symbols. Once your code is in
+production, just remove the `g`:
+
+```c++
+gROOT->LoadMacro("AliAnalysisTaskDummyTask.cxx++");
+```
+
+Please note that debug code is considerably slower than production
+code, although it provides you with more information. A visible effect
+is a clearer backtrace if the code crashes. Consider the following
+backtrace snippet:
+
+```
+ *** Break *** segmentation violation
+ Generating stack trace...
+ 0x00000001191d3bdd in AliAnalysisTaskSE::Exec(char const*) (in libANALYSISalice.so) (AliAnalysisTask.h:118)
+ 0x0000000111df577f in TTask::ExecuteTask(char const*) (in libCore.5.so) + 383
+ 0x00000001110518ed in AliAnalysisManager::ExecAnalysis(char const*) (in libANALYSIS.so) (AliAnalysisManager.cxx:2323)
+ 0x0000000111061be8 in AliAnalysisSelector::Process(long long) (in libANALYSIS.so) (AliAnalysisSelector.cxx:164)
+ 0x0000000114aa824f in TTreePlayer::Process(TSelector*, char const*, long long, long long) (in libTreePlayer.5.so) + 895
+ 0x000000011105afd6 in AliAnalysisManager::StartAnalysis(char const*, TTree*, long long, long long) (in libANALYSIS.so) (AliAnalysisManager.cxx:1950)
+ 0x0000000111086153 in G__G__ANALYSIS_208_0_14(G__value*, char const*, G__param*, int) (in libANALYSIS.so) (G__ANALYSIS.cxx:4560)
+ 0x0000000112578881 in Cint::G__ExceptionWrapper(int (*)(G__value*, char const*, G__param*, int), G__value*, char*, G__param*, int) (in libCint.5.so) + 49
+ 0x000000011262185b in G__execute_call (in libCint.5.so) + 75
+ 0x0000000112621cbc in G__call_cppfunc (in libCint.5.so) + 860
+ 0x00000001125f563e in G__interpret_func (in libCint.5.so) + 5198
+ 0x00000001125e3a67 in G__getfunction (in libCint.5.so) + 5655
+...
+```
+
+Line numbers are present (like `AliAnalysisTask.h:113`) as extra
+information provided by debug symbols. Debug symbols also retain
+variable names, as we will see when running our code through `gdb`.
+
+> Only use debug builds for temporary tests: turn off debugging when
+> sending your code to production!
 
 <!--
 Refined version
