@@ -154,31 +154,8 @@ gROOT->LoadMacro("AliAnalysisTaskDummyTask.cxx++");
 ```
 
 Please note that debug code is considerably slower than production
-code, although it provides you with more information. A visible effect
-is a clearer backtrace if the code crashes. Consider the following
-backtrace snippet:
-
-```
- *** Break *** segmentation violation
- Generating stack trace...
- 0x00000001191d3bdd in AliAnalysisTaskSE::Exec(char const*) (in libANALYSISalice.so) (AliAnalysisTask.h:118)
- 0x0000000111df577f in TTask::ExecuteTask(char const*) (in libCore.5.so) + 383
- 0x00000001110518ed in AliAnalysisManager::ExecAnalysis(char const*) (in libANALYSIS.so) (AliAnalysisManager.cxx:2323)
- 0x0000000111061be8 in AliAnalysisSelector::Process(long long) (in libANALYSIS.so) (AliAnalysisSelector.cxx:164)
- 0x0000000114aa824f in TTreePlayer::Process(TSelector*, char const*, long long, long long) (in libTreePlayer.5.so) + 895
- 0x000000011105afd6 in AliAnalysisManager::StartAnalysis(char const*, TTree*, long long, long long) (in libANALYSIS.so) (AliAnalysisManager.cxx:1950)
- 0x0000000111086153 in G__G__ANALYSIS_208_0_14(G__value*, char const*, G__param*, int) (in libANALYSIS.so) (G__ANALYSIS.cxx:4560)
- 0x0000000112578881 in Cint::G__ExceptionWrapper(int (*)(G__value*, char const*, G__param*, int), G__value*, char*, G__param*, int) (in libCint.5.so) + 49
- 0x000000011262185b in G__execute_call (in libCint.5.so) + 75
- 0x0000000112621cbc in G__call_cppfunc (in libCint.5.so) + 860
- 0x00000001125f563e in G__interpret_func (in libCint.5.so) + 5198
- 0x00000001125e3a67 in G__getfunction (in libCint.5.so) + 5655
-...
-```
-
-Line numbers are present (like `AliAnalysisTask.h:113`) as extra
-information provided by debug symbols. Debug symbols also retain
-variable names, as we will see when running our code through `gdb`.
+code, although it provides you with more information (for instance
+line numbers in stacktraces as we will see later).
 
 > Only use debug builds for temporary tests: turn off debugging when
 > sending your code to production!
@@ -215,9 +192,191 @@ no output if no debug symbols are present.
 Please note that on OS X debug symbols do not show up with `nm -a`.
 
 
+Where does my code crash?
+-------------------------
+
+When the code you are running "crashes", you are usually presented
+with a **backtrace** or **stack trace** showing the nesting level of
+the called functions plus some more or less "obscure" information.
+Such backtrace can be more detailed if you have compiled your code
+with debug symbols.
+
+Consider the following backtrace:
+
+```
+ *** Break *** segmentation violation
+ Generating stack trace...
+ 0x00000001191d3bdd in AliAnalysisTaskSE::Exec(char const*) (in libANALYSISalice.so) (AliAnalysisTask.h:118)
+ 0x0000000111df577f in TTask::ExecuteTask(char const*) (in libCore.5.so) + 383
+ 0x00000001110518ed in AliAnalysisManager::ExecAnalysis(char const*) (in libANALYSIS.so) (AliAnalysisManager.cxx:2323)
+ 0x0000000111061be8 in AliAnalysisSelector::Process(long long) (in libANALYSIS.so) (AliAnalysisSelector.cxx:164)
+ 0x0000000114aa824f in TTreePlayer::Process(TSelector*, char const*, long long, long long) (in libTreePlayer.5.so) + 895
+ 0x000000011105afd6 in AliAnalysisManager::StartAnalysis(char const*, TTree*, long long, long long) (in libANALYSIS.so) (AliAnalysisManager.cxx:1950)
+ 0x0000000111086153 in G__G__ANALYSIS_208_0_14(G__value*, char const*, G__param*, int) (in libANALYSIS.so) (G__ANALYSIS.cxx:4560)
+ 0x0000000112578881 in Cint::G__ExceptionWrapper(int (*)(G__value*, char const*, G__param*, int), G__value*, char*, G__param*, int) (in libCint.5.so) + 49
+ 0x000000011262185b in G__execute_call (in libCint.5.so) + 75
+ 0x0000000112621cbc in G__call_cppfunc (in libCint.5.so) + 860
+ 0x00000001125f563e in G__interpret_func (in libCint.5.so) + 5198
+ 0x00000001125e3a67 in G__getfunction (in libCint.5.so) + 5655
+ 0x00000001126e45db in G__getstructmem(int, G__FastAllocString&, char*, int, char*, int*, G__var_array*, int) (in libCint.5.so) + 4187
+ 0x00000001126db0cd in G__getvariable (in libCint.5.so) + 7341
+ 0x00000001125d82c2 in G__getitem (in libCint.5.so) + 402
+ 0x00000001125d3e92 in G__getexpr (in libCint.5.so) + 31458
+ 0x000000011265517c in G__exec_statement (in libCint.5.so) + 34988
+ 0x000000011265348d in G__exec_statement (in libCint.5.so) + 27581
+ 0x00000001125f8282 in G__interpret_func (in libCint.5.so) + 16530
+ 0x00000001125e3ab4 in G__getfunction (in libCint.5.so) + 5732
+ 0x00000001125d832f in G__getitem (in libCint.5.so) + 511
+ 0x00000001125d3e92 in G__getexpr (in libCint.5.so) + 31458
+ 0x000000011265517c in G__exec_statement (in libCint.5.so) + 34988
+ 0x00000001125ba885 in G__exec_tempfile_core(char const*, __sFILE*) (in libCint.5.so) + 1125
+ 0x00000001125ba416 in G__exec_tempfile_fp (in libCint.5.so) + 22
+ 0x000000011265e4ab in G__process_cmd (in libCint.5.so) + 9339
+ 0x0000000111e27674 in TCint::ProcessLine(char const*, TInterpreter::EErrorCode*) (in libCore.5.so) + 884
+ 0x0000000111d86fbd in TApplication::ProcessLine(char const*, bool, int*) (in libCore.5.so) + 2141
+ 0x0000000113d81be4 in TRint::HandleTermInput() (in libRint.5.so) + 676
+ 0x0000000111e5f11d in TUnixSystem::CheckDescriptors() (in libCore.5.so) + 317
+ 0x0000000111e68053 in TMacOSXSystem::DispatchOneEvent(bool) (in libCore.5.so) + 387
+ 0x0000000111de4d5a in TSystem::InnerLoop() (in libCore.5.so) + 26
+ 0x0000000111de4c58 in TSystem::Run() (in libCore.5.so) + 392
+ 0x0000000111d87cc4 in TApplication::Run(bool) (in libCore.5.so) + 36
+ 0x0000000113d8150c in TRint::Run(bool) (in libRint.5.so) + 1420
+ 0x000000010546c5a8 in main (in aliroot) (aliroot.cxx:113)
+ 0x00007fff8c4d75fd in start (in libdyld.dylib) + 1
+ 0x0000000000000001 in <unknown function>
+```
+
+This means that the program has crashed while running the function
+`AliAnalysisTaskSE::Exec`, and in particular while executing the line
+of code defined in `AliAnalysisTask.h` at line 113:
+
+```
+0x00000001191d3bdd in AliAnalysisTaskSE::Exec(char const*) (in libANALYSISalice.so) (AliAnalysisTask.h:118)
+```
+
+The function was in turn called by `TTask::ExecuteTask()`, and so on,
+until we reach the first function called by the program.
+
+Other lines carry obscure information:
+
+```
+0x0000000111e5f11d in TUnixSystem::CheckDescriptors() (in libCore.5.so) + 317
+```
+
+In this case, we know that the `CheckDescriptors()` function is
+defined in `libCore.5.so` and the crash occurred at byte offset 317
+calculated from the start of the compiled function inside the binary
+library.
+
+The difference in debug information is given by the fact that:
+
+* AliRoot has been compiled **with debug information**: all AliRoot
+  functions report the corresponding source file and line number
+* ROOT has been compiled **without debug information**: all ROOT
+  functions only report obscure offsets
+
+> It is possible to mix non-debug and debug code, but we will obtain
+> comprehensible information only for the latter.
+
+In the following sections we will present two commonly used debugging
+techniques: one very simple based on printouts, and another one based
+on using a debugger (gdb).
+
+
+### Debugging with "printf/cout" and "assertions"
+
+The simplest way to understand what goes on in your code is to
+introduce periodic printouts stating the value of some variables, or
+simply indicating what the program is currently executing.
+
+Please note that, while printouts may be useful, they surely clutter
+your code if abused: so if you end up adding one printout per code
+line, you'd better off with a debugger, as explained in the next
+paragraph.
+
+Apart from code cleanliness, printouts have a computational cost,
+which might be non-negligible depending on the frequency of your
+output: we are about to learn the appropriate way to add *discrete*
+debug printouts to your code in a way that:
+
+* we can turn them off when debug is over without additional
+  computational costs
+* we don't have to rewrite our code twice, one debug and one
+  production version
+
+
+#### The generic way
+
+The simplest (and wrong) way to do it in C/C++ is the following:
+
+```c++
+// global variable
+bool gPrintDebug = true;
+
+void PrintDebug(const char *message) {
+  if (gPrintDebug == false)
+    return;
+  std::cout << message << std::endl;
+}
+
+int main(int argn, char *argv[]) {
+  PrintDebug("We are here");
+  return 0;
+}
+```
+
+The above snippet has a convenient `PrintDebug()` function, whose
+output can be suppressed by simply setting the global variable
+`gPrintDebug = false`.
+
+However, the PrintDebug() function is called in any case, even if no
+output will be produced, and this function call has a non-negligible
+cost; moreover, the condition `if (!gPrintDebug)` must be tested every
+time, which has another computational cost.
+
+The correct way is to use C/C++ **preprocessor macros**. The simplest
+way is to move the condition `if (!gPrintDebug)` from C++ to the
+preprocessor:
+
+```c++
+//#define PRINT_DEBUG
+
+void PrintDebug(const char *message) {
+  if (gPrintDebug == false)
+    return;
+  std::cout << message << std::endl;
+}
+
+int main(int argn, char *argv[]) {
+  #ifdef PRINT_DEBUG
+  PrintDebug("We are here");
+  #endif
+  return 0;
+}
+```
+
+If we compile the above snippet, no call to the print function will
+ever be generated in the compiled code, because the condition is
+evaluated at compile time by the **code preprocessor** (to be precise,
+this happens *just before* compiling the code).
+
+To enable print debug, you can either uncomment the `#define` line on
+top, or compile the code with:
+
+```bash
+gcc -o prog -D PRINT_DEBUG prog.cxx
+```
+
+*i.e.* you can define the `PRINT_DEBUG` preprocessor variable on the
+command line without modifying your code.
+
+> There are fancier ways to use preprocessor macros for debug: this
+> one is trivial and provided as an example.
+
+
 <!--
-Refined version
----------------
+
+brew install homebrew/dupes/gdb
 
 * Prepare your code for debug
  * What are the "debug symbols"?
@@ -266,59 +425,4 @@ Refined version
   * Meaning of some flags
  * Loading of library fails because a symbol is missing: how to find
    which library to load first
--->
-
-<!--
-What to do
-----------
-
-* Debugging techniques:
- * gdb/lldb
- * printf with 100, 200, 300 (like BASIC line numbers)
-  * an efficient way of doing printf with the defines
-   * AliDebug does exactly that: use it
-   * Use AliDebugF for formatting messages (instead of
-     AliDebug(Form()))
-* How to compile AliRoot and ROOT with the "debug" options
- * ROOT: ./configure --build debug
-  * Note: you must recompile everything, and not just run ./configure
-  * Since on your computer you will not run any production code, it
-    is recommended you do that
-  * Note: the important thing is that your analysis task is compiled
-    with the debug options
- * When to do that
- * When not to do that
- * Example: assertions and what changes
-* What if my code is slow?
- * What is IgProf?
- * How to compile IgProf on Ubuntu
- * IgProf: find where the program spends most of the time
-  * Code "too" efficient!
- * Also useful for optimizations: optimize only "relevant" parts
-* What if my code eats lots of memory?
- * IgProf
- * Valgrind
-* Read and understand a backtrace
-* What if a symbol is missing?
- * Note: with libraries, order matters
- * Mangling and demangling symbols: why, and c++filt
- * Find what libraries are needed by an executable or another library
- * Find where a missing symbol is
-* Before insanely plunging into a debug
- * Understand a backtrace
- * Check indentation (gotofail problem)
-* Have I compiled everything properly?
- * Check if I have compiled with or without debug symbols
- * Use the precompiled AliRoot from cvmfs
-  * The same you find on the Grid
-  * Note: you don't have debug symbols there(?check?)
-  * General way of checking if a library or executable has been
-    compiled with the debug symbols
-* Two notes:
- * Code is either optimized, or compiled with debug symbols. They are
-   mutually exclusive
- * A limited backtrace may be obtained even if you do not have debug
-   symbols
- * IgProf does not need debug symbols and it is used for testing on
-   the real architecture
 -->
