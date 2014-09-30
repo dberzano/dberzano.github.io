@@ -283,7 +283,7 @@ techniques: one very simple based on printouts, and another one based
 on using a debugger (gdb).
 
 
-### Debugging with "printf/cout" and "assertions"
+### Debugging with "printf/cout"
 
 The simplest way to understand what goes on in your code is to
 introduce periodic printouts stating the value of some variables, or
@@ -339,18 +339,20 @@ way is to move the condition `if (!gPrintDebug)` from C++ to the
 preprocessor:
 
 ```c++
+#include <iostream>
+
 //#define PRINT_DEBUG
 
+#ifdef PRINT_DEBUG
 void PrintDebug(const char *message) {
-  if (gPrintDebug == false)
-    return;
   std::cout << message << std::endl;
 }
+#else
+#define PrintDebug(...) 0;
+#endif
 
 int main(int argn, char *argv[]) {
-  #ifdef PRINT_DEBUG
   PrintDebug("We are here");
-  #endif
   return 0;
 }
 ```
@@ -460,6 +462,193 @@ case.
 
 The `AliInfoF()` version instead does not even execute `Form()` if
 the `LOG_NO_INFO` variable is defined.
+
+
+### Debugging with gdb
+
+[gdb](http://www.gnu.org/software/gdb/) is the GNU debugger. To
+install it on Debian-based distributions (like Ubuntu):
+
+```bash
+aptitude update
+aptitude install gdb
+```
+
+On OS X, if you have the
+[Apple developer tools](../install-aliroot/prereq-osx/) installed, the
+default debugger is [lldb](http://lldb.llvm.org/), while gdb must be
+installed via another channel.
+
+Getting gdb on OS X with Homebrew is easy:
+
+```bash
+brew install gdb
+```
+
+At the end of the OS X installation, you will get a "weird" message
+concerning "code signing" gdb:
+
+```
+==> Caveats
+gdb requires special privileges to access Mach ports.
+You will need to codesign the binary. For instructions, see:
+
+  http://sourceware.org/gdb/wiki/BuildingOnDarwin
+```
+
+According to
+[these instructions](http://ntraft.com/installing-gdb-on-os-x-mavericks/),
+you should do the following.
+
+First, you need to create a certificate.
+
+* Open the Keychain application
+* Go to menu **Keychain Access > Certificate Assistant >
+  Create a Certificate**...
+* A wizard opens. Type in the following information:
+ * **Name:** gdb-cert *(or any name you want)*
+ * **Identity type:** self-signed root
+ * **Certificate type:** code signing
+ * Check the checkbox asking if you want to override some default
+   options
+* Press the **Create** button
+* Extend the certificate validity to **10 years (3650 days)**
+* Proceed, by accepting all the defaults, but save the certificate in
+  the **System** keychain, and not in the **Login** one
+
+Now that you have created the certificate, select on the left pane of
+Keychain the **System** keychain: select the newly created
+**gdb-cert** on the right.
+
+Double-click on it. Expand the **Authorization** triangle, and mark
+the certificate as **always trusted**.
+
+Now, before codesigning gdb, open a terminal window. You must kill
+[taskgated](https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man8/taskgated.8.html)
+as root:
+
+```bash
+sudo kill -15 $( ps -e -o pid,command | grep taskgated | grep -v grep | awk '{print $1}' )
+```
+
+Now, you need to codesign gdb using the certficate you created. In a
+terminal:
+
+```bash
+codesign --force --sign gdb-cert /usr/local/bin/gdb
+```
+
+Type your username and password whenever requested, and always allow
+gdb to access the Keychain if prompted.
+
+**Note:** creating the certificate and signing gdb is a security
+measure. You can avoid creating a certificate by running gdb as root,
+but this is highly not recommended.
+
+
+#### Test case: a program that crashes
+
+Consider the following snippet:
+
+```c++
+#include <iostream>
+
+#define COUNTER_MAX 10000
+
+void crash_function() {
+  unsigned int answer_to_everything = 42;
+  int another_number = -answer_to_everything;
+  float many_floats[12];
+  const char *test_string = "oh no, not again!";
+  std::cout << test_string << std::endl;
+  for (unsigned int i=0; i<COUNTER_MAX; i++) {
+    std::cout << "setting index " << i << " out of " << COUNTER_MAX << ". string is: " << test_string << std::endl;
+    many_floats[i] = 0.12345;
+  }
+  std::cout << another_number << std::endl;
+}
+
+int main(int argn, char *argv[]) {
+  crash_function();
+  return 0;
+}
+```
+
+Name it `crash.cxx` and compile it **with debug symbols**:
+
+```bash
+g++ -g -o crash crash.cxx
+```
+
+**Note:** you might use `clang++` if you have it (for instance on OS
+X).
+
+This code contains an array of floats, allocated "on the stack"
+(*i.e.* on the function's memory), which has space for 12 elements:
+
+```c++
+float many_floats[12];
+```
+
+However in the `for` loop we are writing way beyond its length in
+order to artificially generate a crash. Let's run it:
+
+```bash
+$> ./crash
+...
+setting index 811 out of 10000. string is: oh no, not again!
+setting index 812 out of 10000. string is: oh no, not again!
+setting index 813 out of 10000. string is: oh no, not again!
+setting index 814 out of 10000. string is: oh no, not again!
+setting index 815 out of 10000. string is: oh no, not again!
+setting index 816 out of 10000. string is: oh no, not again!
+Segmentation fault: 11
+```
+
+The program crashes as expected. Note that we did not obtain any
+stack trace: this is not a standard feature of every program, but it
+is the default when running ROOT programs.
+
+We want to run the program under gdb in order to:
+
+* obtain a stack trace
+* see the value of the variables at the moment of the crash
+
+Load the program under gdb:
+
+```bash
+gdb --args ./crash
+```
+
+From the gdb prompt, run the program by typing `run`: when the program
+crashes, we are back at the gdb prompt:
+
+```
+Program received signal SIGBUS, Bus error.
+0x0000000100000ee8 in crash_function () at crash.cxx:14
+14	    many_floats[i] = 0.12345;
+```
+
+gdb clearly tells us the file name where the crash happened, and the
+line. It even displays us the line that caused the crash. To see a
+broader snippet of the code, type `list`:
+
+```
+9	  int counter_max = 10000;
+10	  const char *test_string = "oh no, not again!";
+11	  std::cout << test_string << std::endl;
+12	  for (unsigned int i=0; i<counter_max; i++) {
+13	    std::cout << "setting index " << i << " out of " << counter_max << ". string is: " << test_string << std::endl;
+14	    many_floats[i] = 0.12345;
+15	  }
+16	  std::cout << another_number << std::endl;
+17	}
+18
+```
+<!-- restore syntax highlight in sublime... -->
+
+Now type `bt` to obtain a backtrace:
+
 
 <!--
 
