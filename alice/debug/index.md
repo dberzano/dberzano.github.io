@@ -183,6 +183,38 @@ variable names, as we will see when running our code through `gdb`.
 > Only use debug builds for temporary tests: turn off debugging when
 > sending your code to production!
 
+
+#### Check if you have compiled with debug symbols (Linux)
+
+To check if your code has been compiled with debug symbols, on Linux
+you can do:
+
+```bash
+nm -a libName.so | grep debug
+```
+
+The `nm -a` command lists all symbols: we grep only the ones
+containing the word "debug". For instance:
+
+```bash
+$> cd $ALICE_BUILD/lib/tgt_*
+$> objdump --syms libPWGEMCAL.so
+0000000000000000 l    d  .debug_aranges	0000000000000000              .debug_aranges
+0000000000000000 l    d  .debug_info    0000000000000000              .debug_info
+0000000000000000 l    d  .debug_abbrev  0000000000000000              .debug_abbrev
+0000000000000000 l    d  .debug_line    0000000000000000              .debug_line
+0000000000000000 l    d  .debug_str     0000000000000000              .debug_str
+0000000000000000 l    d  .debug_loc     0000000000000000              .debug_loc
+0000000000000000 l    d  .debug_ranges  0000000000000000              .debug_ranges
+```
+
+The library `libPWGEMCAL.so` on our reference Linux installation
+**does contain** debug symbols. The above command usually contains
+no output if no debug symbols are present.
+
+Please note that on OS X debug symbols do not show up with `nm -a`.
+
+
 <!--
 Refined version
 ---------------
