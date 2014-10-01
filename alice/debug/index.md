@@ -1119,6 +1119,27 @@ In a couple of hours we were able to:
 * understand where it spends the majority of its time
 * optimize the relevant part
 
+
+### Performance profiling on OS X
+
+As we have said, IgProf is not available on OS X. However, Xcode
+includes an excellent graphical tool called
+[Instruments](https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Introduction/Introduction.html):
+if you have installed Xcode, open it, then go to the menu
+**Xcode > Open Developer Tool > Instruments**.
+
+A main menu is presented: the **Time Profiler** tool can be used to
+sample a running process and to obtain an interactive and browsable
+profile.
+
+![Xcode Instruments](xcode-instruments-main.png)
+
+Profiles obtained with IgProf and Instruments are very similar, and
+the considerations on interpreting and optimizing are valid for both
+tools.
+
+
+
 <!--
 
 brew install homebrew/dupes/gdb
