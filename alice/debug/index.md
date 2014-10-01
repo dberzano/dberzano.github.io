@@ -819,6 +819,26 @@ printouts, input requests, etc.: we now know how to obtain the same
 results without modifying our code.
 
 
+#### Commands summary
+
+| gdb              | lldb                      | description                 |
+|------------------|---------------------------|-----------------------------|
+| run              | run                       | start execution             |
+| quit             | quit                      | exit debugger               |
+| break            | breakpoint set [-l/-f...] | set a breakpoint            |
+| delete           | breakpoint delete         | deletes a breakpoint        |
+| info breakpoints | breakpoint list           | lists current breakpoints   |
+| enable           | breakpoint enable         | enable a breakpoint         |
+| disable          | breakpoint disable        | disable a breakpoint        |
+| continue         | continue                  | resume a stopped execution  |
+| kill             | kill                      | terminate current execution |
+| list             | list                      | show source code            |
+| print            | print                     | print value of a variable   |
+
+> A complete list of gdb vs. lldb commands can be found on the
+> official [lldb documentation](http://lldb.llvm.org/lldb-gdb.html).
+
+
 Find memory leaks for ROOT object: TObjectTable
 -----------------------------------------------
 
