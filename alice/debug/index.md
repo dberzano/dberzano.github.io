@@ -819,6 +819,69 @@ printouts, input requests, etc.: we now know how to obtain the same
 results without modifying our code.
 
 
+Debug memory problems
+---------------------
+
+* TObjectTable
+* Valgrind's memcheck
+
+
+Profiling: IgProf
+-----------------
+
+[IgProf](http://igprof.org), the Ignominious Profiler, is a
+performance and memory profiling tool.
+
+*"Profiling an application"* means finding the application's hotspots:
+
+* in what functions the program spends most of the time
+* what parts of the code do the most memory operations
+
+One might want to perform profiling either because the application
+appears to be slower than expected: in this case, profiling aims to
+answer the question: where does my program **waste** more time?
+
+For general optimization reasons, profiling is useful to understand
+what parts of the code are worth optimizing: for instance, a very slow
+initialization part that takes 10 seconds on a long job that lasts for
+hours is not worth optimizing.
+
+There are several profilers already used with success: for instance,
+Valgrind's memcheck and callgrind tools.
+
+IgProf and Valgrind have different scopes and very different ways of
+working.
+
+First of all, Valgrind is a **deterministic** tool, while IgProf is
+**statistic**. Valgrind runs your code in a special internal virtual
+machine that traps every single function call and memory operation:
+the final report will be very precise, but the code execution might
+take up to 40 times more.
+
+On the other hand, IgProf just monitors **externally** the profiled
+program: it periodically (with a high frequency) asks the system what
+is the currently executing function of a certain program. The
+advantages of this approach are:
+
+* code runs at **native speed** and optimized for the **real
+  architecture**: there is no Valgrind virtual machine slowing down
+* no debugging symbols are needed, *i.e.* you do not need to compile
+  with `-g`
+
+Of course, the big disadvantage is that the final report, being only
+statistic, will be more imprecise than Valgrind's: but the idea is
+that, for programs that take a long time to complete (like our physics
+analyses), IgProf might miss the least called functions, but its
+precision on the most called functions is very close to Valgrind's.
+
+In practice, IgProf is considered much more efficient than Valgrind
+when attempting to optimize code with a long running time for a
+certain architecture.
+
+> **Beware!** It is not implied that IgProf is a replacement of
+> Valgrind: it is instead a lightweight alternative to it for a
+> limited and specific number of cases.
+
 
 
 <!--
