@@ -399,6 +399,53 @@ TH1 *histo = (TH1F *)myFile->Get("myHist");
 delete histo;
 ```
 
+### Compiler warnings
+
+**Do not overlook compiler warnings!** Warnings should **never** exist
+in a clean code.
+
+Whenever you see a warning, you have to:
+
+* **fix** the code, if it is actually broken: sometimes warnings get
+  it right that you are doing something wrong
+* **silence** the warning by rewriting the snippet in a way that it
+  does not trigger the warning.
+
+Different compilers give different warnings: clang is usually more
+precise and tends to give you advice on either how to silence the
+warning, or what you probably meant when writing the code. Of course a
+compiler is a "stupid" piece of software and you should not always
+follow literally its advice, but do not overlook it!
+
+
+### When to use pointers
+
+As a general rule, it is not always a good idea to use pointers to
+objects as data members of your class. If objects are big you are
+forced to use it, but for many small objects you'd better use the
+object directly: you will save yourself (and the computer) a
+new/delete operation for each one of them. This has an impact if you
+have many small objects.
+
+Remember to always initialize pointers used as data members: compilers
+should raise warnings if you do not.
+
+Many member pointers in custom classes are **transient**, *i.e.* they
+should exist only in memory and they should not be written to a file.
+So please mark every transient pointer with the appropriate special
+ROOT comment `//!` (no spaces between the slash and exclamation mark):
+
+```c++
+class MyClass : public TObject {
+  private:
+    AnotherClass *transient_ptr;  //!
+  // ...
+}
+```
+
+> This is not just for aesthetics: you are telling ROOT **not to
+> save** the pointer to file, considerably reducing the output size!
+
 
 Where does my code crash?
 -------------------------
