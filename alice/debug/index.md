@@ -464,7 +464,7 @@ The `AliInfoF()` version instead does not even execute `Form()` if
 the `LOG_NO_INFO` variable is defined.
 
 
-### Debugging with gdb
+### Using a debugger
 
 [gdb](http://www.gnu.org/software/gdb/) is the GNU debugger. To
 install it on Debian-based distributions (like Ubuntu):
@@ -474,19 +474,22 @@ aptitude update
 aptitude install gdb
 ```
 
-On OS X, if you have the
-[Apple developer tools](../install-aliroot/prereq-osx/) installed, the
-default debugger is [lldb](http://lldb.llvm.org/), while gdb must be
-installed via another channel.
+On OS X, the default debugger is the
+[LLVM debugger (lldb)](http://lldb.llvm.org/).
 
-Getting gdb on OS X with Homebrew is easy:
+
+#### Installing gdb on OS X
+
+> It is recommended you get accustomed with lldb if you use a Mac,
+> unless you need to use some gdb features not available in lldb.
+
+Obtaining OS X is easy with Homebrew:
 
 ```bash
 brew install gdb
 ```
 
-At the end of the OS X installation, you will get a "weird" message
-concerning "code signing" gdb:
+At the end of the installation, here is the message printed by `brew`:
 
 ```
 ==> Caveats
@@ -496,32 +499,38 @@ You will need to codesign the binary. For instructions, see:
   http://sourceware.org/gdb/wiki/BuildingOnDarwin
 ```
 
-According to
-[these instructions](http://ntraft.com/installing-gdb-on-os-x-mavericks/),
-you should do the following.
+This means in practice that for security reasons gdb will not be able
+to inspect other programs until we "codesign" it manually using a
+custom created certificate.
 
-First, you need to create a certificate.
+This can be done by following
+[some instructions](http://ntraft.com/installing-gdb-on-os-x-mavericks/):
+the steps are summarized below.
 
-* Open the Keychain application
-* Go to menu **Keychain Access > Certificate Assistant >
-  Create a Certificate**...
-* A wizard opens. Type in the following information:
- * **Name:** gdb-cert *(or any name you want)*
- * **Identity type:** self-signed root
- * **Certificate type:** code signing
- * Check the checkbox asking if you want to override some default
-   options
-* Press the **Create** button
-* Extend the certificate validity to **10 years (3650 days)**
-* Proceed, by accepting all the defaults, but save the certificate in
-  the **System** keychain, and not in the **Login** one
+First, you need to create a certificate using the OS X Keychain
+application. Open it, then select from the menu **Keychain Access >
+Certificate Assistant > Create a Certificate**.
 
-Now that you have created the certificate, select on the left pane of
-Keychain the **System** keychain: select the newly created
-**gdb-cert** on the right.
+The certificate wizard will open. Create a certificate using the
+following information:
 
-Double-click on it. Expand the **Authorization** triangle, and mark
-the certificate as **always trusted**.
+* **Name:** gdb-cert *(or any name you want)*
+* **Identity type:** self-signed root
+* **Certificate type:** code signing
+
+Also check the checkbox for overriding the default options.
+
+Here are the options to override:
+
+* extend the certificate validity to **10 years (3650 days)** or
+  another long time at will;
+* save the certificate in the **System** keychain **and not** in the
+  login one.
+
+After the certificate has been generated, select the System keychain
+and double click on our certificate entry: expand the
+**Authorization** triangle and mark the certificate as **always
+trusted**.
 
 Now, before codesigning gdb, open a terminal window. You must kill
 [taskgated](https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man8/taskgated.8.html)
@@ -531,8 +540,7 @@ as root:
 sudo kill -15 $( ps -e -o pid,command | grep taskgated | grep -v grep | awk '{print $1}' )
 ```
 
-Now, you need to codesign gdb using the certficate you created. In a
-terminal:
+You can finally codesign gdb using the certficate you created:
 
 ```bash
 codesign --force --sign gdb-cert /usr/local/bin/gdb
@@ -541,9 +549,8 @@ codesign --force --sign gdb-cert /usr/local/bin/gdb
 Type your username and password whenever requested, and always allow
 gdb to access the Keychain if prompted.
 
-**Note:** creating the certificate and signing gdb is a security
-measure. You can avoid creating a certificate by running gdb as root,
-but this is highly not recommended.
+> gdb on OS X can run as root without needing a certificate, but it is
+> not recommended to do that.
 
 
 #### Test case: a program that crashes
@@ -553,35 +560,52 @@ Consider the following snippet:
 ```c++
 #include <iostream>
 
-#define COUNTER_MAX 10000
+#define FLOAT_ARY 12
 
 void crash_function() {
   unsigned int answer_to_everything = 42;
   int another_number = -answer_to_everything;
-  float many_floats[12];
+  float many_floats[FLOAT_ARY];
+  int counter_max = 10000;
   const char *test_string = "oh no, not again!";
   std::cout << test_string << std::endl;
-  for (unsigned int i=0; i<COUNTER_MAX; i++) {
-    std::cout << "setting index " << i << " out of " << COUNTER_MAX << ". string is: " << test_string << std::endl;
+  for (unsigned int i=0; i<counter_max; i++) {
+    std::cout << "setting index " << i << " out of " << counter_max << ". string is: " << test_string << std::endl;
     many_floats[i] = 0.12345;
   }
   std::cout << another_number << std::endl;
 }
 
+void func2() {
+  float pi = 3.14;
+  crash_function();
+}
+
+void func1() {
+  int a_variable = 456;
+  a_variable += 1;
+  func2();
+}
+
 int main(int argn, char *argv[]) {
+  func1();
   crash_function();
   return 0;
 }
 ```
+<!-- restore syntax -->
 
-Name it `crash.cxx` and compile it **with debug symbols**:
+Name it `crash.cxx` and compile it **with debug symbols**. On Linux:
 
 ```bash
 g++ -g -o crash crash.cxx
 ```
 
-**Note:** you might use `clang++` if you have it (for instance on OS
-X).
+On OS X:
+
+```bash
+g++ -g -o crash crash.cxx
+```
 
 This code contains an array of floats, allocated "on the stack"
 (*i.e.* on the function's memory), which has space for 12 elements:
@@ -605,11 +629,12 @@ setting index 816 out of 10000. string is: oh no, not again!
 Segmentation fault: 11
 ```
 
-The program crashes as expected. Note that we did not obtain any
-stack trace: this is not a standard feature of every program, but it
-is the default when running ROOT programs.
+The program crashes at a random point as expected.
 
-We want to run the program under gdb in order to:
+> We did not obtain any stack trace automatically: this is a
+> peculiarity of ROOT programs.
+
+We want to run the program under a debugger in order to:
 
 * obtain a stack trace
 * see the value of the variables at the moment of the crash
@@ -620,34 +645,180 @@ Load the program under gdb:
 gdb --args ./crash
 ```
 
-From the gdb prompt, run the program by typing `run`: when the program
-crashes, we are back at the gdb prompt:
+On OS X you might use lldb:
 
-```
-Program received signal SIGBUS, Bus error.
-0x0000000100000ee8 in crash_function () at crash.cxx:14
-14	    many_floats[i] = 0.12345;
+```bash
+lldb -- ./crash
 ```
 
-gdb clearly tells us the file name where the crash happened, and the
-line. It even displays us the line that caused the crash. To see a
-broader snippet of the code, type `list`:
+From the gdb or lldb prompt, run the program by typing `run`: when the
+program crashes, we are back at the debugger's prompt.
+
+Here is the sample output from lldb (gdb's output is very similar):
 
 ```
-9	  int counter_max = 10000;
-10	  const char *test_string = "oh no, not again!";
-11	  std::cout << test_string << std::endl;
-12	  for (unsigned int i=0; i<counter_max; i++) {
-13	    std::cout << "setting index " << i << " out of " << counter_max << ". string is: " << test_string << std::endl;
-14	    many_floats[i] = 0.12345;
-15	  }
-16	  std::cout << another_number << std::endl;
-17	}
-18
+* thread #1: tid = 0x13c1d0, 0x0000000100000ee8 crash`crash_function() + 280 at crash.cxx:14, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x7fff5fc00000)
+    frame #0: 0x0000000100000ee8 crash`crash_function() + 280 at crash.cxx:14
+   11  	  std::cout << test_string << std::endl;
+   12  	  for (unsigned int i=0; i<counter_max; i++) {
+   13  	    std::cout << "setting index " << i << " out of " << counter_max << ". string is: " << test_string << std::endl;
+-> 14  	    many_floats[i] = 0.12345;
+   15  	  }
+   16  	  std::cout << another_number << std::endl;
+   17  	}
 ```
-<!-- restore syntax highlight in sublime... -->
 
-Now type `bt` to obtain a backtrace:
+The debugger is pointing us exactly to the line where the execution
+has stopped: since we have compiled the program with debug symbols,
+we have this precise reference and the debugger can even show us the
+code snippet.
+
+To manually show the code snippet, type `list` (both gdb and lldb). By
+pressing Enter on the empty prompt you are repeating the last `list`
+command that advances in the code until the end of file is reached.
+
+To reset code listing to the beginning, type `list 1`.
+
+Print a backtrace by typing `bt`:
+
+```
+* thread #1: tid = 0x13d53e, 0x0000000100000ee8 crash`crash_function() + 280 at crash.cxx:14, queue = 'com.apple.main-thread', stop reason = EXC_BAD_ACCESS (code=2, address=0x7fff5fc00000)
+  * frame #0: 0x0000000100000ee8 crash`crash_function() + 280 at crash.cxx:14
+```
+
+Print the list of local variables available in the current program
+context with `frame variable` (lldb):
+
+```console
+$> frame variable
+(unsigned int) answer_to_everything = 42
+(int) another_number = -42
+(float [12]) many_floats = ([0] = 0.123450004, [1] = 0.123450004, [2] = 0.123450004, [3] = 0.123450004, [4] = 0.123450004, [5] = 0.123450004, [6] = 0.123450004, [7] = 0.123450004, [8] = 0.123450004, [9] = 0.123450004, [10] = 0.123450004, [11] = 0.123450004)
+(int) counter_max = 10000
+(const char *) test_string = 0x0000000100001f14 "oh no, not again!"
+(unsigned int) i = 436
+```
+
+Print the value of a variable at this point in the program (both lldb
+and gdb):
+
+```console
+$> print global_int
+(int) $0 = 789
+$> print test_string
+(const char *) $1 = 0x0000000100001f14 "oh no, not again!"
+```
+
+We can manually set a "breakpoint" in the program to stop before
+executing a certain line of code, then we can advance manually from
+there.
+
+Let's start by killing the current running process:
+
+```
+kill
+```
+
+Set a breakpoint when calling the function `func1()`. With lldb:
+
+```
+breakpoint set -b func1
+```
+
+With gdb:
+
+```
+break func1
+```
+
+Or, as an alternative, we can set the breakpoint to a certain line of
+code. With lldb:
+
+```console
+$> breakpoint set -l 28
+Breakpoint 1: where = crash`func1() + 15 at crash.cxx:28, address = 0x0000000100000f9f
+```
+
+With gdb:
+
+```console
+$> break set 28
+Breakpoint 1 at 0x100000f9f: file crash.cxx, line 28.
+```
+
+Now run the program with `run`. It will stop where we told it to stop,
+even if it did not crash: since the execution is stopped, we can do
+many things:
+
+* examine the variables
+* advance line by line
+* resume the normal execution
+* delete the breakpoint
+
+For instance, we set the breakpoint before incrementing the variable
+`a_variable` of one unit: let's print its value:
+
+```console
+$> print a_variable
+$0 = 456
+```
+
+Process next line with `next`, or simply `n`, then examine again:
+
+```console
+$> n
+$> print a_variable
+$1 = 457
+```
+
+The variable was correctly incremented by one unit like expected. To
+resume normal execution just type `continue` (our demo program will
+continue until the crash).
+
+Current breakpoints can be listed. On lldb:
+
+```console
+$> breakpoint list
+Current breakpoints:
+1: file = '/Users/volpe/Temp/macr/crash.cxx', line = 28, locations = 1, resolved = 1, hit count = 1
+  1.1: where = crash`func1() + 15 at crash.cxx:28, address = 0x0000000100000f9f, resolved, hit count = 1
+```
+
+On gdb:
+
+```console
+$> info breakpoints
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000100000f9f in func1() at crash.cxx:28
+	breakpoint already hit 1 time
+```
+
+We can delete a breakpoint, or disable it if we don't want it to be
+effective but we might want to restore it later. With lldb:
+
+```console
+$> breakpoint delete 1
+$> breakpoint disable 2
+$> breakpoint enable 2
+```
+
+With gdb:
+
+```console
+$> delete 1
+$> disable 2
+$> enable 2
+```
+
+We have now learned how to perform the basic operations with two
+different debuggers: stopping the program's execution and checking on
+the variable values.
+
+Without a debugger those operations are commonly done by adding
+printouts, input requests, etc.: we now know how to obtain the same
+results without modifying our code.
+
+
 
 
 <!--
@@ -694,7 +865,7 @@ brew install homebrew/dupes/gdb
  * Turn it on and off, check if it is on
  * Retrieve results (do it periodically to quickly check for leaks)
 
-* Problems loading libraries
+* Problems loading libraries [skipped for now]
  * Find libraries needed by other libraries or executables (Linux and
    OS X: ldd, otool)
  * List symbols in a library or executable (Linux and OS X: nm)
