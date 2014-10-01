@@ -868,6 +868,10 @@ advantages of this approach are:
 * no debugging symbols are needed, *i.e.* you do not need to compile
   with `-g`
 
+> Note that `-g` should in fact be **off** when running with IgProf,
+> as the tool aims to profile in conditions as close as possible to
+> the production environment.
+
 Of course, the big disadvantage is that the final report, being only
 statistic, will be more imprecise than Valgrind's: but the idea is
 that, for programs that take a long time to complete (like our physics
@@ -883,6 +887,115 @@ certain architecture.
 > limited and specific number of cases.
 
 
+### Installing IgProf on Ubuntu
+
+IgProf is not available on OS X. To install it on Ubuntu 14.04, here
+is a slightly modified version of the
+[official installation recipe](http://igprof.org/install.html):
+
+```bash
+mkdir -p $ALICE_PREFIX/igprof/src
+cd $ALICE_PREFIX/igprof/src
+
+IGPROF_VERSION=5.9.10
+LIBATOMIC_VERSION=7.2alpha4
+LIBUNWIND_VERSION=1.0.1
+```
+
+Download and unpack:
+
+```bash
+wget http://www.hpl.hp.com/research/linux/atomic_ops/download/libatomic_ops-$LIBATOMIC_VERSION.tar.gz
+wget http://download.savannah.gnu.org/releases/libunwind/libunwind-$LIBUNWIND_VERSION.tar.gz
+wget -Oigprof-$IGPROF_VERSION.tar.gz https://github.com/ktf/igprof/archive/v$IGPROF_VERSION.tar.gz
+
+for f in *.tar.gz ; do tar xzf $f ; done
+```
+
+Build the three components. libatomic:
+
+```bash
+cd libatomic_ops-$LIBATOMIC_VERSION
+./configure --prefix=$ALICE_PREFIX/igprof
+make -j$MJ install
+cd ../
+```
+
+libunwind:
+
+```bash
+cd libunwind-$LIBUNWIND_VERSION
+./configure \
+  CPPFLAGS="-I$ALICE_PREFIX/igprof/include -U_FORTIFY_SOURCE" \
+  CFLAGS="-g -O3" \
+  --prefix=$ALICE_PREFIX/igprof --disable-block-signals
+make -j$MJ install
+cd ../
+```
+
+To install IgProf, you need `libpcre3-dev` and `cmake`:
+
+```bash
+aptitude install libpcre3-dev cmake
+```
+
+Build it (a small patching is needed to the `CMakeLists.txt`file):
+
+```bash
+cd igprof-$IGPROF_VERSION
+sed -e 's/-Werror//g' -i CMakeLists.txt
+cmake \
+  -DCMAKE_INSTALL_PREFIX=$ALICE_PREFIX/igprof \
+  -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O3" \
+  -DUNWIND_INCLUDE_DIR=$ALICE_PREFIX/igprof/include \
+  -DUNWIND_LIBRARY=$ALICE_PREFIX/igprof/lib
+make -j$MJ
+make install
+cd ../
+```
+
+
+### Running IgProf
+
+Assuming that IgProf and libunwind are installed under
+`$IGPROF_PREFIX`, you need to set the following environment:
+
+```bash
+export PATH="$ALICE_PREFIX/igprof/bin:$PATH"
+export LD_LIBRARY_PATH="$ALICE_PREFIX/igprof/lib:$LD_LIBRARY_PATH"
+```
+
+If everything is OK, `igprof` should be in the path:
+
+```bash
+$> which igprof
+/home/ubuntu/alice/igprof/bin/igprof
+```
+
+Suppose you normally launch your AliRoot macro like this:
+
+```bash
+aliroot -b -q myTestMacro.C++
+```
+
+It is very easy to run it under the IgProf performance profiler:
+
+```bash
+igprof -pp -z -o myTestMacro.pp.gz aliroot -b -q myTestMacro.C++
+```
+
+In this case:
+
+* we are using the **performance profiler** (`-pp`)
+* output data will be compressed (`-z`)
+* output data will be saved to myTestMacro.pp.gz (`-o`)
+
+When the process has finished, launch the following command to produce
+a parsed text output:
+
+```bash
+igprof-analyse -v -g myTestMacro.pp.gz > myTestMacro.pp.txt
+```
 
 <!--
 
