@@ -997,6 +997,128 @@ a parsed text output:
 igprof-analyse -v -g myTestMacro.pp.gz > myTestMacro.pp.txt
 ```
 
+### Interpreting IgProf data
+
+The resulting text file contains information on the absolute and
+relative amount of time spent inside each function. It is composed of
+two main sections:
+
+* a **cumulative timing** part, indicated by `Flat profile (cumulative
+  >= ...%)`, where each percentage takes into account the time spent
+  in that function and in all functions invoked by it;
+* a **self timing** part, indicated by `Flat profile (self >= ...%)`,
+  where the time spent in the functions called by the current
+  function are *not* taken into account.
+
+There is another third section highlighting the stack calls for each
+entry of the first two tables.
+
+The following example is taken from a profiling performed on the ROOT
+`hadd` executable for merging histograms in different files to a
+single output. Test conditions:
+
+* 984 ROOT files
+* 10000 TH1F histograms
+* 100 bins per histogram
+
+The *self* profiling data is presented below:
+
+```
+Flat profile (self >= 0.01%)
+
+% total       Self  Function
+  23.60      23.46  __strcmp_ssse3 [23]
+  19.67      19.55  TDirectoryFile::GetKey(char const*, short) const [21]
+  10.77      10.70  TListIter::Next() [24]
+   3.92       3.90  TNamed::GetName() const [35]
+   3.02       3.00  inflate [26]
+   2.79       2.78  inflate_table [45]
+   2.16       2.14  inflate_fast [54]
+   2.14       2.13  __read_nocancel [55]
+   2.04       2.02  TList::FindObject(char const*) const [37]
+   1.40       1.39  __strcmp_ssse3 [69]
+   0.77       0.77  _init [84]
+...
+```
+
+What we notice is that about a quarter of the total running time is
+spent inside the `__strcmp_ssse3` function, which performs string
+comparison. Another consistent percentage is spent in the `GetKey()`
+method of ROOT, used to obtain the key in a file corresponding to a
+certain object name.
+
+The result is astonishing, as we do not expect string comparison to
+be the heaviest part of our merging code.
+
+Next to `__strcmp_ssse3` there is a `[23]` indication, that points to
+the relevant stack trace portions:
+
+```
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Rank    % total       Self       Self / Children   Function
+           58.7  .........      58.34 / 62.09        TDirectoryFile::WriteTObject(TObject const*, char const*, char const*, int) [20]
+[21]       58.7      58.34      19.55 / 38.79      TDirectoryFile::GetKey(char const*, short) const
+           22.7  .........      22.57 / 23.46        __strcmp_ssse3 [23]
+           10.4  .........      10.37 / 10.70        TListIter::Next() [24]
+            3.8  .........       3.76 / 3.90         TNamed::GetName() const [35]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            0.9  .........       0.90 / 3.29         TList::FindObject(char const*) const [37]
+           22.7  .........      22.57 / 58.34        TDirectoryFile::GetKey(char const*, short) const [21]
+[23]       23.6      23.46      23.46 / 0.00       __strcmp_ssse3
+```
+
+This is useful to understand *what* called the string comparison: from
+the stack trace, we notice that `GetKey()` calls it, and it is in turn
+called by the public function `TList::FindObject()`. `GetKey()` is
+also invoked by `WriteTObject()`.
+
+Now, when merging data from different files, objects with the same
+name are merged, and they have to be looked by using the
+`FindObject()` function: by blindly profiling the code, we have
+understood what is the part of the code where it is worth starting
+the optimization.
+
+The string comparison function is provided by the system, and it is
+already heavily optimized: the code has been then optimized by trying
+to *avoid* calling the string comparison as much as possible during
+the lookup of objects.
+
+In this case, the optimization consisted in using a hash table instead
+of using a list for storing objects. When performing a string lookup,
+hashes of the current string and precomputed hashes of each element
+are compared: since they are numbers, the comparison is much faster.
+
+If hashes match, it does not mean that strings match, as hashes have
+less degrees of freedom than strings: only in the case they match, an
+actual string comparison is performed.
+
+After the optimization (committed in ROOT), here is the relevant part
+of the self profile:
+
+```
+Flat profile (self >= 0.01%)
+
+% total       Self  Function
+   8.86       3.20  inflate [21]
+   8.68       3.14  inflate_table [31]
+   5.74       2.07  inflate_fast [42]
+   4.98       1.80  TList::FindObject(char const*) const [32]
+   3.01       1.09  __read_nocancel [64]
+   2.41       0.87  TH1::Merge(TCollection*) [30]
+...
+```
+
+The string comparison has completely disappeared, and now other
+functions take most of the time. In the above example, the `inflate`
+functions are used because ROOT files are compressed, and the calls to
+`FindObject()` have already been optimized.
+
+In a couple of hours we were able to:
+
+* profile an unknown code
+* understand where it spends the majority of its time
+* optimize the relevant part
+
 <!--
 
 brew install homebrew/dupes/gdb
