@@ -447,6 +447,85 @@ class MyClass : public TObject {
 > save** the pointer to file, considerably reducing the output size!
 
 
+### Strings
+
+A very very very bad habit found very frequently in analysis code is
+referencing objects via their name inside the `UserExec()` (or any
+other loop):
+
+```c++
+TH1I *h = list->FindObject("myHistoName");
+```
+
+The `FindObject()` function is very (very!) expensive, furthermore it
+always returns the same pointer for a certain object: it surely makes
+no sense to run it inside the `UserExec()`! Do this call **once**
+during the initialization and use the **cached** result in the event
+loop!
+
+Also, avoid passing "raw" strings as arguments to functions. Don't do:
+
+```c++
+void MyClass::myfunc(TString a) {
+  // ...
+}
+```
+
+Do instead:
+
+```c++
+void MyClass::myfunc(const TString &a) {
+  // ...
+}
+```
+
+Note that in both cases you invoke it with:
+
+```c++
+myfunc("this is a string");
+```
+
+which means that you can update your code without changing the way
+you call such functions.
+
+Moreover, it is a **bad idea** to use strings as triggering options on
+a method, like:
+
+```c++
+void MyClass::dosomething(const TString &what) {
+  if (what == "this") {
+    // ...
+  }
+  else if (what == "that") {
+    // ...
+  }
+  else if (what == "something else") {
+    // ...
+  }
+}
+```
+
+As we have seen, **string comparison is evil**. Use **enums** instead:
+
+```c++
+enum dowhat_t { THIS, THAT, SOMETHING_ELSE };
+
+void MyClass::dosomething(const dowhat_t what) {
+  if (what == THIS) {
+    // ...
+  }
+  else if (what == THAT) {
+    // ...
+  }
+  else if (what == SOMETHING_ELSE) {
+    // ...
+  }
+}
+```
+
+The code is as readable, but much more efficient.
+
+
 Where does my code crash?
 -------------------------
 
