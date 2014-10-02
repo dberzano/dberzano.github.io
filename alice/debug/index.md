@@ -390,14 +390,38 @@ at least **two constructors** in your code for clarity:
 Objects obtained from a file with statements like:
 
 ```c++
-TH1 *histo = (TH1F *)myFile->Get("myHist");
+TH1F *histo = (TH1F *)myFile->Get("myHist");
 ```
 
-**must be disposed by you**, so you **must** destroy them when done:
+are related to the corresponding `TFile`, and they are **destroyed**
+when the file is closed. So, **do not do that**:
 
 ```c++
+TFile *myFile = TFile::Open("myfile.root");
+TH1F *histo = (TH1F *)myFile->Get("myHist");
+delete myFile;
+histo->Draw();
+```
+
+This is because **TFile owns the pointer**. You can detach the
+histogram from the file:
+
+```c++
+TFile *myFile = TFile::Open("myfile.root");
+TH1F *histo = (TH1F *)myFile->Get("myHist");
+histo->SetDirectory(0);
+delete myFile;
+histo->Draw();
+```
+
+but in this case **you own the histogram** and **you must dispose of
+it**:
+
+```c++
+// when done...
 delete histo;
 ```
+
 
 ### Compiler warnings
 
