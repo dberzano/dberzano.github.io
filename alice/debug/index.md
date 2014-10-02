@@ -1110,7 +1110,7 @@ Current breakpoints can be listed. On lldb:
 ```console
 $> breakpoint list
 Current breakpoints:
-1: file = '/Users/volpe/Temp/macr/crash.cxx', line = 28, locations = 1, resolved = 1, hit count = 1
+1: file = '/tmp/crash.cxx', line = 28, locations = 1, resolved = 1, hit count = 1
   1.1: where = crash`func1() + 15 at crash.cxx:28, address = 0x0000000100000f9f, resolved, hit count = 1
 ```
 
@@ -1668,49 +1668,7 @@ where coloed blocks indentify graphically which are the functions
 where your program spends most of its time.
 
 <!--
-
-brew install homebrew/dupes/gdb
-
-* Prepare your code for debug
- * What are the "debug symbols"?
- * How to compile ROOT with debug symbols
- * How to compile AliRoot with debug symbols
- * How to compile your analysis with debug symbols
- * How to check if the code has debug symbols
-
-* Where does my code crash?
- * "printf/cout" technique: how to do it smartly
-  * The AliRoot way
-  * The generic way
- * Understand a backtrace and generate one manually
-  * The ROOT way
-  * gdb
-   * set a breakpoint
-   * print value of variable or expression
-   * print the backtrace
-
-* Valgrind
- * Obtain Valgrind: Linux and OS X
- * Memory tool and callgrind
- * Why Valgrind is so slow? (Hint: it is a "deterministic" tool.)
- * Run an analysis under Valgrind
-  * Analyze Valgrind output
-  * Take appropriate actions
- * When to use Valgrind (Hint: it is the "last resort".)
-
-* IgProf: the Ignominious Profiler
- * Obtain IgProf: Linux (not available under OS X)
- * Memory profiler and performance profiler
- * Why IgProf is so fast? (Hint: it is a "statistic" tool.)
- * Run an analysis under IgProf
-  * Analyze IgProf output
-  * Amend your code appropriately
-
-* ROOT's TObjectTable
- * What is it (Hint: counts every TObject instance)
- * Turn it on and off, check if it is on
- * Retrieve results (do it periodically to quickly check for leaks)
-
+* brew install homebrew/dupes/gdb
 * Problems loading libraries [skipped for now]
  * Find libraries needed by other libraries or executables (Linux and
    OS X: ldd, otool)
