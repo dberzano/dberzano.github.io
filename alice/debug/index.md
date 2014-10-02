@@ -354,9 +354,10 @@ the `TLorentzVector` has various `Set*()` methods that make it not
 necessary to destroy and recreate the object to set new coordinates.
 
 Also, **do not be too zealous when deleting**: in particular, do not
-delete objects that do not belong to you. Common example: do not
-delete the object if you get its pointer from a TFolder, as it should
-be removed by those who posted it.
+delete objects that do not belong to you.
+
+> Common example: do not delete the object if you get its pointer from
+> a `TDirectory` (like a `TFile`)!
 
 Choose the ROOT container carefully: even if a `TList` and a
 `TObjArray` are both collections capable of expanding, **lists are
