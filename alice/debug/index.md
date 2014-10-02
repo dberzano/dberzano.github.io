@@ -72,20 +72,14 @@ pointing directly fragments of functions to the corresponding lines in
 the source code.
 
 To compile with clang or gcc with debug symbols, you would use the
-`-g` switch: by default, this also turns off all optimizations, *i.e.*
-it implicitly enables `-O0`.
-
-It is still however possible to enable optimizations with `-g`, but it
-is not recommended at all. The safest way to compile code ready for
-debugging is:
+`-g` switch: there is no guarantee that optimizations are also turned
+off, so you'd better specify also `-O0`:
 
 ```bash
 gcc -O0 -g ...
 ```
 
 The same flags are used for `clang`.
-
-When seeing a backtrace
 
 
 ### Compiling your ALICE code for debug
@@ -114,7 +108,7 @@ make
 
 By default, if you follow
 [the instructions](../install-aliroot/manual/#configure_and_build_aliroot),
-AliRoot is built in debug mode.
+AliRoot is built with debug symbols, but with optimization turned on.
 
 For building AliRoot for production (`-O3` optimization and no debug
 symbols, like on the Grid):
@@ -131,6 +125,8 @@ default):
 cmake -DCMAKE_BUILD_TYPE=Debug \
   # other cmake options
 ```
+
+This implies building with `-g -O0`.
 
 AliRoot needs to be recompiled (via `make`) after changing the build
 type.
