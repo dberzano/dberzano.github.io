@@ -771,27 +771,73 @@ aliroot -q load.C
 
 and see what happens if you *uncomment* the `LOG_NO_INFO` definition.
 
-Note that in the above example we have used `AliInfoF()` instead of
-`AliInfo()`. All the debug functions have a `F` version (for
-*formatting*. They accept a format string just like `printf` (for
-instance, `%s` for strings or `%d` for signed integers) and a variable
-number of arguments.
+Please note that in the example above we have used a function called
+`AliInfoF()` (and not `AliInfo()`): this is not a typo.
 
-The following functions produce the same output:
+Each one of the aforementioned log functions has a `*F` version (where
+"F" is for "formatting"), accepting the same arguments of `printf`
+(for instance, `%s` for strings or `%d` for signed integers).
+The following two calls produce the same output:
 
 ```c++
 AliInfoF("I am %s", "legend");
 AliInfo( Form("I am %s", "legend") );
 ```
 
-but this does not mean that they are equivalent. For the usual
-optimization reasons, a call to the second function with `LOG_NO_INFO`
-defined would produce indeed *no output* and the code for printout
-would not be generated, but the `Form()` snippet would run in any
-case.
+but they do different things. The `AliInfoF()` function roughly
+translates to:
 
-The `AliInfoF()` version instead does not even execute `Form()` if
-the `LOG_NO_INFO` variable is defined.
+```c++
+// AliInfoF(message, ...)
+{
+  TString formattedMessage;
+  formattedMessage.Form(message, ...);
+  AliInfo( formattedMessage );
+}
+```
+
+which allocates a `TString` object used as a buffer for formatting the
+string. The `Form()` call, instead, uses a preallocated common
+circular buffer of a certain, uncontrollable size: so, `AliInfoF()` is
+**safer** if you have to format very very long strings and you fear
+you might overwrite the buffer or get your part of the buffer
+overwritten by something else.
+
+> In single core programs, no one overwrites your buffer before you
+> print it out: you might have problems with **multithreading**.
+
+In general, **using the full `AliInfo(Form())` is better** as it does
+not create and destroy an object, which is costly. If you do not want
+to use the circular buffer but also don't want to create a buffer for
+each call, you can also allocate your own buffer once and reuse it:
+
+```c++
+TString myBuffer;
+AliInfo( myBuffer.Form("the string %d", 1) );
+AliInfo( myBuffer.Form("the string %d", 2) );
+AliInfo( myBuffer.Form("the string %d", 3) );
+```
+
+Please also note that the `LOG_NO_INFO` define has the effect of
+suppressing also the code generation for whatever the argument of
+`AliInfo()` is. So, if you have:
+
+```c++
+#define LOG_NO_INFO
+#include "AliLog.h"
+// ...
+AliInfo( Form("something %s, something %s", "borrowed", "blue") );
+```
+
+the `Form()` code will not be generated.
+
+As a general rule:
+
+* use `AliInfo( Form() )`
+* revert to a shared buffer, or `AliInfoF()` if you get garbled output
+
+> Choose `AliInfo()` or `AliInfoF()` according to your needs, but be
+> aware of what they do under the hood!
 
 
 ### Using a debugger
