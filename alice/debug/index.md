@@ -1604,7 +1604,7 @@ valgrind \
   --suppressions=$ROOTSYS/etc/valgrind-root.supp \
   --leak-check=no \
   --num-callers=40 \
-  --log-file=/tmp/valgrind_memcheck.log \
+  --log-file=/tmp/valgrind_memory.log \
   aliroot -b -q launchMyAnalysis.C+
 ```
 
@@ -1631,6 +1631,41 @@ An example of the interactive output produced by massif-visualizer is
 presented:
 
 ![massif-visualizer](massif-visualizer.png)
+
+
+### Performance profiler
+
+Valgrind has a performance profiler called
+[callgrind](http://valgrind.org/docs/manual/cl-manual.html). Its
+purpose, like IgProf, is to analyze how much time is spent in each
+function. As we have already discussed, being a deterministic tool
+every single function of your program is trapped and captured, which
+makes the tool very precise, but also very slow.
+
+Callgrind's output can be analyzed by means of the KCachegrind program
+that can be installed on Ubuntu 14.04 with:
+
+```bash
+sudo aptitude install kcachegrind
+```
+
+The typical way of invoking Valgrind's callgrind for AliRoot programs
+is:
+
+```bash
+valgrind
+  --tool=callgrind \
+  --log-file=/tmp/valgrind_callgrind.log \
+  aliroot -b -q launchMyAnalysis.C+
+```
+
+The produced output can be browsed interactively by means of
+KCachegrind. An output similar to the following is presented:
+
+![KCachegrind](kcachegrind.jpg)
+
+where coloed blocks indentify graphically which are the functions
+where your program spends most of its time.
 
 <!--
 
