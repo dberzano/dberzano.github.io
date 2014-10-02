@@ -1531,6 +1531,106 @@ the considerations on interpreting and optimizing are valid for both
 tools.
 
 
+Valgrind
+--------
+
+[Valgrind](http://valgrind.org/) is a complex and robust tool to
+perform code analysis and profiling.
+
+Valgrind is composed of many *tools*, each one of them performing a
+different task. The two tools we are interested in are:
+
+* **memcheck**: the memory checker
+* **callgrind**: a performance profiler
+
+Installing Valgrind on Ubuntu is easy:
+
+```bash
+aptitude install valgrind
+```
+
+On OS X it is easy as well. With Homebrew:
+
+```bash
+brew install valgrind
+```
+
+### Memory check
+
+Memory checks with Valgrind are useful to find the following memory
+problems:
+
+* invalid memory reads
+* invalid memory writes
+* potential memory leaks
+
+Valgrind will indicate the potential problems in the logfile it
+produces. Since it can be hard to understand the logfile, there are
+also graphical tools showing:
+
+* memory trends (with respect to running time): useful to see when and
+  how the memory grows
+* allocation peaks: useful to see which are the parts of your code
+  making the most memory allocations
+
+We recommend using the massif-visualizer tool. On Ubuntu 14.04, it can
+be installed by going to
+[this page](https://launchpad.net/ubuntu/trusty/+package/massif-visualizer)
+and selecting under "Published versions" the version corresponding to
+your architecture (*e.g.* the one ending with `amd64` for a 64 bit
+machine): on the page that opens, download the .deb file.
+
+For convenience, here is a direct link to the 64 bit version:
+
+» [massif-visualizer 0.3 for Ubuntu 14.04](http://launchpadlibrarian.net/119729130/massif-visualizer_0.3-0ubuntu2_amd64.deb)
+
+Install the .deb package by running:
+
+```bash
+sudo gdebi massif-visualizer_0.3-0ubuntu2_amd64.deb
+```
+
+Or you can just open the package through the graphical interface and
+follow the instructions to install it.
+
+Run your program under Valgrind's memory check. The following command
+is suitable for AliRoot (see `man valgrind` for more details):
+
+```bash
+valgrind \
+  --tool=memcheck \
+  --error-limit=no \
+  --max-stackframe=3060888 \
+  --suppressions=$ROOTSYS/etc/valgrind-root.supp \
+  --leak-check=no \
+  --num-callers=40 \
+  --log-file=/tmp/valgrind_memcheck.log \
+  aliroot -b -q launchMyAnalysis.C+
+```
+
+A couple of notes.
+
+* The `--suppressions` switch is used to tell Valgrind which alleged
+  memory problems to ignore. The file we pass to it is the ROOT
+  suppressions file, and greatly simplifies the produced output by
+  reducing false positives.
+* The `--leak-check=no` makes the execution much faster, but it does
+  not check for memory leaks. Use `--leak-check=full` for a deeper
+  inspection, but expect a longer running time.
+
+> Valgrind traps all memory operations through an internal "virtual
+> machine": this is why it can be up to 40 times slow. Run your
+> program under Valgrind on a very small dataset!
+
+To produce data readable with the massif-visualizer, use
+`--tool=massif`, which invokes the
+[massif heap analyzer](http://valgrind.org/docs/manual/ms-manual.html)
+instead of memcheck.
+
+An example of the interactive output produced by massif-visualizer is
+presented:
+
+![massif-visualizer](massif-visualizer.png)
 
 <!--
 
