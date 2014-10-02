@@ -316,17 +316,16 @@ ever create and destroy an object per loop (for instance inside the
 A **bad example** with objects constructed per loop:
 
 ```c++
-for(ip=0; ip<np; ip++) {
-  for (in=0; in<nn; in++){
-    TLorentzVector pos( f(ip) );
-    TLorentzVector neg( f(in) );
-    TLorentzVector comb = pos + neg;
-    neg.Boost( -comb.GetBoostVector() );
+for (x=0; x<100; x++) {
+  for (y=0; y<100; y++) {
+    TLorentzVector vec1( x, y, 0, 0);
+    TLorentzVector vec2(-x, y, 0, 0);
+    TLorentzVector res = vec1 + vec2;
+    vec1.Boost( -res.GetBoostVector() );
     // ...
   }
 }
 ```
-<!-- -->
 
 Even if `new` and `delete` are not used there (objects are on the
 stack), the `TLorentzVectors` have their constructor and destructor
@@ -335,21 +334,20 @@ invoked **per loop!**
 The amended code:
 
 ```c++
-TLorentzVector pos;
-TLorentzVector neg;
-TLOrentzVector comb;
+TLorentzVector vec1;
+TLorentzVector vec2;
+TLorentzVector res;
 
-for(ip=0; ip<np; ip++) {
-  for (in=0; in<nn; in++){
-    pos.SetVect( f(ip) );
-    neg.SetVect( f(in) );
-    TLorentzVector comb = pos + neg;
-    neg.Boost( -comb.GetBoostVector() );
+for (x=0; x<100; x++) {
+  for (y=0; y<100; y++) {
+    vec1.SetXYZT( x, y, 0, 0);
+    vec2.SetXYZT(-x, y, 0, 0);
+    res = vec1 + vec2;
+    vec1.Boost( -res.GetBoostVector() );
     // ...
   }
 }
 ```
-<!-- -->
 
 [As you can see](http://root.cern.ch/root/html/TLorentzVector.html),
 the `TLorentzVector` has various `Set*()` methods that make it not
