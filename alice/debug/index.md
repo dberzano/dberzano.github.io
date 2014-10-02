@@ -59,6 +59,10 @@ When debugging code, you want the binaries to match as much as
 possible the readable code: this is one of the reasons why
 optimization must be turned off in such a case.
 
+> Increasing the optimization does not necessarily lead to more
+> efficient code! "Extreme" optimizations (like `-O4`) are not
+> recommended and can really lead to unexpected results.
+
 
 ### Symbols and debug symbols
 
@@ -157,7 +161,7 @@ line numbers in stacktraces as we will see later).
 > sending your code to production!
 
 
-#### Check if you have compiled with debug symbols (Linux)
+#### Got Debug Symbols? (Linux only)
 
 To check if your code has been compiled with debug symbols, on Linux
 you can do:
@@ -974,13 +978,13 @@ int main(int argn, char *argv[]) {
 Name it `crash.cxx` and compile it **with debug symbols**. On Linux:
 
 ```bash
-g++ -g -o crash crash.cxx
+g++ -g -O0 -o crash crash.cxx
 ```
 
 On OS X:
 
 ```bash
-g++ -g -o crash crash.cxx
+clang++ -g -O0 -o crash crash.cxx
 ```
 
 This code contains an array of floats, allocated "on the stack"
