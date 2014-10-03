@@ -877,83 +877,27 @@ aptitude update
 aptitude install gdb
 ```
 
-On OS X, the default debugger is the
-[LLVM debugger (lldb)](http://lldb.llvm.org/).
 
+#### gdb and OS X
 
-#### Installing gdb on OS X
+Since some time, OS X moved to LLVM. In general, code compiled with
+LLVM compilers cannot be debugged easily with gdb, although it is
+claimed now and then to be compatible.
+
+LLVM comes with a new debugger called [lldb](http://lldb.llvm.org/):
+for the basic operations, lldb's commands and its way of funcitoning
+are very similar, if not identical in some cases, to gdb.
+
+The debugging example that follows contains examples and references to
+both gdb and lldb, and enough information on how to use the latter if
+you come from gdb.
+
+Just for reference,
+[here's how to install gdb on OS X](http://ntraft.com/installing-gdb-on-os-x-mavericks/)
+properly.
 
 > It is recommended you get accustomed with lldb if you use a Mac,
-> unless you need to use some gdb features not available in lldb.
-
-Obtaining OS X is easy with Homebrew:
-
-```bash
-brew install gdb
-```
-
-At the end of the installation, here is the message printed by `brew`:
-
-```
-==> Caveats
-gdb requires special privileges to access Mach ports.
-You will need to codesign the binary. For instructions, see:
-
-  http://sourceware.org/gdb/wiki/BuildingOnDarwin
-```
-
-This means in practice that for security reasons gdb will not be able
-to inspect other programs until we "codesign" it manually using a
-custom created certificate.
-
-This can be done by following
-[some instructions](http://ntraft.com/installing-gdb-on-os-x-mavericks/):
-the steps are summarized below.
-
-First, you need to create a certificate using the OS X Keychain
-application. Open it, then select from the menu **Keychain Access >
-Certificate Assistant > Create a Certificate**.
-
-The certificate wizard will open. Create a certificate using the
-following information:
-
-* **Name:** gdb-cert *(or any name you want)*
-* **Identity type:** self-signed root
-* **Certificate type:** code signing
-
-Also check the checkbox for overriding the default options.
-
-Here are the options to override:
-
-* extend the certificate validity to **10 years (3650 days)** or
-  another long time at will;
-* save the certificate in the **System** keychain **and not** in the
-  login one.
-
-After the certificate has been generated, select the System keychain
-and double click on our certificate entry: expand the
-**Authorization** triangle and mark the certificate as **always
-trusted**.
-
-Now, before codesigning gdb, open a terminal window. You must kill
-[taskgated](https://developer.apple.com/library/mac/documentation/Darwin/Reference/Manpages/man8/taskgated.8.html)
-as root:
-
-```bash
-sudo kill -15 $( ps -e -o pid,command | grep taskgated | grep -v grep | awk '{print $1}' )
-```
-
-You can finally codesign gdb using the certficate you created:
-
-```bash
-codesign --force --sign gdb-cert /usr/local/bin/gdb
-```
-
-Type your username and password whenever requested, and always allow
-gdb to access the Keychain if prompted.
-
-> gdb on OS X can run as root without needing a certificate, but it is
-> not recommended to do that.
+> and refrain from using gdb, as it lacks official support.
 
 
 #### Test case: a program that crashes
