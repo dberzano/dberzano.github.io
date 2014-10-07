@@ -646,20 +646,29 @@ git-new-workdir "$ALICE_PREFIX"/aliroot/git "$ALICE_ROOT" "$ALICE_VER"
 
 As for ROOT, the old SVN *trunk* is now called the *master* branch.
 
-The clone URL will not work if you need to **push (*i.e.*, publish)
-your commits**: if you need to do it, execute:
+**Please note** that AliRoot's Git repository has **two different
+URLs**: pick one of them depending whether you have push rights
+(*i.e.* you are allowed to publish your commits) or not.
 
-```bash
-cd "$ALICE_ROOT"
-git remote set-url origin https://git.cern.ch/reps/AliRoot
-```
+Here are the URLs:
+
+* Use this if **you can push:** `https://git.cern.ch/reps/AliRoot`
+* Use this if **you cannot push:** `http://git.cern.ch/pub/AliRoot`
+
+> You can change the URL without re-cloning. Do:
+>
+> ```bash
+> cd "$ALICE_ROOT"
+> git remote set-url origin <appropriate_url>
+> ```
+>
+> and watch out for `http` vs. `https`.
 
 All the repositories created using `git-new-workdir` will
 automatically use the new URL as the remote repository's URL.
 
-> Use this method only if you have access rights: you will be asked
-> for your CERN username and password for doing every operation.
-
+> The cloning command above uses the **public URL**: do not run the
+> `git remote set-url` command if you do not have push rights!
 
 
 #### Configure and build AliRoot
@@ -718,28 +727,3 @@ This is needed because header files are now copied inside
 inside `$ALICE_ROOT/include`.
 
 When you are finished you can finally start using AliRoot.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
