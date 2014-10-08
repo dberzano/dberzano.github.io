@@ -434,8 +434,8 @@ originating `TFile` if you want to keep the object while closing the
 file.
 
 > This does not apply for objects that are neither histograms nor
-> trees: in that case **you** are responsible of disposing of the
-> object.
+> trees: in that case (*e.g* a `TList` or a `TGraph`) **you** are
+> responsible of disposing of the object.
 
 
 ### Compiler warnings
