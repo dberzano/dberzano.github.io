@@ -386,7 +386,7 @@ at least **two constructors** in your code for clarity:
   the actual stuff and should be used by the programmer when creating
   a new object.
 
-Objects obtained from a file with statements like:
+Histograms or trees obtained from a file with statements like:
 
 ```c++
 TH1F *histo = (TH1F *)myFile->Get("myHist");
@@ -420,6 +420,22 @@ it**:
 // when done...
 delete histo;
 ```
+
+Please note that there are in particular **two objects** that are
+automatically associated to a `TFile`, mostly for performance reasons:
+
+* Histograms (*i.e.* all objects inheriting from `TH1`)
+* Trees (*i.e.* all objects inheriting from `TTree`, including the
+  `TNtuple`)
+
+For those categories of objects, the corresponding `TFile` owns the
+object. You must always **disassociate** the object from the
+originating `TFile` if you want to keep the object while closing the
+file.
+
+> This does not apply for objects that are neither histograms nor
+> trees: in that case **you** are responsible of disposing of the
+> object.
 
 
 ### Compiler warnings
