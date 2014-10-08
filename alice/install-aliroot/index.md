@@ -7,17 +7,6 @@ createtoc: false
 ---
 
 
-<!--
-Use AliRoot without compiling it
---------------------------------
-
-All the available Grid AliRoot versions (and correct dependencies)
-will be automatically available when using them from a
-[CernVM Virtual Machine](http://cernvm.cern.ch/).
-
-* [Use AliRoot from CernVM](cernvm)
--->
-
 Compile AliRoot from source
 ---------------------------
 
@@ -39,8 +28,7 @@ Two installation options are possible:
 * [Manual installation](manual)
 
 
-Compatibility grid
-------------------
+### Compatibility grid
 
 Some components of the ALICE framework might have compatibility
 problems with certain operating systems: the following grid
@@ -53,7 +41,7 @@ of the component compatible with each operating system.
 | **OS X**   | ≥ 5.34.18 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
 
 
-### Notes
+#### Notes
 
 <sup>†</sup> On OS X you need to patch FastJet 2 before compiling it: the
 [manual](manual) installation procedure explains you how. The
@@ -62,3 +50,12 @@ of the component compatible with each operating system.
 See the
 [release notes of FastJet](http://fastjet.fr/all-releases.html) for
 more detailed explanations.
+
+
+Use AliRoot without compiling it
+--------------------------------
+
+If you want you can use the same AliRoot versions available on the
+Grid without compiling them by means of cvmfs.
+
+* [Use AliRoot from cvmfs](cvmfs)
