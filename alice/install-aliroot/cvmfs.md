@@ -166,3 +166,53 @@ $> which aliroot
 > Do not be scared if it takes time to list AliRoot versions or to
 > open AliRoot: software is transparently downloaded the first time,
 > but then it is **cached locally** for faster access.
+
+To "unload" the current environment, just exit the shell:
+
+```bash
+exit
+```
+
+
+### Load an AliRoot version inside a shell script
+
+If you are not using AliRoot interactively, but you are instead using
+it from a script, you cannot "enter" the AliRoot environment by
+opening a new shell: you need to load the appropriate environment
+inside the *current* shell.
+
+This is how you do that:
+
+```bash
+eval `alienv printenv VO_ALICE@AliRoot::vAN-20141006`
+```
+
+Please note that those quotes are **backticks** and not ordinary
+single quotes!
+
+> **Do not do that if you are using AliRoot interactively!** Use
+> the "enter" command instead!
+
+For instance, inside a script:
+
+```bash
+#!/bin/bash
+export AliRootVersion=vAN-20141006
+export OutDir=/tmp/aliroot-outdir
+mkdir -p "$OutDir"
+cd "$OutDir" || exit 1
+
+# this is the relevant line loading the environment: mind the backticks!
+eval `alienv printenv VO_ALICE@AliRoot::$AliRootVersion`
+
+# check if env has been loaded properly (maybe you picked a wrong AliRoot version?)
+which aliroot || exit 1
+
+cat > MyMacro.C <<EOF
+void MyMacro() {
+  // do something
+}
+EOF
+
+exec aliroot -b -q MyMacro.C++g
+```
