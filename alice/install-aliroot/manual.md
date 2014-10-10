@@ -40,9 +40,6 @@ more efficient as other users might benefit from a single reply.
 > ```bash
 > bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
 > ```
->
-> Note that you **must** run this command from the same directory
-> containing the `alice-env.sh` script in use.
 
 
 Prepare your environment
