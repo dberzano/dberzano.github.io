@@ -883,6 +883,38 @@ As a general rule:
 > aware of what they do under the hood!
 
 
+#### Choosing a "debug level"
+
+AliLog allows you to set the "importance" of your debug message, which
+is called the **debug level**: depending on the settings, you can
+decide to only print important messages, *i.e.* messages with a debug
+level equal or greater than whatever you decide.
+
+Debug messages are printed using `AliDebug()`, and the corresponding
+`AliDebugF()` function for printf-formatted messages. Syntax:
+
+```c++
+AliDebug(level, message);
+AliDebugF(level, formatstring, [arg1[, arg2...]]);
+```
+
+`level` is a positive integer setting the debug level: **greater means
+"more important"**.
+
+The **global debug level** is used to decide which messages to print.
+Use:
+
+```c++
+AliLog::SetGlobalDebugLevel(level);
+```
+
+Only messages with a level greater than or equal to `level` will be
+printed out.
+
+The `SetGlobalDebugLevel` function is a *static* function, so you
+should literally use it prefixed by `AliLog::`.
+
+
 ### Using a debugger
 
 [gdb](http://www.gnu.org/software/gdb/) is the GNU debugger. To
