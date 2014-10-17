@@ -210,7 +210,6 @@ gpgcheck=0
 system:
 
 ```bash
-
 yum -y distro-sync
 yum -y upgrade
 ```
@@ -546,3 +545,17 @@ Notes:
 * The `-c` option makes smaller images ("compress").
 * Our convention is incrementing the build number `<N>` by 1 every
   time we release a new image version.
+
+
+### Upgrading an existing image
+
+Boot the existing image from VMWare: since we have created snapshots
+we can always revert if something went wrong.
+
+Log in and repeat the [upgrade procedure](#upgrade_your_system).
+
+If kernel version changed, reboot the VM, log in again and
+[reinstall support for growing root partition](#automatically_growing_root_partition).
+
+Then [clean everything up](#clean_up_before_shutting_down) and halt:
+the upgraded image is ready to be converted and distributed.
