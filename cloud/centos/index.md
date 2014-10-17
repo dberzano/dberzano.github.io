@@ -529,6 +529,15 @@ qemu-img convert \
   CentOS65-x86_64-build<N>-compat0.10.qcow2
 ```
 
+To sign with GPG:
+
+```bash
+gpg --detach-sign CentOS65-x86_64-build<N>-compat0.10.qcow2
+```
+
+A binary file named `CentOS65-x86_64-build<N>-compat0.10.qcow2.sig`
+will be created and must be distributed along with the image.
+
 Notes:
 
 * We use **qcow2 v0.10** (instead of the latest) for **compatibility**
