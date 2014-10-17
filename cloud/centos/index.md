@@ -150,6 +150,13 @@ PERSISTENT_DHCLIENT=1
 EoF
 ```
 
+To avoid problems with EC2 metadata servers, add the following line
+to **/etc/sysconfig/network**:
+
+```bash
+NOZERCONF=yes
+```
+
 Restart networking to test:
 
 ```bash
