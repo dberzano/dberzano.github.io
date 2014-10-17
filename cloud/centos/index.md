@@ -432,3 +432,108 @@ rm -rf \
 
 **Note:** it is recommended to create under the root user a script
 with the above content, to re-run every time you upgrade the image.
+
+At this point you can shut down:
+
+```bash
+halt
+```
+
+> If you boot the image by accident, you have to **clean it up again**
+> before saving it!
+
+
+### Converting the image to qcow2
+
+Take a VMWare snapshot just in case: we will restart from there in
+case of problems.
+
+VMWare saves everything under *bundles*, seen as normal directories
+if using a terminal:
+
+```bash
+cd '/Users/myuser/Virtual Machines/CentOS, 64 bit.vmwarevm'
+```
+
+Disks have extension `.vmdk`. Every disk is split in several files:
+moreover, a set of split files exists per snapshot.
+
+So, for instance:
+
+```
+$> ls -l *.vmdk
+Disk-000001-s001.vmdk
+Disk-000001-s002.vmdk
+Disk-000001-s003.vmdk
+Disk-000001-s004.vmdk
+Disk-000001-s005.vmdk
+Disk-000001-s006.vmdk
+Disk-000001-s007.vmdk
+Disk-000001-s008.vmdk
+Disk-000001-s009.vmdk
+Disk-000001-s010.vmdk
+Disk-000001-s011.vmdk
+Disk-000001.vmdk
+Disk-000002-s001.vmdk
+Disk-000002-s002.vmdk
+Disk-000002-s003.vmdk
+Disk-000002-s004.vmdk
+Disk-000002-s005.vmdk
+Disk-000002-s006.vmdk
+Disk-000002-s007.vmdk
+Disk-000002-s008.vmdk
+Disk-000002-s009.vmdk
+Disk-000002-s010.vmdk
+Disk-000002-s011.vmdk
+Disk-000002.vmdk
+Disk-s001.vmdk
+Disk-s002.vmdk
+Disk-s003.vmdk
+Disk-s004.vmdk
+Disk-s005.vmdk
+Disk-s006.vmdk
+Disk-s007.vmdk
+Disk-s008.vmdk
+Disk-s009.vmdk
+Disk-s010.vmdk
+Disk-s011.vmdk
+Disk.vmdk
+```
+
+means that we have three disk sets:
+
+* `Disk.vmdk` (and `Disk-s??.vmdk`) is the current working copy
+* `Disk-000001.vmdk` (and `Disk-000001-s??.vmdk`) is the oldest
+  snapshot
+* `Disk-000002.vmdk` (and `Disk-000002-s??.vmdk`) is the most recent
+  snapshot
+
+Since we have just taken a snapshot, we are interested in converting
+the following disk: `Disk-000002.vmdk`.
+
+We must have `qemu-img` installed on OS X. To install it (with
+[Homebrew](http://brew.sh/)):
+
+```bash
+brew install qemu
+```
+
+To convert:
+
+```bash
+qemu-img convert \
+  -O qcow2 \
+  -c \
+  -o compat=0.10 \
+  'Disk-000002.vmdk' \
+  CentOS65-x86_64-build<N>-compat0.10.qcow2
+```
+
+Notes:
+
+* We use **qcow2 v0.10** (instead of the latest) for **compatibility**
+  with the qemu version running on CentOS 6 hypervisors: you might not
+  need it.
+* The `-c` option makes smaller images ("compress").
+* Our convention is incrementing the build number `<N>` by 1 every
+  time we release a new image version.
