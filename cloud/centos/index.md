@@ -30,6 +30,7 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
   (unconfigured and disabled by default)
 * **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.2**
   (unconfigured and disabled by default)
+* **EPEL 6.8**
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
 > can be disabled during contextualization as explained below.
@@ -125,3 +126,206 @@ At the end of the installation the VM reboots.
 
 > With VMWare the VM may appear stuck after rebooting. This is a known
 > bug: **pause and unpause** the VM to unfreeze the screen.
+
+
+### Image customization
+
+After booting the image we can customize it.
+
+
+#### Network interface
+
+Remove any reference of MAC addresses from the network configuration,
+enable DHCP, disable NetworkManager and make the DHCP client retry
+forever if no address is assigned. Do all of this by running:
+
+```bash
+cat > /etc/sysconfig/network-scripts/ifcfg-eth0 <<\EoF
+TYPE=Ethernet
+DEVICE=eth0
+ONBOOT=yes
+BOOTPROTO=dhcp
+NM_CONTROLLED=no
+PERSISTENT_DHCLIENT=1
+EoF
+```
+
+Restart networking to test:
+
+```bash
+service network restart
+```
+
+
+#### Install extra repositories
+
+[EPEL](https://fedoraproject.org/wiki/EPEL/): get the latest RPM from
+[here](http://mirror.switch.ch/ftp/mirror/epel/6/i386/repoview/epel-release.html)
+and install it to enable the repository.
+
+For instance, for EPEL version 6.8:
+
+```bash
+yum install -y http://mirror.switch.ch/ftp/mirror/epel/6/i386/epel-release-6-8.noarch.rpm
+```
+
+Also install extra repositories for
+[HTCondor](http://research.cs.wisc.edu/htcondor/) and
+[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs).
+
+For HTCondor create **/etc/yum.repos.d/htcondor.repo**:
+
+```ini
+[htcondor]
+name=HTCondor Stable RPM Repository for Redhat Enterprise Linux 6
+baseurl=http://research.cs.wisc.edu/htcondor/yum/stable/rhel$releasever
+enabled=1
+gpgcheck=0
+```
+
+For CernVM-FS create **/etc/yum.repos.d/cvmfs.repo**:
+
+```ini
+[cvmfs]
+name=CernVM-FS Stable
+baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/$releasever/$basearch
+enabled=1
+gpgcheck=0
+```
+
+> We are using the "stable" repositories for both HTCondor and
+> CernVM-FS.
+
+
+#### Upgrade your system
+
+**Before you install any extra package**, immediately upgrade the
+system:
+
+```bash
+
+yum -y distro-sync
+yum -y upgrade
+```
+
+Reboot when finished (not needed if kernel did not change):
+
+```bash
+reboot
+```
+
+#### Extra packages
+
+Install some base extra packages:
+
+```bash
+yum install -y cloud-utils cloud-init parted git vim-enhanced
+```
+
+Install the following packages required by ALICE (*i.e.* without them,
+ALICE software will **not** run): this is the
+[minimal list](http://alien2.cern.ch/index.php?option=com_content&view=article&id=134:cvmfs&catid=7&Itemid=140):
+
+```bash
+yum install gcc gcc-c++ gcc-gfortran libXpm compat-libgfortran-41 redhat-lsb-core tcl compat-libtermcap
+```
+
+If you want to play safe, install a WLCG metapackage with all required
+stuff for all LHC experiments:
+
+```bash
+yum install -y http://linuxsoft.cern.ch/wlcg/sl6/x86_64/HEP_OSlibs_SL6-1.0.16-0.el6.x86_64.rpm
+```
+
+This is a superset of the minimal list provided above. The CentOS
+image ready to download has such metapackages installed.
+
+> **Beware:** this metapackage **increases the image size of ~50%!**
+
+Install HTCondor and CernVM-FS:
+
+```bash
+yum install -y condor cvmfs
+```
+
+Disable them (we can enable them if we need them during
+contextualization):
+
+```
+chkconfig condor off
+chkconfig autofs off
+```
+
+**Note:** we disable autofs to disable CernVM-FS automounting.
+
+Check if they are disabled:
+
+```console
+$> chkconfig | grep -E 'condor|autofs'
+autofs              0:off     1:off     2:off     3:off     4:off     5:off     6:off
+condor              0:off     1:off     2:off     3:off     4:off     5:off     6:off
+```
+
+#### Automatically growing root partition
+
+If running the virtual machine from a virtual disk stored on a block
+device and not on a file (such as a LVM logical volume), we want the
+virtual disk to grow up to the maximum disk space.
+
+Although several modules for resizing partitions exist for cloud-init,
+the only way to resize the root partition without rebooting is by
+doing it before the root filesystem is mounted, *i.e.* from the
+"initial ramdisk".
+
+[Smart people](https://github.com/flegmatik/)
+have written
+[the machinery to do that](https://github.com/flegmatik/linux-rootfs-resize.git).
+
+Here is how we enable our initrd to grow:
+
+```bash
+cd /tmp
+git clone https://github.com/flegmatik/linux-rootfs-resize.git
+cd linux-rootfs-resize
+./install
+```
+
+**Note:** we are downloading the HEAD of the Git master by default. In
+case of problems, the latest tested hash that has proven to
+work with our custom virtual machine is
+[08f06bf5d9](https://github.com/flegmatik/linux-rootfs-resize/tree/08f06bf5d90bba5d655bf860786b5b58a790ef07).
+
+
+#### cloud-init configuration
+
+Let's edit **/etc/cloud/cloud.cfg** and make sure the following
+modules, datasources, etc. are present (just **add** them to the
+relevant sections, **do not** replace the file with this one):
+
+```yaml
+disable_root: 1
+ssh_pwauth:   0
+
+datasource_list: [ 'Ec2', 'OpenNebula' ]
+
+datasource:
+  # case-sensitive!
+  Ec2:
+    max_wait: 20
+    timeout: 20
+
+cloud_config_modules:
+ - mounts
+ - yum_add_repo
+ - package_update_upgrade_install
+
+system_info:
+  default_user:
+    sudo: ALL=(ALL) NOPASSWD:ALL
+```
+
+We have enabled modules for mounting filesystems, adding repositories
+and installing/upgrading packages.
+
+Moreover, the default user "cloud-user" will have `sudo` permissions
+without password.
