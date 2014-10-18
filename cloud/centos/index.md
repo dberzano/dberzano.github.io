@@ -30,11 +30,12 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
   (unconfigured and disabled by default)
 * **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.2**
   (unconfigured and disabled by default)
-* **EPEL 6.8**
+* **[EPEL](https://fedoraproject.org/wiki/EPEL/) 6.8**
 * **SELinux enabled** (it can be disabled at context time)
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
-> can be disabled during contextualization as explained below.
+> can be disabled during contextualization as explained
+> [below](#disable_root_login).
 
 
 ### Verify image
