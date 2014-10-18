@@ -23,7 +23,7 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
 * **Single root partition** (no swap) that **automatically grows** to
   the full backing block device where applicable (*e.g.* virtual
   machines on LVM logical volumes)
-* **[cloud-init](http://cloudinit.readthedocs.org/en/latest/) v0.7.4**
+* **[cloud-init](http://cloudinit.readthedocs.org/) v0.7.4**
   (configured with support for EC2 metadata server, packages
   installation, Yum repository addition, mount points manipulation)
 * **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.19**
@@ -31,6 +31,7 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
 * **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.2**
   (unconfigured and disabled by default)
 * **EPEL 6.8**
+* **SELinux enabled** (it can be disabled at context time)
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
 > can be disabled during contextualization as explained below.
@@ -55,6 +56,121 @@ gpg: Good signature from "Dario Berzano <FullEmailHere>"
 double-click the signature file from the Finder to verify it.
 
 > Do not use the image if signature verification fails!
+
+
+Contextualize the image
+-----------------------
+
+This image supports **[cloud-init](http://cloudinit.readthedocs.org/)
+v0.7.4**: check **/etc/cloud/cloud.cfg** to see in more detail what
+modules and datasources are enabled by default.
+
+In the following sections, sample cloud-init contextualizations are
+provided: they are text files that should be provided as
+[user-data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).
+
+
+### Disable root login
+
+Account for user **root** is enabled by default with a very weak
+password: a minimal cloud-init configuration file that only disables
+the root account is provided.
+
+```yaml
+#cloud-config
+
+users:
+ - default
+
+bootcmd:
+ - passwd --lock root
+```
+
+With this configuration:
+
+* SSH login will be possible as user **cloud-user** with the SSH key
+  provided via the cloud interface
+* User **cloud-user** can escalate to root without password via `sudo`
+* The **root** user will not be able to login with a password: the
+  only way to become root is via the **cloud-user**
+
+
+### Create swap space
+
+This image comes without a swap partition. If running it backed by a
+block device, or you have converted it from qcow2 to raw, we can
+create a big file on the root filesystem to use as swap.
+
+Note that using files for swap
+[is as efficient as using partitions](http://serverfault.com/questions/25653/swap-partition-vs-file-for-performance),
+as long as:
+
+* files are not sparse
+* the backing VM image is not qcow2
+
+With that in mind, we can use the following cloud-init user-data for
+instance when instantiating the VM backed by LVM logical volumes.
+
+```yaml
+#cloud-config
+
+bootcmd:
+ - |
+    SWAP_PER_CORE_KB=3000000
+    SWAP_FILE=/swap
+    SWAP_SIZE_KB=$(( $(grep -c bogomips /proc/cpuinfo) * SWAP_PER_CORE_KB ))
+    if [[ ! -e "$SWAP_FILE" ]] ; then
+      fallocate -l ${SWAP_SIZE_KB}000 "$SWAP_FILE"
+      mkswap "$SWAP_FILE"
+    fi
+
+mounts:
+ - [ /swap, swap, swap, sw ]
+```
+
+This script uses `fallocate` to quickly create a large file, and we
+can decide the number of KB of swap space per virtual core (it is
+**3 GB per core** in the above example).
+
+
+### Upgrading and installing packages (example: CVMFS)
+
+cloud-init can perform a `yum upgrade` during the first boot, and it
+can install extra packages as well.
+
+The following example will:
+
+* add a new repository for CVMFS
+* install CVMFS and [htop](http://hisham.hm/htop/)
+* upgrade all packages on the system
+* configure CVMFS
+
+```yaml
+#cloud-config
+
+yum_repos:
+  cvmfs:
+    name: CernVM-FS Stable
+    baseurl: http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/$releasever/$basearch
+    enabled: true
+    gpgcheck: false
+
+package_upgrade: true
+
+packages:
+ - cvmfs
+ - htop
+
+runcmd:
+ - echo CVMFS_HTTP_PROXY="http://<my_http_proxy>:3128" > /etc/cvmfs/default.local
+ - [ cvmfs_config, setup ]
+ - [ cvmfs_config, reload ]
+ - [ service, autofs, forcerestart ]
+```
+
+**Note:** the `bootcmd:` section executes commands very early in the
+contextualization process (before any other module), while the
+`runcmd:` section executes them after everything else.
 
 
 How the image was created
