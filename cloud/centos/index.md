@@ -23,17 +23,19 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
 * **Single root partition** (no swap) that **automatically grows** to
   the full backing block device where applicable (*e.g.* virtual
   machines on LVM logical volumes)
-* **[cloud-init](http://cloudinit.readthedocs.org/en/latest/) v0.7.4**
+* **[cloud-init](http://cloudinit.readthedocs.org/) v0.7.4**
   (configured with support for EC2 metadata server, packages
   installation, Yum repository addition, mount points manipulation)
 * **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.19**
   (unconfigured and disabled by default)
 * **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.2**
   (unconfigured and disabled by default)
-* **EPEL 6.8**
+* **[EPEL](https://fedoraproject.org/wiki/EPEL/) 6.8**
+* **SELinux enabled** (it can be disabled at context time)
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
-> can be disabled during contextualization as explained below.
+> can be disabled during contextualization as explained
+> [below](#disable_root_login).
 
 
 ### Verify image
@@ -55,6 +57,306 @@ gpg: Good signature from "Dario Berzano <FullEmailHere>"
 double-click the signature file from the Finder to verify it.
 
 > Do not use the image if signature verification fails!
+
+
+Contextualize the image
+-----------------------
+
+This image supports **[cloud-init](http://cloudinit.readthedocs.org/)
+v0.7.4**: check **/etc/cloud/cloud.cfg** to see in more detail what
+modules and datasources are enabled by default.
+
+In the following sections, sample cloud-init contextualizations are
+provided: they are text files that should be provided as
+[user-data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).
+
+
+### Disable root login
+
+Account for user **root** is enabled by default with a very weak
+password: a minimal cloud-init configuration file that only disables
+the root account is provided.
+
+```yaml
+#cloud-config
+
+users:
+ - default
+
+bootcmd:
+ - passwd --lock root
+```
+
+With this configuration:
+
+* SSH login will be possible as user **cloud-user** with the SSH key
+  provided via the cloud interface
+* User **cloud-user** can escalate to root without password via `sudo`
+* The **root** user will not be able to login with a password: the
+  only way to become root is via the **cloud-user**
+
+
+### Create swap space
+
+This image comes without a swap partition. If running it backed by a
+block device, or you have converted it from qcow2 to raw, we can
+create a big file on the root filesystem to use as swap.
+
+Note that using files for swap
+[is as efficient as using partitions](http://serverfault.com/questions/25653/swap-partition-vs-file-for-performance),
+as long as:
+
+* files are not sparse
+* the backing VM image is not qcow2
+
+With that in mind, we can use the following cloud-init user-data for
+instance when instantiating the VM backed by LVM logical volumes.
+
+```yaml
+#cloud-config
+
+bootcmd:
+ - |
+    SWAP_PER_CORE_KB=3000000
+    SWAP_FILE=/swap
+    SWAP_SIZE_KB=$(( $(grep -c bogomips /proc/cpuinfo) * SWAP_PER_CORE_KB ))
+    if [[ ! -e "$SWAP_FILE" ]] ; then
+      fallocate -l ${SWAP_SIZE_KB}000 "$SWAP_FILE"
+      mkswap "$SWAP_FILE"
+    fi
+
+mounts:
+ - [ /swap, swap, swap, sw ]
+```
+
+This script uses `fallocate` to quickly create a large file, and we
+can decide the number of KB of swap space per virtual core (it is
+**3 GB per core** in the above example).
+
+
+### Upgrading and installing packages (example: CVMFS)
+
+cloud-init can perform a `yum upgrade` during the first boot, and it
+can install extra packages as well.
+
+The following example will:
+
+* add a new repository for CVMFS
+* install CVMFS and [htop](http://hisham.hm/htop/)
+* upgrade all packages on the system
+* configure CVMFS
+
+```yaml
+#cloud-config
+
+yum_repos:
+  cvmfs:
+    name: CernVM-FS Stable
+    baseurl: http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs/EL/$releasever/$basearch
+    enabled: true
+    gpgcheck: false
+
+package_upgrade: true
+
+packages:
+ - cvmfs
+ - htop
+
+runcmd:
+ - echo CVMFS_HTTP_PROXY="http://<my_http_proxy>:3128" > /etc/cvmfs/default.local
+ - [ cvmfs_config, setup ]
+ - [ cvmfs_config, reload ]
+ - [ service, autofs, forcerestart ]
+ - [ chkconfig, autofs, on ]
+```
+
+**Note:** the `bootcmd:` section executes commands very early in the
+contextualization process (before any other module), while the
+`runcmd:` section executes them after everything else.
+
+
+### A HTCondor worker node for ALICE jobs
+
+This long example uses the base image to configure a HTCondor worker
+node for running ALICE Grid jobs. The node attaches it to an existing
+HTCondor head node by using a shared secret as authentication.
+
+This context is currently used in production on the ALICE HLT Cloud:
+obviously addresses and passwords are not the real ones.
+
+Features:
+
+* Creates a user **aliprod** and group **aliprod**, both with ID 355:
+  user's home is `/var/lib/aliprod`.
+* root password is disabled
+* No package upgrade or installation for faster boot
+* Swap disk with 3 GB per core
+* HTCondor is configured to work without valid FQDNs (only IP
+  addresses)
+* Job wrapper script setting a very minimal environment for ALICE jobs
+* SELinux turned off
+* Possibility to define the amount of RAM memory per core: as VM
+  flavours cannot be customized (and they usually come with 2 GB per
+  core), HTCondor is configured to start a lower number of job slots
+  in order to give each at least the configured amount of memory
+  (look for `MEM_PER_CORE_KB`)
+
+```yaml
+#cloud-config
+
+users:
+ - default
+
+package_upgrade: false
+
+bootcmd:
+ - |
+    getent group | grep -Eq ^aliprod: || groupadd aliprod -g 355
+    id aliprod > /dev/null 2>&1 || useradd aliprod -u 355 -g 355 -m --home-dir /var/lib/aliprod
+ - passwd --lock root
+ - |
+    SWAP_PER_CORE_KB=3000000
+    SWAP_FILE=/swap
+    SWAP_SIZE_KB=$(( $(grep -c bogomips /proc/cpuinfo) * SWAP_PER_CORE_KB ))
+    if [[ ! -e "$SWAP_FILE" ]] ; then
+      fallocate -l ${SWAP_SIZE_KB}000 "$SWAP_FILE"
+      mkswap "$SWAP_FILE"
+    fi
+
+mounts:
+ - [ /swap, swap, swap, sw ]
+
+write_files:
+ - content: |
+     # written by cloud-init
+     DAEMON_LIST = MASTER, STARTD
+     CONDOR_HOST = <IP_FOR_HTCONDOR_HEAD>
+     CONDOR_ADMIN = root@<IP_FOR_HTCONDOR_HEAD>
+     UID_DOMAIN = *
+     TRUST_UID_DOMAIN = True
+     SOFT_UID_DOMAIN = True
+     QUEUE_SUPER_USERS = root, condor
+     HIGHPORT = 42000
+     LOWPORT = 41000
+     SEC_DAEMON_AUTHENTICATION = required
+     SEC_DAEMON_INTEGRITY = required
+     SEC_DAEMON_AUTHENTICATION_METHODS = password
+     SEC_CLIENT_AUTHENTICATION_METHODS = password,fs,gsi,kerberos
+     SEC_PASSWORD_FILE = /etc/condor/condor_credential
+     SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION = True
+     ALLOW_DAEMON = condor_pool@*, submit-side@matchsession
+     COLLECTOR_NAME = Condor cluster at \$(CONDOR_HOST)
+     NEGOTIATOR_INTERVAL = 20
+     START = TRUE
+     SUSPEND = FALSE
+     PREEMPT = FALSE
+     KILL = FALSE
+     TRUST_UID_DOMAIN = TRUE
+     UPDATE_COLLECTOR_WITH_TCP = True
+     COLLECTOR_SOCKET_CACHE_SIZE = 1000
+     # this is needed to set the path
+     USER_JOB_WRAPPER = /etc/condor/job_wrapper.sh
+     # this is a dummy value to prevent job killing for consuming too much mem
+     JOB_DEFAULT_REQUESTMEMORY = 42
+   path: /etc/condor/condor_config.local
+   permissions: '0644'
+   owner: root:root
+ - content: |
+     #!/bin/sh
+     echo '^___^ <--( welcome to condor! )'
+     export PATH='/bin:/usr/bin'
+     export USER=`whoami`
+     if [[ "$USER" == 'aliprod' ]] ; then
+       export HOME='/var/lib/aliprod'
+     elif [[ "$UID" != '' ]] ; then
+       export HOME="/tmp/home-$UID"
+     fi
+     exec "$@"
+   path: /etc/condor/job_wrapper.sh
+   permissions: '0755'
+   owner: root:root
+
+runcmd:
+ - |
+    # set the fqdn to something known by the vobox (needed by AliEn/MonALISA)
+    IP_ADDRESS=$( ifconfig eth0 | grep 'inet addr:' | sed -e 's/\s*inet addr:// ; s/\s.*$//' )
+    if [[ "$IP_ADDRESS" != '' ]] ; then
+      XY=$( echo "$IP_ADDRESS" | sed -e 's/^\([0-9]\+\.\)\{2\}//' )
+      X=$( echo "$XY" | cut -d. -f1 )
+      Y=$( echo "$XY" | cut -d. -f2 )
+      GEN_HOSTSHORT=$( printf "wn-%03d-%03d" $X $Y )
+      GEN_HOSTFQDN=$( printf "wn-%03d-%03d.hltcloud" $X $Y )
+
+      # /etc/hosts
+      F=/etc/hosts
+      cat "$F" | grep -v "$IP_ADDRESS" > "$F".0
+      [[ $( tail -n1 "$F".0 | wc --lines ) == '0' ]] && echo '' >> "$F".0
+      echo "$IP_ADDRESS $GEN_HOSTFQDN $GEN_HOSTSHORT" >> "$F".0
+      mv "$F".0 "$F"
+
+      # system configuration
+      F=/etc/sysconfig/network
+      cat "$F" | grep -v "HOSTNAME=" > "$F".0
+      [[ $( tail -n1 "$F".0 | wc --lines ) == '0' ]] && echo '' >> "$F".0
+      echo "HOSTNAME=$GEN_HOSTFQDN" >> "$F".0
+      mv "$F".0 "$F"
+
+      # make changes
+      hostname "$GEN_HOSTFQDN"
+      service network restart
+    fi
+ - echo 0 > /selinux/enforce
+ - echo CVMFS_HTTP_PROXY="http://<MY_HTTP_PROXY>:3128" > /etc/cvmfs/default.local
+ - [ cvmfs_config, setup ]
+ - [ cvmfs_config, reload ]
+ - [ service, autofs, forcerestart ]
+ - [ service, condor, stop ]
+ - [ rm, -rf, /etc/condor/config.d ]
+ - |
+    # variables
+    CFG=/etc/condor/condor_config
+    CFG_LOCAL="$CFG".local
+    IP_ADDRESS=$( ifconfig eth0 | grep 'inet addr:' | sed -e 's/\s*inet addr:// ; s/\s.*$//' )
+    TOT_MEM_KB=$(cat /proc/meminfo | grep MemTotal | awk '{ print $2 }')
+    NUM_PHYS_CORES=$(grep -c bogomips /proc/cpuinfo)
+    MEM_PER_CORE_KB=2700000
+    NUM_SLOTS=$(( TOT_MEM_KB/MEM_PER_CORE_KB ))
+    [[ $NUM_SLOTS -gt $NUM_PHYS_CORES ]] && NUM_SLOTS=$NUM_PHYS_CORES
+
+    # prepare config: strip old vars, add new line at the end
+    cat "$CFG" | grep -vE '^\s*NO_DNS\s*=|^\s*DEFAULT_DOMAIN_NAME\s*=|^\s*NETWORK_INTERFACE\s*=' > "$CFG".0
+    [[ $( tail -n1 "$CFG".0 | wc --lines ) == '0' ]] && echo '' >> "$CFG".0
+
+    # append cfg vars (they need to stay here)
+    cat >> "$CFG".0 <<EOF
+    NETWORK_INTERFACE = $IP_ADDRESS
+    NO_DNS = True
+    DEFAULT_DOMAIN_NAME = condor-net
+    EOF
+    mv "$CFG".0 "$CFG"
+
+    # number of cores: adapt if we cannot tune the vm flavors
+    echo "NUM_CPUS=$NUM_SLOTS" >> "$CFG_LOCAL"
+ - [ rm, -f, /etc/condor/condor_credential ]
+ - [ condor_store_cred, add, -c, -p, <CONDOR_SHARED_SECRET> ]
+ - [ chkconfig, condor, on ]
+ - [ chkconfig, autofs, on ]
+ - [ service, condor, start ]
+```
+
+The following parameters have been stripped out and must be replaced
+with something sensible:
+
+* `<IP_FOR_CONDOR_HEAD>`: set it to the IP address of your HTCondor
+  head node
+* `<MY_HTTP_PROXY>`: set it to the address of your HTTP proxy (also
+  check the port)
+* `<CONDOR_SHARED_SECRET>`: set it to the cleartext version of your
+  HTCondor shared secret, which must obviously be the same as your
+  HTCondor head node
+
+> This context was created for a specific use case, so do not expect
+> it to work for you if you blindly copy-paste it!
 
 
 How the image was created
