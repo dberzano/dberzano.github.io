@@ -15,12 +15,14 @@ Instructions for compiling AliRoot from source are provided for
 Check whether your version is supported, and be sure it complies with
 the **prerequisites**:
 
-* [Ubuntu](prereq-ubuntu) *(and derivatives)* 12.04 LTS, 12.10, 13.04,
+* [Ubuntu 64 bit](prereq-ubuntu) *(and derivatives)* 12.04 LTS, 12.10, 13.04,
   13.10, 14.04 LTS
 * [OS X](prereq-osx) Mountain Lion (10.8) and Mavericks (10.9)
 
 > Your operating system's version has to be considered as **not
 > supported** unless it is **explicitly** mentioned in the above list.
+>
+> Only **64 bit operating systems** are supported.
 
 Two installation options are possible:
 
