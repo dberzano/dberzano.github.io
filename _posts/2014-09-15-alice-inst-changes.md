@@ -1,6 +1,6 @@
 ---
 title: Minor changes in automatic installer
-createtoc: true
+createtoc: false
 ---
 
 The automatic installation script has been updated, and its usability
