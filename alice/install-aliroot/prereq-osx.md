@@ -99,6 +99,37 @@ particular, pay attention to:
   later on.
 
 
+### Upgrade Homebrew and its packages
+
+From time to time, or whenever you change OS X version, you will need
+to upgrade your Homebrew installation.
+
+Get the list of new packages with:
+
+```bash
+brew update
+```
+
+Upgrade all with:
+
+```bash
+brew upgrade
+```
+
+If you have just upgraded from Mavericks to Yosemite, launching brew
+might produce the following output:
+
+```console
+$> brew
+/usr/local/bin/brew: /usr/local/Library/brew.rb: /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby: bad interpreter: No such file or directory
+/usr/local/bin/brew: line 23: /usr/local/Library/brew.rb: Undefined error: 0
+```
+
+Follow the instructions from
+[here](http://stackoverflow.com/questions/24225959/how-to-get-ruby-homebrew-rvm-to-work-on-yosemite)
+for working around this problem.
+
+
 Install XQuartz
 ---------------
 
