@@ -123,12 +123,21 @@ Install gfortran
 No Fortran compiler is supplied by Xcode: you need to install it on
 your own.
 
-There is a [website](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
-where you can download gfortran for various OS X version. For
-convenience here are the direct links:
+A researcher named François-Xavier Coudert kindly maintains binary
+packages for gfortran on OS X and publishes them on his
+[website](http://coudert.name/). The official
+[gscc's gfortran webpage](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
+also points to it.
 
+For your convenience, we provide direct links for gfortran on various
+OS X versions:
+
+* [gfortran for OS X Yosemite (10.10)](http://coudert.name/software/gfortran-4.9.1-Yosemite.dmg)
 * [gfortran for OS X Mavericks (10.9)](http://coudert.name/software/gfortran-4.9.0-Mavericks.dmg)
 * [gfortran for OS X Mountain Lion (10.8)](http://coudert.name/software/gfortran-4.8.2-MountainLion.dmg)
+
+> Even if you already have gfortran on your system, **upgrade it if
+> you have just upgraded your OS X version!**
 
 
 Install CMake
