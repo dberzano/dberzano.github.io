@@ -159,17 +159,11 @@ cd /usr/bin
 sudo rm -f ccmake cmake cmake-gui cmakexbuild cpack ctest
 ```
 
-Now get the latest version of CMake from the official website. For
-convenience we provide the direct link:
+CMake is simply installed with Homebrew:
 
-* [CMake 2.8.12.2](http://www.cmake.org/files/v2.8/cmake-2.8.12.2-Darwin64-universal.dmg)
-
-When the download is finished, proceed with the installation.
-
-* Open the downloaded **.dmg** file
-* Double-click on the **.pkg** file
-* Follow the on-screen instructions and **always accept the default
-  installation options**
+```bash
+brew install cmake
+```
 
 
 Install CGAL (for FastJet)
