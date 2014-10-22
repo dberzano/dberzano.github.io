@@ -7,24 +7,6 @@ By following these instructions you will prepare your OS X for
 building and using AliRoot.
 
 
-Install XQuartz
----------------
-
-[XQuartz](http://xquartz.macosforge.org/) is a X server for OS X. You
-do not need X to use ROOT from your Mac, but you might need it in case
-you want to run graphical programs from a remote host via SSH.
-
-* Download the latest version from the
-  [website](http://xquartz.macosforge.org/): you will find it in the
-  **Quick Download** section.
-* Open the downloaded **.dmg** file.
-* Double click on the **XQuartz.pkg** file to install it and follow the
-  on-screen instructions.
-
-After you have installed XQuartz, you must log out and log in again.
-Note that this is not an optional step.
-
-
 Install Xcode
 -------------
 
@@ -38,14 +20,15 @@ Xcode is distributed by Apple via the App Store:
 * Search for Xcode
 * Click on Install *(the installation is free)*
 
-> If you are using OS X Mavericks, you need to upgrade to Xcode 5.
-> Previous versions of Xcode will not work on Mavericks.
+Normally a new version of Xcode is released with a new version of OS
+X. If you have just upgraded OS X, check if a new version of Xcode is
+available from the App Store and **update it**.
 
 
 ### Command Line Tools
 
-Command line tools (such as `make` or `clang`) are not immediately
-available after installing or upgrading Xcode.
+Command line developer tools (such as `make`) are not available right
+after installing or upgrading Xcode.
 
 * Open Xcode
 * Click on the **Xcode** boldface menu next to the apple sign
@@ -65,14 +48,73 @@ in a terminal:
 
 ```console
 $> clang -v
-Apple LLVM version 5.1 (clang-503.0.40) (based on LLVM 3.4svn)
-Target: x86_64-apple-darwin13.1.0
+Apple LLVM version 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
+Target: x86_64-apple-darwin14.0.0
 Thread model: posix
 ```
 
-> Please note that you must repeat this procedure every time a new
-> version of Xcode is installed: it is easy to forget doing that since
-> Xcode might get automatic updates from the App Store.
+> Please note that **you must repeat this procedure every time a new
+> version of Xcode is installed**: it is easy to forget doing that
+> since Xcode might get automatic updates from the App Store.
+
+Please also note that you might get prompted, on the command line, for
+accepting Xcode's license the first time you use a command line tool
+(such as `git`). You might notice it because, for instance, the
+[automatic installer](../auto) fails unexpectedly.
+
+If this happens, **it means you have installed the
+command line tools without following these instructions**: if you do
+as suggested in this paragraph, you are prompted for the license
+**graphically** when you execute Xcode.
+
+
+Install Homebrew
+----------------
+
+> Installing Homebrew is optional but strongly recommended.
+
+[Homebrew](http://brew.sh) is a package manager for OS X. Various
+utilities are conveniently distributed via Homebrew.
+
+[The website](http://brew.sh) has ridicolously simple instructions for
+installing it: look for the **Install Homebrew** section at the bottom
+of the page.
+
+> Please note that using several package managers for OS X at the same
+> time (Homebrew, Fink, MacPorts) is not a good idea!
+
+After you have installed Homebrew, run, as suggested by the installer:
+
+```bash
+brew doctor
+```
+
+This command will tell you if there is something wrong or some
+potential pitfall on your system. **Do not overlook its output!** In
+particular, pay attention to:
+
+* Warnings for old compilers: **immediately upgrade Xcode and the
+  command line tools** if warned to do so!
+* Warning for an old XQuartz version: **upgrade XQuartz** as explained
+  later on.
+
+
+Install XQuartz
+---------------
+
+[XQuartz](http://xquartz.macosforge.org/) is a X server for OS X. You
+do not need X to use ROOT from your Mac, but you might need it in case
+you want to run graphical programs from a remote host via SSH.
+
+* Download the latest version from the
+  [website](http://xquartz.macosforge.org/): you will find it in the
+  **Quick Download** section.
+* Open the downloaded **.dmg** file.
+* Double click on the **XQuartz.pkg** file to install it and follow the
+  on-screen instructions.
+
+After you have installed XQuartz, you must log out and log in again.
+Note that this is not an optional step.
 
 
 Install gfortran
@@ -119,19 +161,6 @@ When the download is finished, proceed with the installation.
 * Double-click on the **.pkg** file
 * Follow the on-screen instructions and **always accept the default
   installation options**
-
-
-Install Homebrew
-----------------
-
-> Installing Homebrew is optional but strongly recommended.
-
-[Homebrew](http://brew.sh) is a package manager for OS X. Various
-utilities are conveniently distributed via Homebrew.
-
-[The website](http://brew.sh) has incredibly simple instructions for
-installing it: look for the **Install Homebrew** section at the bottom
-of the page.
 
 
 Install CGAL (for FastJet)
