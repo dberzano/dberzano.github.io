@@ -11,7 +11,7 @@ You can find the instructions at the
 
 > Do not forget to check the
 > [prerequisites](/alice/install-aliroot/prereq-osx) and the
-> [minimum software versions](http://localhost:4000/alice/install-aliroot/#compatibility_grid)!
+> [minimum software versions](/alice/install-aliroot/#compatibility_grid)!
 
 
 ### Release notes
