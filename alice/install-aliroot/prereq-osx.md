@@ -7,24 +7,6 @@ By following these instructions you will prepare your OS X for
 building and using AliRoot.
 
 
-Install XQuartz
----------------
-
-[XQuartz](http://xquartz.macosforge.org/) is a X server for OS X. You
-do not need X to use ROOT from your Mac, but you might need it in case
-you want to run graphical programs from a remote host via SSH.
-
-* Download the latest version from the
-  [website](http://xquartz.macosforge.org/): you will find it in the
-  **Quick Download** section.
-* Open the downloaded **.dmg** file.
-* Double click on the **XQuartz.pkg** file to install it and follow the
-  on-screen instructions.
-
-After you have installed XQuartz, you must log out and log in again.
-Note that this is not an optional step.
-
-
 Install Xcode
 -------------
 
@@ -38,14 +20,15 @@ Xcode is distributed by Apple via the App Store:
 * Search for Xcode
 * Click on Install *(the installation is free)*
 
-> If you are using OS X Mavericks, you need to upgrade to Xcode 5.
-> Previous versions of Xcode will not work on Mavericks.
+Normally a new version of Xcode is released with a new version of OS
+X. If you have just upgraded OS X, check if a new version of Xcode is
+available from the App Store and **update it**.
 
 
 ### Command Line Tools
 
-Command line tools (such as `make` or `clang`) are not immediately
-available after installing or upgrading Xcode.
+Command line developer tools (such as `make`) are not available right
+after installing or upgrading Xcode.
 
 * Open Xcode
 * Click on the **Xcode** boldface menu next to the apple sign
@@ -65,60 +48,24 @@ in a terminal:
 
 ```console
 $> clang -v
-Apple LLVM version 5.1 (clang-503.0.40) (based on LLVM 3.4svn)
-Target: x86_64-apple-darwin13.1.0
+Apple LLVM version 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
+Target: x86_64-apple-darwin14.0.0
 Thread model: posix
 ```
 
-> Please note that you must repeat this procedure every time a new
-> version of Xcode is installed: it is easy to forget doing that since
-> Xcode might get automatic updates from the App Store.
+> Please note that **you must repeat this procedure every time a new
+> version of Xcode is installed**: it is easy to forget doing that
+> since Xcode might get automatic updates from the App Store.
 
+Please also note that you might get prompted, on the command line, for
+accepting Xcode's license the first time you use a command line tool
+(such as `git`). You might notice it because, for instance, the
+[automatic installer](../auto) fails unexpectedly.
 
-Install gfortran
-----------------
-
-No Fortran compiler is supplied by Xcode: you need to install it on
-your own.
-
-There is a [website](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
-where you can download gfortran for various OS X version. For
-convenience here are the direct links:
-
-* [gfortran for OS X Mavericks (10.9)](http://coudert.name/software/gfortran-4.9.0-Mavericks.dmg)
-* [gfortran for OS X Mountain Lion (10.8)](http://coudert.name/software/gfortran-4.8.2-MountainLion.dmg)
-
-
-Install CMake
--------------
-
-CMake is required to build AliRoot. You need to have at least
-**version 2.8.4**: check with:
-
-```console
-$> cmake --version
-cmake version 2.8.8
-```
-
-Before installing CMake, remove any previous version left on the
-system. Open a terminal and type:
-
-```sh
-cd /usr/bin
-sudo rm -f ccmake cmake cmake-gui cmakexbuild cpack ctest
-```
-
-Now get the latest version of CMake from the official website. For
-convenience we provide the direct link:
-
-* [CMake 2.8.12.2](http://www.cmake.org/files/v2.8/cmake-2.8.12.2-Darwin64-universal.dmg)
-
-When the download is finished, proceed with the installation.
-
-* Open the downloaded **.dmg** file
-* Double-click on the **.pkg** file
-* Follow the on-screen instructions and **always accept the default
-  installation options**
+If this happens, **it means you have installed the
+command line tools without following these instructions**: if you do
+as suggested in this paragraph, you are prompted for the license
+**graphically** when you execute Xcode.
 
 
 Install Homebrew
@@ -129,9 +76,125 @@ Install Homebrew
 [Homebrew](http://brew.sh) is a package manager for OS X. Various
 utilities are conveniently distributed via Homebrew.
 
-[The website](http://brew.sh) has incredibly simple instructions for
+[The website](http://brew.sh) has ridicolously simple instructions for
 installing it: look for the **Install Homebrew** section at the bottom
 of the page.
+
+> Please note that using several package managers for OS X at the same
+> time (Homebrew, Fink, MacPorts) is not a good idea!
+
+After you have installed Homebrew, run, as suggested by the installer:
+
+```bash
+brew doctor
+```
+
+This command will tell you if there is something wrong or some
+potential pitfall on your system. **Do not overlook its output!** In
+particular, pay attention to:
+
+* Warnings for old compilers: **immediately upgrade Xcode and the
+  command line tools** if warned to do so!
+* Warning for an old XQuartz version: **upgrade XQuartz** as explained
+  later on.
+
+
+### Upgrade Homebrew and its packages
+
+From time to time, or whenever you change OS X version, you will need
+to upgrade your Homebrew installation.
+
+Get the list of new packages with:
+
+```bash
+brew update
+```
+
+Upgrade all with:
+
+```bash
+brew upgrade
+```
+
+If you have just upgraded from Mavericks to Yosemite, launching brew
+might produce the following output:
+
+```console
+$> brew
+/usr/local/bin/brew: /usr/local/Library/brew.rb: /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby: bad interpreter: No such file or directory
+/usr/local/bin/brew: line 23: /usr/local/Library/brew.rb: Undefined error: 0
+```
+
+Follow the instructions from
+[here](http://stackoverflow.com/questions/24225959/how-to-get-ruby-homebrew-rvm-to-work-on-yosemite)
+for working around this problem.
+
+
+Install XQuartz
+---------------
+
+[XQuartz](http://xquartz.macosforge.org/) is a X server for OS X. You
+do not need X to use ROOT from your Mac, but you might need it in case
+you want to run graphical programs from a remote host via SSH.
+
+* Download the latest version from the
+  [website](http://xquartz.macosforge.org/): you will find it in the
+  **Quick Download** section.
+* Open the downloaded **.dmg** file.
+* Double click on the **XQuartz.pkg** file to install it and follow the
+  on-screen instructions.
+
+After you have installed XQuartz, you must log out and log in again.
+Note that this is not an optional step.
+
+
+Install gfortran
+----------------
+
+No Fortran compiler is supplied by Xcode: you need to install it on
+your own.
+
+A researcher named François-Xavier Coudert kindly maintains binary
+packages for gfortran on OS X and publishes them on his
+[website](http://coudert.name/). The official
+[gscc's gfortran webpage](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
+also points to it.
+
+For your convenience, we provide direct links for gfortran on various
+OS X versions:
+
+* [gfortran for OS X Yosemite (10.10)](http://coudert.name/software/gfortran-4.9.1-Yosemite.dmg)
+* [gfortran for OS X Mavericks (10.9)](http://coudert.name/software/gfortran-4.9.0-Mavericks.dmg)
+* [gfortran for OS X Mountain Lion (10.8)](http://coudert.name/software/gfortran-4.8.2-MountainLion.dmg)
+
+> Even if you already have gfortran on your system, **upgrade it if
+> you have just upgraded your OS X version!**
+
+
+Install CMake
+-------------
+
+[CMake](http://www.cmake.org/) is required to build AliRoot. You need
+to have at least **version 2.8.4**. Check with:
+
+```console
+$> cmake --version
+cmake version 3.0.2
+```
+
+Before installing CMake, **remove any previous version** left on the
+system. Open a terminal and type:
+
+```bash
+cd /usr/bin
+sudo rm -f ccmake cmake cmake-gui cmakexbuild cpack ctest
+```
+
+CMake is simply installed with Homebrew:
+
+```bash
+brew install cmake
+```
 
 
 Install CGAL (for FastJet)

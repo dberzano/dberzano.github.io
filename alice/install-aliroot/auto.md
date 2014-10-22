@@ -13,7 +13,7 @@ dependencies is provided.
 The script:
 
 * follows exactly the same steps described in the
-  [manual installation procedure](manual);
+  [manual installation procedure](../manual);
 * works on the same platforms where the manual procedure works.
 
 There is no need to download the installation script: it can be run
