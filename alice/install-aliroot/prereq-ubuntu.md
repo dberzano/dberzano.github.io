@@ -53,6 +53,18 @@ note that it is a long line)*:
 sudo apt-get install curl build-essential gfortran subversion cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl-dev libxml2-dev libtool automake git unzip libcgal-dev
 ```
 
+Please note that you should have at least **CMake v2.8.8**. You can
+check with:
+
+```console
+$> cmake --version
+cmake version 2.8.12.2
+```
+
+If you do not have this version available with your Ubuntu version,
+you will need to
+[install one manually](http://www.cmake.org/download/).
+
 
 git-new-workdir
 ---------------
