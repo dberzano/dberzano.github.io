@@ -50,14 +50,17 @@ Prepare your environment
 
 Supported operating systems have different prerequisites:
 
-* [Ubuntu](../prereq-ubuntu) *(and derivatives)*
+* [Ubuntu 64 bit](../prereq-ubuntu) *(and derivatives)*
+* [Fedora 64 bit](../prereq-fedora) *(and derivatives)*
 * [OS X](../prereq-osx)
 
 You can find [here](..#compile_aliroot_from_source) the detailed list
 of compatible operating systems.
 
-> If your operating system (with version) is not listed explicitly,
-> **no support will be provided for it**.
+> If your OS **and version** are
+> [not listed explicitly](../#compile_aliroot_from_source),
+> **no support will be provided for it**. In particular, 32 bit OSes
+> are not supported.
 
 
 ### Configure your shell environment
