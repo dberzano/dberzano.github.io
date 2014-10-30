@@ -15,8 +15,9 @@ Instructions for compiling AliRoot from source are provided for
 Check whether your version is supported, and be sure it complies with
 the **prerequisites**:
 
-* [Ubuntu 64 bit](prereq-ubuntu) *(and derivatives)* 12.04 LTS, 12.10,
-  13.04, 13.10, 14.04 LTS
+* [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
+  14.04 LTS
+* [Fedora 64 bit](prereq-fedora) 20
 * [OS X](prereq-osx) Mountain Lion (10.8), Mavericks (10.9) and
   Yosemite (10.10)
 
@@ -24,6 +25,11 @@ the **prerequisites**:
 > supported** unless it is **explicitly** mentioned in the above list.
 >
 > Only **64 bit operating systems** are supported.
+
+Every listed operating system has been tested: it is possible that
+"derivatives" or "similar" versions *(e.g. Linux Mint for Ubuntu, SLC6
+for Fedora)* work with no or little adaptation of the above
+instructions.
 
 Two installation options are possible:
 
