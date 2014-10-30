@@ -20,7 +20,7 @@ Then install (always as root or by prepending `sudo`) all the required
 packages with a single command *(please note that it is a long line)*:
 
 ```bash
-yum install autoconf automake libtool cmake zlib-devel libxml2-devel openssl-devel gcc-c++ gcc-gfortran make libX11-devel libXpm-devel libXft-devel libXext-devel
+yum install autoconf automake libtool cmake zlib-devel libxml2-devel openssl-devel gcc-c++ gcc-gfortran make libX11-devel libXpm-devel libXft-devel libXext-devel mesa-libGLU-devel subversion
 ```
 
 Please note that you should have at least **CMake v2.8.8**. You can
