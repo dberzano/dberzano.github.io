@@ -11,9 +11,9 @@ Compile AliRoot from source
 ---------------------------
 
 Instructions for compiling AliRoot from source are provided for
-[Ubuntu](http://www.ubuntu.com/) and [OS X](http://www.apple.com/osx).
-Check whether your version is supported, and be sure it complies with
-the **prerequisites**:
+[Ubuntu](http://www.ubuntu.com/), [Fedora](http://fedoraproject.org/)
+and [OS X](http://www.apple.com/osx). Check whether your version is
+supported, and be sure it complies with the **prerequisites**:
 
 * [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
   14.04 LTS
