@@ -8,9 +8,9 @@ parnumbers: true
 
 
 This page will guide you in setting up a fully fledged AliRoot
-installation on your system, being it a Max or a Linux box running
-[Ubuntu](http://www.ubuntu.com) or derivatives such as
-[Linux Mint](http://www.linuxmint.com).
+installation on your system, being it [OS X](http://www.apple.com/osx)
+or a Linux box running [Ubuntu](http://www.ubuntu.com) or
+[Fedora](http://fedoraproject.org/). Derivatives are supported too.
 
 Consider this installation procedure as a suggestion: the experienced
 user might find herself at ease with a customized installation,
@@ -229,9 +229,9 @@ work while compiling, it is recommended that you always run `make`
 
 #### Load ALICE environment easily
 
-If you use Bash, the default shell on Ubuntu and OS X, you can simply
-append the following snippet to your `~/.bashrc` using your favorite
-editor:
+If you use Bash, the default shell on Ubuntu, Fedora and OS X, you can
+simply append the following snippet to your `~/.bashrc` using your
+favorite editor:
 
 ```bash
 # Load environment variables by simply typing "ali"
@@ -743,7 +743,7 @@ cmake "$ALICE_ROOT" \
   -DCMAKE_Fortran_COMPILER=`root-config --f77`
 ```
 
-On **Ubuntu**:
+On **Linux (gcc and clang)**:
 
 ```bash
 cmake "$ALICE_ROOT" \
