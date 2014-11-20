@@ -53,6 +53,16 @@ note that it is a long line)*:
 sudo apt-get install curl build-essential gfortran subversion cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl-dev libxml2-dev libtool automake git unzip libcgal-dev
 ```
 
+You can compile everything using Clang if you want: if this is the
+case, install it:
+
+```sh
+sudo apt-get install clang-3.4
+```
+
+**Note:** the `clang-3.5` package on Ubuntu 14.10 has known problems
+preventing ROOT from compiling, while 3.4 works without flaws.
+
 Please note that you should have at least **CMake v2.8.8**. You can
 check with:
 
