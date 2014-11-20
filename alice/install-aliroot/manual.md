@@ -570,16 +570,30 @@ the lines below.
 On **OS X**:
 
 ```bash
-( CXXFLAGS='-lgmp' ./configure --enable-cgal --prefix="$FASTJET" )
+export CXXFLAGS='-lgmp'
+export CXX=$(which clang++)
+./configure --enable-cgal --prefix="$FASTJET" )
 ```
 
-On **Ubuntu**:
+On **Linux (gcc)**:
 
 ```bash
-( CXXFLAGS='-Wl,--no-as-needed -lgmp' ./configure --enable-cgal --prefix="$FASTJET" )
+export CXXFLAGS='-Wl,--no-as-needed -lgmp'
+export CXX=$(which g++)
+./configure --enable-cgal --prefix="$FASTJET" )
 ```
 
-Note that **enabling CGAL is optional**.
+On **Linux (clang)**:
+
+```bash
+export CXXFLAGS='-Wl,--no-as-needed -lgmp'
+export CXX=$(which clang++)
+./configure --enable-cgal --prefix="$FASTJET" )
+```
+
+Note that **enabling CGAL is optional**. Also note that there are two
+`CXX*` variables in the environment: **we will need them later** for
+FastJet contrib.
 
 If the configuration succeeded, compile FastJet with the usual
 command:
@@ -598,9 +612,15 @@ cd "$FASTJET/src/fjcontrib-$FJCONTRIB_VER"
 Now configure, build and install it:
 
 ```bash
-./configure
+./configure CXX="$CXX" CXXFLAGS="$CXXFLAGS"
 make -j"$MJ" install
 make -j"$MJ" fragile-shared-install
+```
+
+**Important!** You **must** clean up the `CXX*` variables now:
+
+```bash
+unset CXX CXXFLAGS
 ```
 
 
