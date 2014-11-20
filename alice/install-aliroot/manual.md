@@ -356,7 +356,7 @@ The following step is very important, because it is the place where
 you customize your own ROOT installation based on your needs: Geant 3
 and AliRoot will rely on ROOT's configuration to compile.
 
-On **OS X**, configure it with:
+On **OS X** configure it with:
 
 ```bash
 ./configure \
@@ -366,18 +366,21 @@ On **OS X**, configure it with:
   --with-monalisa-incdir="$GSHELL_ROOT/include" \
   --with-monalisa-libdir="$GSHELL_ROOT/lib" \
   --with-xrootd=$GSHELL_ROOT \
-  --with-f77=/usr/local/bin/gfortran \
-  --with-clang \
   --enable-minuit2 \
   --enable-roofit \
   --enable-soversion \
   --disable-bonjour \
   --enable-builtin-freetype \
+  --with-clang \
+  --with-f77=$( which gfortran ) \
+  --with-cc=$( which clang ) \
+  --with-cxx=$( which clang++ ) \
+  --with-ld=$( which clang++ )
   --disable-fink \
   --enable-cocoa
 ```
 
-On **Ubuntu**:
+On **Linux (gcc)**:
 
 ```bash
 ./configure \
@@ -387,11 +390,37 @@ On **Ubuntu**:
   --with-monalisa-incdir="$GSHELL_ROOT/include" \
   --with-monalisa-libdir="$GSHELL_ROOT/lib" \
   --with-xrootd=$GSHELL_ROOT \
-  --with-f77=gfortran \
   --enable-minuit2 \
   --enable-roofit \
   --enable-soversion \
-  --disable-bonjour
+  --disable-bonjour \
+  --enable-builtin-freetype \
+  --with-f77=$( which gfortran ) \
+  --with-cc=$( which gcc ) \
+  --with-cxx=$( which g++ ) \
+  --with-ld=$( which g++ )
+```
+
+On **Linux (clang)**:
+
+```bash
+./configure \
+  --with-pythia6-uscore=SINGLE \
+  --with-alien-incdir=$GSHELL_ROOT/include \
+  --with-alien-libdir=$GSHELL_ROOT/lib \
+  --with-monalisa-incdir="$GSHELL_ROOT/include" \
+  --with-monalisa-libdir="$GSHELL_ROOT/lib" \
+  --with-xrootd=$GSHELL_ROOT \
+  --enable-minuit2 \
+  --enable-roofit \
+  --enable-soversion \
+  --disable-bonjour \
+  --enable-builtin-freetype \
+  --with-clang \
+  --with-f77=$( which gfortran ) \
+  --with-cc=$( which clang ) \
+  --with-cxx=$( which clang++ ) \
+  --with-ld=$( which clang++ )
 ```
 
 **Note:** you may need to use different `--enable-` or `--disable-`
