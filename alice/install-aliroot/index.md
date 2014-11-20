@@ -16,7 +16,7 @@ and [OS X](http://www.apple.com/osx). Check whether your version is
 supported, and be sure it complies with the **prerequisites**:
 
 * [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
-  14.04 LTS
+  14.04 LTS, 14.10
 * [Fedora 64 bit](prereq-fedora) 20
 * [OS X](prereq-osx) Mountain Lion (10.8), Mavericks (10.9) and
   Yosemite (10.10)
