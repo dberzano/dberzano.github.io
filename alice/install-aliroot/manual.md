@@ -67,9 +67,8 @@ of compatible operating systems.
 
 You will need a script that helps you setting the environment
 variables needed to build and use different ALICE software
-combinations, constituted by "triads" of ROOT, Geant 3 and AliRoot. It
-is also possible to define an optional [FastJet](http://fastjet.fr/)
-version.
+combinations, constituted by "tuples" of ROOT, Geant 3 and AliRoot,
+plus other optional components.
 
 > As of **Aug 13, 2014**, the way of configuring the environment has
 > been **slightly changed**:
@@ -110,65 +109,63 @@ something like:
 ```bash
 #!/bin/bash
 
-# Automatically created by alice-env.sh on Wed Aug 13 18:05:29 CEST 2014
+# Automatically created by alice-env.sh on Thu Nov 20 18:02:07 CET 2014
 
 #
-# Triads: they start from 1 (not 0) and must be consecutive
+# Software tuples: they start from 1 (not 0) and must be consecutive.
 #
-# Format:
-#   TRIAD[n]='ROOT Geant3 AliRoot [FastJet[_FJContrib]]'
+# Format (you can also type it on a single long line):
+#   AliTuple[n]='root=<rootver> geant3=<geant3ver> aliroot=<alirootver> \
+#                aliphysics=<aliphysicsver> fastjet=<fjver> fjcontrib=<fjcontribver>'
 #
-# FastJet is optional. FJ Contrib is optional with FastJet 2 and mandatory with
-# FastJet 3.
+# Note: FastJet and FJContrib are optional.
 #
 
 # No FastJet
-TRIAD[1]='v5-34-18 v1-15a master'
+AliTuple[1]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master'
 
 # FastJet 2
-#TRIAD[2]='v5-34-18 v1-15a master 2.4.5'
+#AliTuple[2]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master fastjet=2.4.5'
 
 # FastJet 3
-#TRIAD[3]='v5-34-18 v1-15a master 3.0.6_1.012'
+#AliTuple[3]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master \
+#             fastjet=3.0.6 fjcontrib=1.012'
 
-# You can add more triads
-#TRIAD[4]='...'
+# You can add more tuples
+#AliTuple[4]='...'
 
-# Default triad for automatic installation
-export N_TRIAD=1
+# Default software tuple (selected when running "source alice-env.sh -n")
+export nAliTuple=1
 ```
 
-In this file you define some **"triads"**: they are combinations of
-ROOT, Geant 3 and AliRoot to use together. Optionally, you can specify
-a fourth element indicating the FastJet (and FastJet Contrib) version:
+> **Note:** config syntax has changed recently: old config files are
+upgraded automatically. Details [here](http://fixme/).
 
-```bash
-TRIAD[n]='ROOT Geant3 AliRoot [FastJet[_FJContrib]]'
-```
-
-Square braces indicate *optional parameters*.
+In this file you define some **software "tuples"**, *i.e.* a
+combination of ROOT, Geant 3, AliRoot and AliPhysics (plus other
+components if you wish) to use together.
 
 You must "source" the `alice-env.sh` script every time you intend to
 run or build the framework: an interactive menu will be presented,
-allowing you to choose one of the defined triads.
+allowing you to choose one of the defined tuples.
 
 Every time you re-source the script in the same environment (*i.e.*,
 in the same terminal "window"), the old environment variables are
 wiped out in order to avoid unpleasant clashes: it is therefore not
-needed to open a new terminal in order to switch between triads.
+needed to open a new terminal in order to switch between tuples.
 
 The `alice-env.sh` script needs to be downloaded only once. You do not
 need to update it: it will periodically update itself automatically.
 Whenever it updates, a message is printed to the user.
 
-> Do not edit the `alice-env.sh`: use the separate `alice-env.conf`
-> for configuring the variables. Automatic updates **destroy your
-> changes** in `alice-env.sh`!
+> Do not edit `alice-env.sh` directly: use the separate
+> `alice-env.conf` for configuring the variables. Automatic updates
+> will **destroy any changes of yours** in `alice-env.sh`!
 
 
 #### AliRoot version dependencies
 
-You cannot just pick any triad and expect it to work. Some versions of
+You cannot just pick any tuple and expect it to work. Some versions of
 AliRoot work only with a specific version of ROOT, and in general they
 may be used with any other ROOT version.
 
@@ -196,19 +193,20 @@ The syntax to source the script is simple. Assuming the full path to
 the script is `$HOME/alicesw/alice-env.sh`, you will do:
 
 ```bash
-source $HOME/alicesw/alice-env.sh [-q] [-n] [-c] [-k] [-u]
+source $HOME/alicesw/alice-env.sh [-q] [-n [nTuple]] [-c] [-k] [-u]
 ```
 
 As you can see, some optional switches are available (square braces
 stand for "optional", you should not type them literally):
 
 * `-n`: AliRoot environment is set up *non-interactively*, meaning
-  that no menu is shown; the triad to pick is indicated
-  by the variable `$N_TRIAD` in your configuration file
+  that no menu is shown; pick a tuple number by typing it after `-n`:
+  if you don't specify anything, the default one selected by the
+  variable `$nAliTuple` in the configuration file will be chosen
 * `-q`: quiet mode. Useful if you source the script from `.bashrc` and
   you do not want to see the output every time you open a new shell
 * `-c`: cleans environment from previously set ALICE variables without
-  setting any triad
+  setting any tuple
 * `-k`: do not check for updates of the environment script
 * `-u`: force update of the environment script
 
@@ -490,11 +488,10 @@ and before building AliRoot.
 
 ### FastJet and FastJet contrib (optional)
 
-You can define a fourth element in the triad corresponding to the
-[FastJet](http://fastjet.fr/) version you would like to use. You might
-need an additional
-[FastJet contrib](http://fastjet.hepforge.org/contrib/) package of
-your choice, depending on your needs and configuration.
+You can optionally add a `fastjet=` and `fjcontrib=` element in your
+software tuple definition if you want to install also
+[FastJet](http://fastjet.fr/) and
+[FastJet contrib](http://fastjet.hepforge.org/contrib/).
 
 > Compiling FastJet is optional. FastJet contrib is:
 >
@@ -502,18 +499,21 @@ your choice, depending on your needs and configuration.
 > * **mandatory** if using FastJet 3 (AliRoot won't compile without
 >   it)
 
-If you do not need FastJet contrib, you can specify a fourth element
-to the "triad" like this:
+If you do not need FastJet contrib, your tuple will look like this:
 
 ```bash
-TRIAD[1]="<root> v1-15a master 2.4.5" # with FastJet only
+AliTuple[1]='root=v5-34-08 geant3=v1-15a \
+             aliroot=master aliphysics=master \
+             fastjet=2.4.5'
 ```
 
-If you need FastJet contrib as well, specify its version after the
-FastJet version, separated with an underscore:
+If you need FastJet contrib as well, your tuple will look like this
+instead:
 
 ```bash
-TRIAD[1]="<root> v1-15a master 3.0.6_1.012" # with FastJet and FJ contrib
+AliTuple[2]='root=v5-34-08 geant3=v1-15a \
+             aliroot=master aliphysics=master \
+             fastjet=2.4.5 fjcontrib=1.012'
 ```
 
 Source the `alice-env.sh` script. Then, create the FastJet source
@@ -740,7 +740,11 @@ On **OS X**:
 cmake "$ALICE_ROOT" \
   -DCMAKE_C_COMPILER=`root-config --cc` \
   -DCMAKE_CXX_COMPILER=`root-config --cxx` \
-  -DCMAKE_Fortran_COMPILER=`root-config --f77`
+  -DCMAKE_Fortran_COMPILER=`root-config --f77` \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DALIEN="$ALIEN_DIR" \
+  -DROOTSYS="$ROOTSYS" \
+  -DFASTJET="$FASTJET"
 ```
 
 On **Linux (gcc and clang)**:
@@ -752,8 +756,14 @@ cmake "$ALICE_ROOT" \
   -DCMAKE_Fortran_COMPILER=`root-config --f77` \
   -DCMAKE_MODULE_LINKER_FLAGS='-Wl,--no-as-needed' \
   -DCMAKE_SHARED_LINKER_FLAGS='-Wl,--no-as-needed' \
-  -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed'
+  -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed' \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DALIEN="$ALIEN_DIR" \
+  -DROOTSYS="$ROOTSYS" \
+  -DFASTJET="$FASTJET"
 ```
+
+Omit `-DFASTJET` if you do not have FastJet.
 
 After configuring, build it:
 
@@ -765,14 +775,21 @@ If you don't want to build in parallel, run `make` without any
 switches. CMake provides you with a percentage of completion of your
 build.
 
-If the build is successful, do:
+If you have an old AliRoot version you need to do a workaround for making the
+include directory visible to the source code. The following command
+automatically determines wheter it is necessary to perform the workaround, so
+just copy-paste it:
 
 ```bash
-ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
+[ -d "$ALICE_BUILD/version" ] || ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
 ```
 
-This is needed because header files are now copied inside
-`$ALICE_BUILD/include`, yet some analysis macros still search for them
-inside `$ALICE_ROOT/include`.
+You cannot "install" old AliRoot versions through `make install`. The following
+command will install AliRoot only if appropriate (again: just copy-paste it):
 
-When you are finished you can finally start using AliRoot.
+```bash
+[ -d "$ALICE_BUILD/version" ] && make -j$MJ install
+```
+
+When you are finished **you must to re-source `alice-env.sh`** and then you can
+start using AliRoot.
