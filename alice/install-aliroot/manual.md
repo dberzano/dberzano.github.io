@@ -139,7 +139,7 @@ export nAliTuple=1
 ```
 
 > **Note:** config syntax has changed recently: old config files are
-upgraded automatically. Details [here](http://fixme/).
+upgraded automatically. Details [here](/2014/12/15/aliroot-tuples-cmake).
 
 In this file you define some **software "tuples"**, *i.e.* a
 combination of ROOT, Geant 3, AliRoot and AliPhysics (plus other
