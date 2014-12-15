@@ -740,7 +740,11 @@ On **OS X**:
 cmake "$ALICE_ROOT" \
   -DCMAKE_C_COMPILER=`root-config --cc` \
   -DCMAKE_CXX_COMPILER=`root-config --cxx` \
-  -DCMAKE_Fortran_COMPILER=`root-config --f77`
+  -DCMAKE_Fortran_COMPILER=`root-config --f77` \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DALIEN="$ALIEN_DIR" \
+  -DROOTSYS="$ROOTSYS" \
+  -DFASTJET="$FASTJET"
 ```
 
 On **Linux (gcc and clang)**:
@@ -752,8 +756,14 @@ cmake "$ALICE_ROOT" \
   -DCMAKE_Fortran_COMPILER=`root-config --f77` \
   -DCMAKE_MODULE_LINKER_FLAGS='-Wl,--no-as-needed' \
   -DCMAKE_SHARED_LINKER_FLAGS='-Wl,--no-as-needed' \
-  -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed'
+  -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed' \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DALIEN="$ALIEN_DIR" \
+  -DROOTSYS="$ROOTSYS" \
+  -DFASTJET="$FASTJET"
 ```
+
+Omit `-DFASTJET` if you do not have FastJet.
 
 After configuring, build it:
 
@@ -765,14 +775,21 @@ If you don't want to build in parallel, run `make` without any
 switches. CMake provides you with a percentage of completion of your
 build.
 
-If the build is successful, do:
+If you have an old AliRoot version you need to do a workaround for making the
+include directory visible to the source code. The following command
+automatically determines wheter it is necessary to perform the workaround, so
+just copy-paste it:
 
 ```bash
-ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
+[ -d "$ALICE_BUILD/version" ] || ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
 ```
 
-This is needed because header files are now copied inside
-`$ALICE_BUILD/include`, yet some analysis macros still search for them
-inside `$ALICE_ROOT/include`.
+You cannot "install" old AliRoot versions through `make install`. The following
+command will install AliRoot only if appropriate (again: just copy-paste it):
 
-When you are finished you can finally start using AliRoot.
+```bash
+[ -d "$ALICE_BUILD/version" ] && make -j$MJ install
+```
+
+When you are finished **you must to re-source `alice-env.sh`** and then you can
+start using AliRoot.
