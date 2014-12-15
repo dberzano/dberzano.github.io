@@ -572,7 +572,7 @@ On **OS X**:
 ```bash
 export CXXFLAGS='-lgmp'
 export CXX=$(which clang++)
-./configure --enable-cgal --prefix="$FASTJET" )
+./configure --enable-cgal --prefix="$FASTJET"
 ```
 
 On **Linux (gcc)**:
@@ -580,7 +580,7 @@ On **Linux (gcc)**:
 ```bash
 export CXXFLAGS='-Wl,--no-as-needed -lgmp'
 export CXX=$(which g++)
-./configure --enable-cgal --prefix="$FASTJET" )
+./configure --enable-cgal --prefix="$FASTJET"
 ```
 
 On **Linux (clang)**:
@@ -588,7 +588,7 @@ On **Linux (clang)**:
 ```bash
 export CXXFLAGS='-Wl,--no-as-needed -lgmp'
 export CXX=$(which clang++)
-./configure --enable-cgal --prefix="$FASTJET" )
+./configure --enable-cgal --prefix="$FASTJET"
 ```
 
 Note that **enabling CGAL is optional**. Also note that there are two
