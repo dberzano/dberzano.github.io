@@ -75,3 +75,19 @@ patch to an expert.
 > **Do not include headers or load macros from the source directory** in your
 > production code! They will not work on the Grid. Modify the
 > `CMakeLists.txt` to have them installed properly.
+
+If you really need to use macros and headers from the source directory (for
+instance while developing code), if you are using the standard installation
+procedure the source directory will **always** be found under:
+
+```
+${ALICE_ROOT}/../src
+```
+
+so you can, for instance, include your files like this:
+
+```c++
+gSystem->AddIncludePath( "-I$ALICE_ROOT/../src/MUON" );
+```
+
+> Keep again in mind that this will not work on the Grid.
