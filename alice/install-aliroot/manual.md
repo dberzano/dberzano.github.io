@@ -640,17 +640,28 @@ paradigm.
 > New to Git? Check out [our ALICE Git tutorial](../../git)!
 
 
-#### Source and build directories
+#### Source, build and installation directory
 
-The suggested setup uses two directories, stored in two corresponding
-environment variables:
+For compatibility reasons with software running on the Grid, a single
+environment variable, `$ALICE_ROOT`, is exported, and it points to the AliRoot
+Core installation directory.
 
-* the `$ALICE_ROOT` variable points to the source code directory: all
-  Git operations (like `git pull –rebase` or `git checkout`) shall
-  occur here;
-* the `$ALICE_BUILD` variable points to the build directory: this is
-  where the results from compilation will be stored, and where `make`
-  is performed.
+In total we have three directories needed for AliRoot:
+
+* as said already, `$ALICE_ROOT` is the **installation directory**: this is
+  where AliRoot binaries and other needed files end up after performing `make
+  install`;
+* **source code** is available under the `$ALICE_ROOT/../src` directory: this is
+  the place where all Git operations (*e.g.* `git pull --rebase`,
+  `git checkout`) occur;
+* there is a third *temporary* directory, the **build directory**, where
+  temporary object files are stored: this is accessible under
+  `$ALICE_ROOT/../build`, it is only used during compilation and it does not
+  contain any important file for running AliRoot. The `make install` command is
+  issued from there.
+
+> The meaning of `$ALICE_ROOT` has changed on Dec 2014 and has been made
+> compatible with the Grid: [more info here](/2014/12/16/alice-root-var).
 
 
 #### Clone and configure your Git repository
@@ -690,7 +701,7 @@ Create a Git source directory based on the local Git clone, using the
 utility (which must be in your `$PATH`):
 
 ```bash
-git-new-workdir "$ALICE_PREFIX"/aliroot/git "$ALICE_ROOT" "$ALICE_VER"
+git-new-workdir "${ALICE_PREFIX}/aliroot/git" "$(dirname "$ALICE_ROOT")/src" "$ALICE_VER"
 ```
 
 As for ROOT, the old SVN *trunk* is now called the *master* branch.
@@ -707,7 +718,7 @@ Here are the URLs:
 > You can change the URL without re-cloning. Do:
 >
 > ```bash
-> cd "$ALICE_ROOT"
+> cd "$(dirname "$ALICE_ROOT")/src"
 > git remote set-url origin <appropriate_url>
 > ```
 >
@@ -720,24 +731,23 @@ automatically use the new URL as the remote repository's URL.
 > `git remote set-url` command if you do not have push rights!
 
 
-#### Configure and build AliRoot
+#### Configure and build AliRoot Core
 
-Once you are done creating the local clone, create the build
-directory (whose name is stored in the `$ALICE_BUILD` variable):
+Once you are done creating the local clone, create the build directory:
 
 ```bash
-mkdir -p "$ALICE_BUILD"
-cd "$ALICE_BUILD"
+mkdir -p "$(dirname "$ALICE_ROOT")/build"
+cd "$(dirname "$ALICE_ROOT")/build"
 ```
 
-Now, tell CMake to get the source files from the proper directories
-and to use the same compilers configured with ROOT: this procedure
-has to be run only once.
+Now we configure AliRoot Core with CMake: we tell AliRoot to use the same
+compilers used by ROOT, and we point it to the correct location of its
+dependencies. This procedure has to be run only once.
 
 On **OS X**:
 
 ```bash
-cmake "$ALICE_ROOT" \
+cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_C_COMPILER=`root-config --cc` \
   -DCMAKE_CXX_COMPILER=`root-config --cxx` \
   -DCMAKE_Fortran_COMPILER=`root-config --f77` \
@@ -750,7 +760,7 @@ cmake "$ALICE_ROOT" \
 On **Linux (gcc and clang)**:
 
 ```bash
-cmake "$ALICE_ROOT" \
+cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_C_COMPILER=`root-config --cc` \
   -DCMAKE_CXX_COMPILER=`root-config --cxx` \
   -DCMAKE_Fortran_COMPILER=`root-config --f77` \
@@ -771,25 +781,24 @@ After configuring, build it:
 make -j$MJ
 ```
 
-If you don't want to build in parallel, run `make` without any
-switches. CMake provides you with a percentage of completion of your
-build.
+If you don't want to build in parallel, run `make` without any switches. CMake
+provides you with a percentage of completion of your build.
 
-If you have an old AliRoot version you need to do a workaround for making the
-include directory visible to the source code. The following command
-automatically determines wheter it is necessary to perform the workaround, so
-just copy-paste it:
+When build has completed, remove any previous symlink of the `include` directory
+from the source code: do that with:
 
 ```bash
-[ -d "$ALICE_BUILD/version" ] || ln -nfs "$ALICE_BUILD"/include "$ALICE_ROOT"/include
+[[ -L "$(dirname "$ALICE_ROOT")/src/include" ]] && rm -f "$(dirname "$ALICE_ROOT")/src/include"
 ```
 
-You cannot "install" old AliRoot versions through `make install`. The following
-command will install AliRoot only if appropriate (again: just copy-paste it):
+The above command only removes it if necessary.
+
+Now, perform the installation. Installation has to be done in two different ways
+according to how recent is your AliRoot installation. If you copy and paste the
+following long command, the correct method will be chosen automatically:
 
 ```bash
-[ -d "$ALICE_BUILD/version" ] && make -j$MJ install
+[[ -d "$(dirname "$ALICE_ROOT")/build/version" ]] && make install || ( rm -rf "$ALICE_ROOT" ; ln -nfs build "$ALICE_ROOT" )
 ```
 
-When you are finished **you must to re-source `alice-env.sh`** and then you can
-start using AliRoot.
+You are now done and you can start using AliRoot right away.
