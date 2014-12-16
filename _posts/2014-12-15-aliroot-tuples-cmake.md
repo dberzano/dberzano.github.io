@@ -140,17 +140,17 @@ If you want you can read more details on what changed below.
 In practice, the CMake command for configuring AliRoot has new mandatory flags.
 Assuming that:
 
-* `ALICE_ROOT` is the AliRoot Core source directory
-* `ALICE_BUILD` is the *temporary* build directory
-* `ALICE_INSTALL` is the installation directory
+* `ALICE_ROOT` is the AliRoot Core **installation directory**
+* `ALICE_ROOT/../build` is the temporary **build directory**
+* `ALICE_ROOT/../src` is the **source directory**
 
 the CMake command becomes:
 
 ```bash
-cd "$ALICE_BUILD"
-cmake "$ALICE_ROOT" \
+cd "$( dirname "$ALICE_ROOT" )/build"
+cmake "$( dirname "$ALICE_ROOT" )/src" \
   ...your_own_flags... \
-  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_ROOT" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
   -DFASTJET="$FASTJET"
@@ -159,6 +159,9 @@ cmake "$ALICE_ROOT" \
 The `FASTJET` parameter is mandatory if you want to use FastJet. `ALIEN`,
 `ROOTSYS` and `CMAKE_INSTALL_PREFIX` are mandatory and they are no longer
 detected from environment variables.
+
+> The meaning of `$ALICE_ROOT` has changed:
+> [read here](/2014/12/16/alice-root-var).
 
 
 #### Changes in the installation
@@ -181,8 +184,8 @@ where `$MJ$` is the number of parallel threads you wish to use for building.
 
 The new AliRoot binary and library directories are respectively:
 
-* `$ALICE_INSTALL/bin`
-* `$ALICE_INSTALL/lib`
+* `$ALICE_ROOT/bin`
+* `$ALICE_ROOT/lib`
 
 and they do not contain anymore the `tgt_<arch>` subpath in `bin` and `lib`.
 
