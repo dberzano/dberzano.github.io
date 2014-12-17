@@ -125,7 +125,7 @@ something like:
 AliTuple[1]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master'
 
 # FastJet 2
-#AliTuple[2]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master fastjet=2.4.5'
+#AliTuple[2]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master fastjet=3.0.6'
 
 # FastJet 3
 #AliTuple[3]='root=v5-34-18 geant3=v1-15a aliroot=master aliphysics=master \
@@ -493,31 +493,19 @@ software tuple definition if you want to install also
 [FastJet](http://fastjet.fr/) and
 [FastJet contrib](http://fastjet.hepforge.org/contrib/).
 
-> Compiling FastJet is optional. FastJet contrib is:
->
-> * optional if using FastJet 2
-> * **mandatory** if using FastJet 3 (AliRoot won't compile without
->   it)
+> FastJet 2 is no longer supported. **FastJet contrib is mandatory** if you want
+> to use FastJet.
 
-If you do not need FastJet contrib, your tuple will look like this:
+For using FastJet make your tuple look similar to this one:
 
 ```bash
 AliTuple[1]='root=v5-34-08 geant3=v1-15a \
              aliroot=master aliphysics=master \
-             fastjet=2.4.5'
+             fastjet=3.0.6 fjcontrib=1.012'
 ```
 
-If you need FastJet contrib as well, your tuple will look like this
-instead:
-
-```bash
-AliTuple[2]='root=v5-34-08 geant3=v1-15a \
-             aliroot=master aliphysics=master \
-             fastjet=2.4.5 fjcontrib=1.012'
-```
-
-Source the `alice-env.sh` script. Then, create the FastJet source
-directory and move into it:
+Source the `alice-env.sh` script. Then, create the FastJet source directory and
+move into it:
 
 ```bash
 mkdir -p "$FASTJET"/src
@@ -530,8 +518,7 @@ Download the tarball corresponding to the desired FastJet version:
 curl -Lo source.tar.gz http://fastjet.fr/repo/fastjet-"$FASTJET_VER".tar.gz
 ```
 
-Download the tarball corresponding to the desired FastJet contrib
-version:
+Download the tarball corresponding to the desired FastJet contrib version:
 
 ```bash
 curl -Lo contrib.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJCONTRIB_VER".tar.gz
@@ -544,28 +531,14 @@ tar xzf source.tar.gz
 tar xzf contrib.tar.gz
 ```
 
-> **OS X with FastJet 2:** you need to apply an additional "patch"
-> to make it compile correctly. Copy and paste the following:
->
-> ```bash
-> find . -name '*.h' -or -name '*.hh' | \
->   while read F; do
->     echo '#include <cstdlib>' > "$F.0" && \
->       cat "$F" | grep -v '#include <cstdlib>' >> "$F.0" && \
->       \mv -f "$F.0" "$F"
->   done
-> ```
->
-> **No patch** is needed for FastJet 3 *(from v3.0.6)*.
-
 Now, move to the FastJet source directory:
 
 ```bash
 cd "$FASTJET/src/fastjet-$FASTJET_VER"
 ```
 
-When you are done patching, configure FastJet by copying and pasting
-the lines below.
+When you are done patching, configure FastJet by copying and pasting the lines
+below.
 
 On **OS X**:
 
@@ -591,19 +564,17 @@ export CXX=$(which clang++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
 
-Note that **enabling CGAL is optional**. Also note that there are two
-`CXX*` variables in the environment: **we will need them later** for
-FastJet contrib.
+Note that **enabling CGAL is optional**. Also note that there are two `CXX*`
+variables in the environment: **we will need them later** for FastJet contrib.
 
-If the configuration succeeded, compile FastJet with the usual
-command:
+If the configuration succeeded, compile FastJet with the usual command:
 
 ```bash
 make -j$MJ install
 ```
 
-For installing FastJet contrib, **source the environment variables
-once again**, then move to the contrib source directory:
+For installing FastJet contrib, **source the environment variables once again**,
+then move to the contrib source directory:
 
 ```bash
 cd "$FASTJET/src/fjcontrib-$FJCONTRIB_VER"

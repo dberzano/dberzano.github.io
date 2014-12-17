@@ -44,22 +44,14 @@ problems with certain operating systems: the following grid
 illustrates such special cases and indicates the correct version range
 of the component compatible with each operating system.
 
-|                        | ROOT      | FastJet 2           | FastJet 3 |
-| ---------------------- |:---------:|:-------------------:|:---------:|
-| **Ubuntu**             |           | ≥ 2.4.5             |           |
-| **OS X Mountain Lion** | ≥ 5.34.18 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
-| **OS X Mavericks**     | ≥ 5.34.18 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
-| **OS X Yosemite**      | ≥ 5.34.22 | ≥ 2.4.5<sup>†</sup> | ≥ 3.0.6   |
+|                        | ROOT      | FastJet |
+| ---------------------- |:---------:|:-------:|
+| **Ubuntu**             | ≥ 5.34.08 | ≥ 3.0.6 |
+| **OS X Mountain Lion** | ≥ 5.34.18 | ≥ 3.0.6 |
+| **OS X Mavericks**     | ≥ 5.34.18 | ≥ 3.0.6 |
+| **OS X Yosemite**      | ≥ 5.34.22 | ≥ 3.0.6 |
 
-
-#### Notes
-
-<sup>†</sup> On OS X you need to patch FastJet 2 before compiling it:
-the [manual](manual) installation procedure explains you how. The
-[automatic](auto) procedure does it for you.
-
-See the [FastJet release notes](http://fastjet.fr/all-releases.html)
-for a more detailed explanation.
+**Note:** Fastjet 2 is no longer supported.
 
 
 Use AliRoot without compiling it
