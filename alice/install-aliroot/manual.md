@@ -719,7 +719,7 @@ cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_C_COMPILER=`root-config --cc` \
   -DCMAKE_CXX_COMPILER=`root-config --cxx` \
   -DCMAKE_Fortran_COMPILER=`root-config --f77` \
-  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_ROOT" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
   -DFASTJET="$FASTJET"
@@ -735,7 +735,7 @@ cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_MODULE_LINKER_FLAGS='-Wl,--no-as-needed' \
   -DCMAKE_SHARED_LINKER_FLAGS='-Wl,--no-as-needed' \
   -DCMAKE_EXE_LINKER_FLAGS='-Wl,--no-as-needed' \
-  -DCMAKE_INSTALL_PREFIX="$ALICE_INSTALL" \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_ROOT" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
   -DFASTJET="$FASTJET"
