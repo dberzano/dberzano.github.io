@@ -190,22 +190,40 @@ The syntax to source the script is simple. Assuming the full path to
 the script is `$HOME/alicesw/alice-env.sh`, you will do:
 
 ```bash
-source $HOME/alicesw/alice-env.sh [-q] [-n [nTuple]] [-c] [-k] [-u]
+source $HOME/alicesw/alice-env.sh [-q] [-n [nTuple]|-m queryTuple] [-c] [-k] [-u]
 ```
 
 As you can see, some optional switches are available (square braces
-stand for "optional", you should not type them literally):
+stand for "optional", you should not type them literally).
 
-* `-n`: AliRoot environment is set up *non-interactively*, meaning
-  that no menu is shown; pick a tuple number by typing it after `-n`:
-  if you don't specify anything, the default one selected by the
-  variable `$nAliTuple` in the configuration file will be chosen
+Two of them are used to select a tuple **non-interactively**, *e.g.* from inside
+another script:
+
+* `-n [nTuple]`: automatically loads tuple number `nTuple`, if this parameter is
+  specified (*e.g.* `-n 12`). If you just specify `-n` without any number, loads
+  the tuple number stored in the variable `$nAliTuple`, to be configured in the
+  configuration file
+* `-m queryTuple`: automatically loads the first tuple found that matches
+  `queryTuple`, a string that follows the tuple format. This is better
+  understood via a couple of examples:
+  * To load the first tuple with AliRoot version *master* and ROOT version
+    *v5-34-08*: `-m "aliroot=master root=v5-34-08"`
+  * To load the first tuple with AliRoot *master*: `-m "aliroot=master"`
+
+Setting environment via a query string has priority, so if both `-m` and `-n`
+are specified, only `-m` is considered.
+
+The script returns a verbose error in case it is impossible to find a matching
+tuple.
+
+Other parameters:
+
 * `-q`: quiet mode. Useful if you source the script from `.bashrc` and
   you do not want to see the output every time you open a new shell
 * `-c`: cleans environment from previously set ALICE variables without
   setting any tuple
 * `-k`: do not check for updates of the environment script
-* `-u`: force update of the environment script
+* `-u`: force-update of the environment script
 
 This script also sets a variable, `$MJ`, that you can pass as a
 parameter to `make` in order to set the number of parallel operations:
