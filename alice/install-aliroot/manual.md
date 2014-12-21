@@ -184,7 +184,7 @@ If your download fails because you cannot find the specified version,
 try to strip the final dash and the number, and try again.
 
 
-#### Environment variables syntax
+#### Syntax of the environment script
 
 The syntax to source the script is simple. Assuming the full path to
 the script is `$HOME/alicesw/alice-env.sh`, you will do:
