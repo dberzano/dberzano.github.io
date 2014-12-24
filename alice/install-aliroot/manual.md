@@ -599,8 +599,8 @@ Now configure, build and install it:
 
 ```bash
 ./configure CXX="$CXX" CXXFLAGS="$CXXFLAGS"
-make -j"$MJ" install
-make -j"$MJ" fragile-shared-install
+make -j$MJ && make install
+make -j$MJ fragile-shared && make fragile-shared-install
 ```
 
 **Important!** You **must** clean up the `CXX*` variables now:
