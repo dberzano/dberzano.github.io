@@ -38,7 +38,7 @@ more efficient as other users might benefit from a single reply.
 > produced by the following command:
 >
 > ```bash
-> bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
+> bash <(curl -fsSL http://alien.cern.ch/alice-installer) --bugreport
 > ```
 
 

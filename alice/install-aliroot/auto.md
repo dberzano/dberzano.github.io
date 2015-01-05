@@ -59,14 +59,14 @@ install.
 Then, to install **everything** using all the available cores:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --all
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --all
 ```
 
 To install everything using only one parallel thread *(useful if you
 are doing some work while installing)*:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --all --ncores 1
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --all --ncores 1
 ```
 
 You can specify any number of parallel threads you want.
@@ -78,7 +78,7 @@ Install (or upgrade) only selected components
 Components can be specified individually or in groups:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --alien --root --geant3 --aliroot --fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --alien --root --geant3 --aliroot --fastjet
 ```
 
 The above line is equivalent to specifying only `--all`. The
@@ -87,7 +87,7 @@ appropriate installation order is respected.
 For installing (or upgrading) only ROOT and Geant 3, for example, do:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --root --geant3
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --root --geant3
 ```
 
 
@@ -100,13 +100,13 @@ code and remove the build directories.
 To clean all components:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --clean-all
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-all
 ```
 
 You can specify also the components individually:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --clean-alien --clean-root --clean-geant3 --clean-aliroot --clean-fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-alien --clean-root --clean-geant3 --clean-aliroot --clean-fastjet
 ```
 
 The above command is equivalent to the `--clean-all` switch.
@@ -114,7 +114,7 @@ The above command is equivalent to the `--clean-all` switch.
 For cleaning only AliRoot and FastJet, for example, do:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --clean-aliroot --clean-fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-aliroot --clean-fastjet
 ```
 
 
@@ -124,7 +124,7 @@ Collect system information
 To collect information for reporting an issue:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --bugreport
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --bugreport
 ```
 
 A single file is produced and should be sent out for seeking support.
@@ -153,12 +153,12 @@ For instance, when you are online you can fetch the newest AliRoot
 updates:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --download-only --aliroot
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --download-only --aliroot
 ```
 
 When you are offline, you can compile what you have previously
 downloaded:
 
 ```bash
-bash <(curl -fsSL http://cern.ch/go/NcS7) --no-download --aliroot
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --no-download --aliroot
 ```
