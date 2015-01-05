@@ -18,8 +18,7 @@ supported, and be sure it complies with the **prerequisites**:
 * [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
   14.04 LTS, 14.10
 * [Fedora 64 bit](prereq-fedora) 20
-* [OS X](prereq-osx) Mountain Lion (10.8), Mavericks (10.9) and
-  Yosemite (10.10)
+* [OS X](prereq-osx) Mavericks (10.9) and Yosemite (10.10)
 
 > Your operating system's version has to be considered as **not
 > supported** unless it is **explicitly** mentioned in the above list.
@@ -47,7 +46,6 @@ of the component compatible with each operating system.
 |                        | ROOT      | FastJet |
 | ---------------------- |:---------:|:-------:|
 | **Ubuntu**             | ≥ 5.34.08 | ≥ 3.0.6 |
-| **OS X Mountain Lion** | ≥ 5.34.18 | ≥ 3.0.6 |
 | **OS X Mavericks**     | ≥ 5.34.18 | ≥ 3.0.6 |
 | **OS X Yosemite**      | ≥ 5.34.22 | ≥ 3.0.6 |
 

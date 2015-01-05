@@ -165,7 +165,6 @@ OS X versions:
 
 * [gfortran for OS X Yosemite (10.10)](http://coudert.name/software/gfortran-4.9.1-Yosemite.dmg)
 * [gfortran for OS X Mavericks (10.9)](http://coudert.name/software/gfortran-4.9.0-Mavericks.dmg)
-* [gfortran for OS X Mountain Lion (10.8)](http://coudert.name/software/gfortran-4.8.2-MountainLion.dmg)
 
 > Even if you already have gfortran on your system, **upgrade it if
 > you have just upgraded your OS X version!**
