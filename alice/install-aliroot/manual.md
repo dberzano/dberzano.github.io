@@ -388,7 +388,7 @@ On **OS X** configure it with:
   --with-f77=$( which gfortran ) \
   --with-cc=$( which clang ) \
   --with-cxx=$( which clang++ ) \
-  --with-ld=$( which clang++ )
+  --with-ld=$( which clang++ ) \
   --disable-fink \
   --enable-cocoa
 ```
