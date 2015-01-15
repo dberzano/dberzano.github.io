@@ -1,7 +1,6 @@
 ---
 title: AliRoot repository split
 createtoc: true
-showinlist: false
 ---
 
 As discussed during the last
