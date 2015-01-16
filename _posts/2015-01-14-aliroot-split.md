@@ -39,22 +39,22 @@ The above modules will be found at top-level directories inside the AliPhysics
 repository.
 
 Moreover, the following **ANALYSIS submodules** will be transferred to
-AliPhysics:
+AliPhysics (libraries retain their origial name):
 
- * Tender → TENDER
- * TenderSupplies → ANALYSISTender/Supplies
- * EventMixing → EVEMIX
+ * Tender → TENDER/Tender, `libTender`
+ * TenderSupplies → TENDER/TenderSupplies, `libTenderSupplies`
+ * EventMixing → EVEMIX, `libEventMixing`
 
-> **How to read this map:** *e.g.* what was called *ANALYSIS/Tender* in the root
-> of AliRoot Core, it's now called *ANALYSISTender* in the root of AliPhysics,
-> and it's now a top-level directory there.
+> **How to read this map:** *e.g.* what was  *ANALYSIS/Tender* in the root of
+> AliRoot Core is now *TENDER/Tender* in the root of AliPhysics.
 
 Subdirectory **HLT/JET** will be moved to AliPhysics as well:
 
- * HLT/JET → HLTJET (library: `libHLTjet.{so,dylib}`)
+ * HLT/JET → HLTJET (corresponding library, `libAliHLTJET`, retains the original
+   name)
 
 The following classes from **ANALYSISalice** will become part of the
-**OADB library** (*i.e.* `libOADB.{so,dylib}`) in AliPhysics:
+**OADB library** (*i.e.* `libOADB`) in AliPhysics:
 
  * AliBackgroundSelection
  * AliCentralitySelectionTask
@@ -62,8 +62,8 @@ The following classes from **ANALYSISalice** will become part of the
  * AliPhysicsSelectionTask
 
 The following classes from **EVE/EveBase** will become part of a new library in
-AliPhysics: library will be called `libEveAnalysis.{so,dylib}`, and it will be
-associated to the top-level directory **EVEANALYSIS**:
+AliPhysics: library will be called `libEveAnalysis`, and it will be associated
+to the top-level directory **EVEANALYSIS**:
 
  * AliEveBeamsInfo
  * AliEveBeamsInfoEditor
