@@ -64,6 +64,12 @@ The following classes from **ANALYSISalice** will become part of the
  * AliTriggerAnalysis
  * AliAnalysisUtils
 
+The following macros will be moved from **ANALYSIS/macros** to **OADB/macros**:
+
+ * BrowseAndFillPhysicsSelectionOADB.C
+ * AddTaskPhysicsSelection.C
+ * AddTaskCentrality.C
+
 The following classes from **EVE/EveBase** will become part of a new library in
 AliPhysics: library will be called `libEveAnalysis`, and it will be associated
 to the top-level directory **EVEANALYSIS**:
