@@ -35,17 +35,26 @@ The complete list of modules moved from AliRoot Core to AliPhysics follows:
  * PWGPP
  * PWGUD
 
+The above modules will be found at top-level directories inside the AliPhysics
+repository.
+
 Moreover, the following **ANALYSIS submodules** will be transferred to
 AliPhysics:
 
- * Tender
- * TenderSupplies
- * EventMixing
+ * Tender → TENDER
+ * TenderSupplies → ANALYSISTender/Supplies
+ * EventMixing → EVEMIX
 
-Subdirectory **HLT/JET** will be moved to AliPhysics as well.
+> **How to read this map:** *e.g.* what was called *ANALYSIS/Tender* in the root
+> of AliRoot Core, it's now called *ANALYSISTender* in the root of AliPhysics,
+> and it's now a top-level directory there.
+
+Subdirectory **HLT/JET** will be moved to AliPhysics as well:
+
+ * HLT/JET → HLTJET (library: `libHLTjet.{so,dylib}`)
 
 The following classes from **ANALYSISalice** will become part of the
-**OADB library** in AliPhysics:
+**OADB library** (*i.e.* `libOADB.{so,dylib}`) in AliPhysics:
 
  * AliBackgroundSelection
  * AliCentralitySelectionTask
@@ -53,7 +62,8 @@ The following classes from **ANALYSISalice** will become part of the
  * AliPhysicsSelectionTask
 
 The following classes from **EVE/EveBase** will become part of a new library in
-AliPhysics:
+AliPhysics: library will be called `libEveAnalysis.{so,dylib}`, and it will be
+associated to the top-level directory **EVEANALYSIS**:
 
  * AliEveBeamsInfo
  * AliEveBeamsInfoEditor
