@@ -43,15 +43,16 @@ AliPhysics (libraries retain their origial name):
 
  * Tender → TENDER/Tender, `libTender`
  * TenderSupplies → TENDER/TenderSupplies, `libTenderSupplies`
- * EventMixing → EVEMIX, `libEventMixing`
+ * EventMixing → EVENTMIX, `libEventMixing`
 
 > **How to read this map:** *e.g.* what was  *ANALYSIS/Tender* in the root of
 > AliRoot Core is now *TENDER/Tender* in the root of AliPhysics.
 
-Subdirectory **HLT/JET** will be moved to AliPhysics as well:
+Subdirectory **HLT/JET** will be moved to AliPhysics as well, to a new top-level
+directory called **HLTANALYSIS**:
 
- * HLT/JET → HLTJET (corresponding library, `libAliHLTJET`, retains the original
-   name)
+ * HLT/JET → HLTANALYSIS/JET (corresponding library, `libAliHLTJET`, retains the
+   original name)
 
 The following classes from **ANALYSISalice** will become part of the
 **OADB library** (*i.e.* `libOADB`) in AliPhysics:
@@ -60,6 +61,8 @@ The following classes from **ANALYSISalice** will become part of the
  * AliCentralitySelectionTask
  * AliPhysicsSelection
  * AliPhysicsSelectionTask
+ * AliTriggerAnalysis
+ * AliAnalysisUtils
 
 The following classes from **EVE/EveBase** will become part of a new library in
 AliPhysics: library will be called `libEveAnalysis`, and it will be associated
