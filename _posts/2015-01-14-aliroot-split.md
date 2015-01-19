@@ -63,6 +63,9 @@ The following classes from **ANALYSISalice** will become part of the
  * AliPhysicsSelectionTask
  * AliTriggerAnalysis
  * AliAnalysisUtils
+ * AliCollisionNormalization
+ * AliCollisionNormalizationTask
+ * AliEPSelectionTask
 
 The following macros will be moved from **ANALYSIS/macros** to **OADB/macros**:
 
@@ -78,6 +81,11 @@ to the top-level directory **EVEANALYSIS**:
  * AliEveBeamsInfoEditor
  * AliEveLego
  * AliEveLegoEditor
+
+Classes from module **TOF/TOFcalib** will be moved to **PWGPP/TOF** and will be
+part of `libPWGPP`, while `libTOFcalib` does not exist anymore:
+
+ * TOF/TOFcalib → PWGPP/TOF (`libTOFcalib` → part of `libPWGPP`)
 
 
 ### Environment variables and installation
