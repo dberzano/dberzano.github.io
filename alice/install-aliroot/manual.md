@@ -458,12 +458,15 @@ make -j$MJ
 **again** the environment script before you can use it!
 
 
-### Geant 3
+### Geant 3 (optional)
 
 > Geant 3 has been moved from SVN to Git. One practical implication:
 > *trunk* does not exist anymore, use *master* instead.
 
-First off, **load your environment variables**.
+The Geant 3 package is optional: if you do not want to install it, do not
+specify a `geant3=` entry in the tuple, and skip this section.
+
+If you want to install it, **load your environment variables** first.
 
 The first time you install Geant 3 you need to create the local Git
 clone. Do:
