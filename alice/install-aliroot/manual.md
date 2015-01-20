@@ -878,3 +878,51 @@ make -j$MJ install
 Do not forget to run `make install` and not just plain `make`.
 
 Now you are ready to use the full chain of the ALICE software.
+
+
+#### Build to test your local changes
+
+Normally you would use AliPhysics to develop and continuously test your changes
+locally.
+
+The standard workflow is the following. After you build and install AliPhysics
+for the first time, go in the **source** directory to develop your code:
+
+```bash
+cd "${ALICE_PHYSICS}/../src"
+# develop develop develop
+```
+
+Then move to the build directory, compile and install:
+
+```bash
+cd "${ALICE_PHYSICS}/../build"
+make -j$MJ install
+```
+
+All the relevant files will be under `$ALICE_PHYSICS`, *i.e.* the installation
+directory.
+
+> There is no need to re-run CMake for development, just run `make install` in
+> the build directory.
+
+When writing your code, keep in mind the following things when referring to
+directories:
+
+ * `$ALICE_ROOT` is the installation directory of AliRoot Core
+ * `$ALICE_PHYSICS` is the installation directory of AliPhysics
+ * both variables are set in your current local environment, and also on the
+   Grid: if you write code that uses them **it will work seamlessly locally and
+   on the Grid
+ * **never refer for any reason to source files**: *i.e.*, do not put
+   references to things like `$ALICE_PHYSICS/../src/blahblah`: source is only
+   available on your computer, and it increases exponentially the chances of
+   your code failing on the Grid
+ * if you want to refer to some source files (*e.g.* load macros), the correct
+   way to proceed is to modify the `CMakeLists.txt` in your working directory
+   (there's one of those files per directory) and tell it to **install** the
+   relevant files: this way, `make install` will copy them under
+   `$ALICE_PHYSICS`
+
+> How to get your files to the installation directory is explained [in an
+> earlier post](/2014/12/16/alice-root-var/).
