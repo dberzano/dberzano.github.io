@@ -11,7 +11,7 @@ paginate_path: /page:num
 markdown: redcarpet
 
 redcarpet:
-  extensions: [ "tables" ]
+  extensions: [ "tables", "strikethrough" ]
 
 highlighter: pygments
 

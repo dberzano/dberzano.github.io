@@ -138,16 +138,20 @@ Check the next paragraph for the migration schedule.
 
 ### Schedule
 
+> **Please note:** schedule has been delayed one day because of an [incident on
+> the central services](https://cern.service-now.com/service-portal/view-outage.do?from=CSP-Service-Status-Board&&n=OTG0017655) preventing us to publish our changes: this
+> is unfortunately **not under our control** as it is managed by CERN IT.
+
  * **Friday Jan 16**: AliRoot Git repository will be set to **read-only** mode
    and therefore it will be impossible to push new changes there. Then, the
    split procedure will be started, and this is expected to last for the
    weekend *([see why](#technical_overview) it takes that much)*.
- * **Monday Jan 19**: AliRoot repository will be set again to **read-write**,
+ * ~~Monday Jan 19~~ **Tuesday Jan 20**: AliRoot repository will be set again to **read-write**,
    and the new AliPhysics repository will be available for pushing as well. New
    code can be added, but tags will not be creaded yet.
- * **Tuesday Jan 20**: Test tags will be created and central operations (such as
+ * ~~Tuesday Jan 20~~ **Wednesday Jan 21**: Test tags will be created and central operations (such as
    trains) will be tested.
- * **Wednesday Jan 21**: Operations will be back to normal.
+ * ~~Wednesday Jan 21~~ **Thursday Jan 22**: Operations will be back to normal.
 
 > **Please push your code before Friday Jan 16!** This will make things easier
 > for you.
