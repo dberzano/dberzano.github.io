@@ -78,11 +78,11 @@ Install (or upgrade) only selected components
 Components can be specified individually or in groups:
 
 ```bash
-bash <(curl -fsSL http://alien.cern.ch/alice-installer) --alien --root --geant3 --aliroot --fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --alien --root --geant3 --aliroot --aliphysics --fastjet
 ```
 
-The above line is equivalent to specifying only `--all`. The
-appropriate installation order is respected.
+The above line is equivalent to specifying only `--all`. Order of switches does
+not matter: operations will be executed in the correct order.
 
 For installing (or upgrading) only ROOT and Geant 3, for example, do:
 
@@ -106,15 +106,15 @@ bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-all
 You can specify also the components individually:
 
 ```bash
-bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-alien --clean-root --clean-geant3 --clean-aliroot --clean-fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-alien --clean-root --clean-geant3 --clean-aliroot --clean-fastjet --clean-aliphysics
 ```
 
 The above command is equivalent to the `--clean-all` switch.
 
-For cleaning only AliRoot and FastJet, for example, do:
+For cleaning only AliPhysics and FastJet, for example, do:
 
 ```bash
-bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-aliroot --clean-fastjet
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-aliphysics --clean-fastjet
 ```
 
 

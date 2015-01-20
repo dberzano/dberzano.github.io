@@ -458,12 +458,15 @@ make -j$MJ
 **again** the environment script before you can use it!
 
 
-### Geant 3
+### Geant 3 (optional)
 
 > Geant 3 has been moved from SVN to Git. One practical implication:
 > *trunk* does not exist anymore, use *master* instead.
 
-First off, **load your environment variables**.
+The Geant 3 package is optional: if you do not want to install it, do not
+specify a `geant3=` entry in the tuple, and skip this section.
+
+If you want to install it, **load your environment variables** first.
 
 The first time you install Geant 3 you need to create the local Git
 clone. Do:
@@ -610,7 +613,7 @@ unset CXX CXXFLAGS
 ```
 
 
-### AliRoot
+### AliRoot Core
 
 #### AliRoot and Git
 
@@ -788,3 +791,138 @@ following long command, the correct method will be chosen automatically:
 ```
 
 You are now done and you can start using AliRoot right away.
+
+
+### AliPhysics
+
+AliPhysics is the ALICE software package for user analysis and it depends on
+[AliRoot Core](#aliroot_core).
+
+AliPhysics is, like AliRoot, available from a Git repository. Installation
+instructions are very similar to AliRoot's: should you need more details you
+might want to look at the [AliRoot Core installation procedure](#aliroot_core).
+
+First off, **make a local clone of AliPhysics**; note that this operation has to
+be performed **only once for all**:
+
+```bash
+[[ ! -d "$ALICE_PREFIX"/aliphysics/git ]] && git clone http://git.cern.ch/pub/AliPhysics "$ALICE_PREFIX"/aliphysics/git
+```
+
+Now configure it (just like AliRoot Core) with your **CERN username** and your
+**real email**:
+
+```bash
+cd "$ALICE_PREFIX"/aliphysics/git
+git config user.name "your_cern_username"
+git config user.email "your.email@cern.ch"
+git config color.ui true
+git config push.default simple
+```
+
+Update the list of remote branches and tags (this is **important**):
+
+```bash
+cd "$ALICE_PREFIX"/aliphysics/git
+git remote update --prune origin
+```
+
+Create a working copy for the branch you intend to use; this will be your
+**source directory**, *i.e.* the directory where you'll edit your code, make
+your commits and push them:
+
+```bash
+git-new-workdir "${ALICE_PREFIX}/aliphysics/git" "$(dirname "$ALICE_PHYSICS")/src" "$ALIPHYSICS_VER"
+```
+
+Create the temporary **build directory**:
+
+```bash
+mkdir -p "$(dirname "$ALICE_PHYSICS")/build"
+cd "$(dirname "$ALICE_PHYSICS")/build"
+```
+
+Configure your build using CMake:
+
+```bash
+cmake "$(dirname "$ALICE_PHYSICS")/src" \
+  -DCMAKE_INSTALL_PREFIX="$ALICE_PHYSICS" \
+  -DCMAKE_C_COMPILER=`root-config --cc` \
+  -DCMAKE_CXX_COMPILER=`root-config --cxx` \
+  -DCMAKE_Fortran_COMPILER=`root-config --f77` \
+  -DALIEN="$ALIEN_DIR" \
+  -DROOTSYS="$ROOTSYS" \
+  -DFASTJET="$FASTJET" \
+  -DALIROOT="$ALICE_ROOT"
+```
+
+You might omit the `-DFASTJET` switch if you don't have FastJet. With this
+command, you are compiling AliPhysics against the version of AliRoot Core
+installed under `$ALICE_ROOT`.
+
+> AliRoot Core is installed under `$ALICE_ROOT`, while AliPhysics uses
+> `$ALICE_PHYSICS`. Variables are set both locally and on the Grid.
+
+Please note that the **CMake step** has to be performed **only once**: when the
+software is configured, unless you have changed AliRoot, FastJet or ROOT, you
+can test your code by compiling and installing as explained below.
+
+To compile your code and get it in the installation directory (which is, it's
+worth to remind it, `$ALICE_PHYSICS`), simply do:
+
+```bash
+cd "$(dirname "$ALICE_PHYSICS")/build"
+make -j$MJ install
+```
+
+Do not forget to run `make install` and not just plain `make`.
+
+Now you are ready to use the full chain of the ALICE software.
+
+
+#### Build to test your local changes
+
+Normally you would use AliPhysics to develop and continuously test your changes
+locally.
+
+The standard workflow is the following. After you build and install AliPhysics
+for the first time, go in the **source** directory to develop your code:
+
+```bash
+cd "${ALICE_PHYSICS}/../src"
+# develop develop develop
+```
+
+Then move to the build directory, compile and install:
+
+```bash
+cd "${ALICE_PHYSICS}/../build"
+make -j$MJ install
+```
+
+All the relevant files will be under `$ALICE_PHYSICS`, *i.e.* the installation
+directory.
+
+> There is no need to re-run CMake for development, just run `make install` in
+> the build directory.
+
+When writing your code, keep in mind the following things when referring to
+directories:
+
+ * `$ALICE_ROOT` is the installation directory of AliRoot Core
+ * `$ALICE_PHYSICS` is the installation directory of AliPhysics
+ * both variables are set in your current local environment, and also on the
+   Grid: if you write code that uses them **it will work seamlessly locally and
+   on the Grid
+ * **never refer for any reason to source files**: *i.e.*, do not put
+   references to things like `$ALICE_PHYSICS/../src/blahblah`: source is only
+   available on your computer, and it increases exponentially the chances of
+   your code failing on the Grid
+ * if you want to refer to some source files (*e.g.* load macros), the correct
+   way to proceed is to modify the `CMakeLists.txt` in your working directory
+   (there's one of those files per directory) and tell it to **install** the
+   relevant files: this way, `make install` will copy them under
+   `$ALICE_PHYSICS`
+
+> How to get your files to the installation directory is explained [in an
+> earlier post](/2014/12/16/alice-root-var/).
