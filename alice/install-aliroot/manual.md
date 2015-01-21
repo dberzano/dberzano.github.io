@@ -845,6 +845,22 @@ your commits and push them:
 git-new-workdir "${ALICE_PREFIX}/aliphysics/git" "$(dirname "$ALICE_PHYSICS")/src" "$ALIPHYSICS_VER"
 ```
 
+As for AliRoot Core, AliPhysics has two different Git URLs:
+
+* Use this if **you can push:** `https://git.cern.ch/reps/AliPhysics`
+* Use this if **you cannot push:** `http://git.cern.ch/pub/AliPhysics`
+
+Change the default URL with:
+
+```bash
+cd "$(dirname "$ALICE_PHYSICS")/src"
+git remote set-url origin <appropriate_url>
+```
+
+URL changes are propagated to all repositories created with `git-new-workdir`,
+*i.e.* you do not need to run the `remote set-url` command on each AliPhysics
+repository you created.
+
 Create the temporary **build directory**:
 
 ```bash
