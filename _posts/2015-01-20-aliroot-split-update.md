@@ -107,6 +107,36 @@ history up to the split is still available in AliRoot Core.
 > AliRoot files at that time (including your "lost" ones).
 
 
+### Using AliRoot tags before the split
+
+The first tag after the split is **vAN-20150120** and it is available both in
+AliRoot and AliPhysics.
+
+This means that the minimum *compiling* combination will have a tuple
+containing:
+
+```
+aliroot=vAN-20150120 aliphysics=vAN-20150120
+```
+
+"Old" tags are available in AliPhysics, but **they will not compile**: they are
+only there to help people understand the Git history, which has been preserved
+in most cases.
+
+If you want to use a "old" AliRoot tag, prior to the split, **just do not
+specify any AliPhysics**. For instance, if you want **vAN-20150111**, your tuple
+will contain:
+
+```
+aliroot=vAN-20150111
+```
+
+and it will **not** contain any `aliphysics=` section. By using the
+[installation instructions and script](/alice/install-aliroot), you will have in
+this case both `$ALICE_ROOT` and `$ALICE_PHYSICS` pointing to the same location
+for backwards compatibility.
+
+
 ### Repository URLs and permissions
 
 AliRoot Core is the same repository as before:
