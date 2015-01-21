@@ -615,6 +615,12 @@ unset CXX CXXFLAGS
 
 ### AliRoot Core
 
+> As of **Jan 20, 2015** AliRoot has been split into AliRoot Core and
+> AliPhysics. If you want to use tags prior to that date (*i.e.* before
+> **vAN-20150120**), you can:
+> [read here how](/2015/01/20/aliroot-split-update/#using_aliroot_tags_before_the_split).
+
+
 #### AliRoot and Git
 
 [Git](http://git-scm.com) is a popular Distributed Version Control
@@ -794,6 +800,10 @@ You are now done and you can start using AliRoot right away.
 
 
 ### AliPhysics
+
+> As of **Jan 20, 2015** AliRoot has been split into AliRoot Core and
+> AliPhysics. You do not need AliPhysics for versions prior to **vAN-20150120**:
+> [find the details here](/2015/01/20/aliroot-split-update/#using_aliroot_tags_before_the_split).
 
 AliPhysics is the ALICE software package for user analysis and it depends on
 [AliRoot Core](#aliroot_core).
