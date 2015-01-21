@@ -95,7 +95,7 @@ No need to touch currently installed ROOT, AliEn, Geant or FastJet.
 
 Some files have been kept in AliRoot Core, others have been moved in AliPhysics.
 
-The complete list of what went were is [here](2015/01/14/aliroot-split/): please
+The complete list of what went were is [here](/2015/01/14/aliroot-split/): please
 look at it very carefully!
 
 History of changes of almost all files has been preserved: if this is not the
