@@ -572,7 +572,7 @@ below.
 On **OS X**:
 
 ```bash
-export CXXFLAGS='-lgmp'
+export CXXFLAGS='-lgmp -O2 -g'
 export CXX=$(which clang++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
@@ -580,7 +580,7 @@ export CXX=$(which clang++)
 On **Linux (gcc)**:
 
 ```bash
-export CXXFLAGS='-Wl,--no-as-needed -lgmp'
+export CXXFLAGS='-Wl,--no-as-needed -lgmp -O2 -g'
 export CXX=$(which g++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
@@ -588,13 +588,24 @@ export CXX=$(which g++)
 On **Linux (clang)**:
 
 ```bash
-export CXXFLAGS='-Wl,--no-as-needed -lgmp'
+export CXXFLAGS='-Wl,--no-as-needed -lgmp -O2 -g'
 export CXX=$(which clang++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
 
 Note that **enabling CGAL is optional**. Also note that there are two `CXX*`
 variables in the environment: **we will need them later** for FastJet contrib.
+
+Please note also that you can use optimization and debug switches different than
+`-O2 -g`. If you are unsure, leave them like this. If you know what you are
+doing, here are the suggested alternative combinations:
+
+* for **debugging**, use `-O0 -g`: optimization is turned off and you have debug
+  symbols, so you are sure that nothing gets optimized out and stack traces are
+  complete
+* for **optimization**, use `-O3`: a higher level of compile-time optimization
+  is enabled and no debug symbols are generated; FastJet will run faster, but
+  one of the consequences is that stack traces will not be complete
 
 If the configuration succeeded, compile FastJet with the usual command:
 
