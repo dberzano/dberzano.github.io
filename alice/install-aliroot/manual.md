@@ -749,6 +749,7 @@ cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_INSTALL_PREFIX="$ALICE_ROOT" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
+  -DCMAKE_BUILD_TYPE=RELWITHDEBINFO \
   -DFASTJET="$FASTJET"
 ```
 
@@ -765,10 +766,29 @@ cmake "$(dirname "$ALICE_ROOT")/src" \
   -DCMAKE_INSTALL_PREFIX="$ALICE_ROOT" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
+  -DCMAKE_BUILD_TYPE=RELWITHDEBINFO \
   -DFASTJET="$FASTJET"
 ```
 
 Omit `-DFASTJET` if you do not have FastJet.
+
+The `-DCMAKE_BUILD_TYPE` tells CMake how to build AliRoot Core. The most common
+values are:
+
+* **RELWITHDEBINFO** *(default if omitted)*: build with some optimization on
+  (`-O2`) and debug symbols on (`-g`)
+* **DEBUG**: build with no optimization (`-O0`) and debug symbols (`-g`)
+* **RELEASE**: build with a high level of optimization (`-O3`) and no debug
+  symbol
+
+If you don't know what this is about, just accept the default value
+(**RELWITHDEBINFO**).
+
+Please note that the values are **case-sensitive** (*i.e.* **Debug** is
+different than **DEBUG**).
+
+> If you want to rebuild an existing AliRoot with different build options,
+> **remove the build directory** and start from scratch!
 
 After configuring, build it:
 
@@ -879,12 +899,18 @@ cmake "$(dirname "$ALICE_PHYSICS")/src" \
   -DALIEN="$ALIEN_DIR" \
   -DROOTSYS="$ROOTSYS" \
   -DFASTJET="$FASTJET" \
-  -DALIROOT="$ALICE_ROOT"
+  -DALIROOT="$ALICE_ROOT" \
+  -DCMAKE_BUILD_TYPE=RELWITHDEBINFO
 ```
 
 You might omit the `-DFASTJET` switch if you don't have FastJet. With this
 command, you are compiling AliPhysics against the version of AliRoot Core
 installed under `$ALICE_ROOT`.
+
+Concerning the `-DCMAKE_BUILD_TYPE` option, leave it like this if you don't know
+what this is about. If you need special build options, have a look at the
+[explanation](#configure_and_build_aliroot_core) for AliRoot Core, which applies
+to AliPhysics as well.
 
 > AliRoot Core is installed under `$ALICE_ROOT`, while AliPhysics uses
 > `$ALICE_PHYSICS`. Variables are set both locally and on the Grid.

@@ -134,8 +134,8 @@ A single file is produced and should be sent out for seeking support.
 > information before sending it to others.
 
 
-Extra download options
-----------------------
+Download without compiling and vice-versa
+-----------------------------------------
 
 The automatic installation has two options for controlling the
 software download:
@@ -162,3 +162,27 @@ downloaded:
 ```bash
 bash <(curl -fsSL http://alien.cern.ch/alice-installer) --no-download --aliroot
 ```
+
+
+Build options
+-------------
+
+It is possible to set explicitly the desired build optimization and debug levels
+by means of the `--type` option.
+
+* `--type normal` *(default if omitted)*: use debug symbols and optimization
+* `--type optimized`: no debug symbols and maximum optimization
+* `--type debug`: debug symbols and no optimization
+
+Please refer to the [manual installation guide](manual) for more information
+about the flags.
+
+If you have built a component with a certain set of build flags and you want to
+rebuild it, **you must clean it first**. For instance, for AliPhysics:
+
+```bash
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-aliphysics --aliphysics --type optimized
+```
+
+The above command will clean the old AliPhysics build and it will rebuild it
+for maximum optimization and without debug symbols.
