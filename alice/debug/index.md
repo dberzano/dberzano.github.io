@@ -112,28 +112,38 @@ make
 
 By default, if you follow
 [the instructions](../install-aliroot/manual/#configure_and_build_aliroot),
-AliRoot is built with debug symbols, but with optimization turned on.
-
-For building AliRoot for production (`-O3` optimization and no debug
-symbols, like on the Grid):
+AliRoot is built with debug symbols, but with optimization turned on. This is
+obtained by passing explicitly the following option to CMake:
 
 ```bash
-cmake -DCMAKE_BUILD_TYPE=Release \
-  # other cmake options
+cmake -DCMAKE_BUILD_TYPE=RELWITHDEBINFO ...
 ```
 
-For explicitly setting the debug mode (which, as we have seen, is the
-default):
+In practice it corresponds to `-O2 -g`: **ALICE Grid builds have this build mode.**
+
+For building AliRoot for production (maximum optimization, `-O3` and **no debug
+symbols**):
 
 ```bash
-cmake -DCMAKE_BUILD_TYPE=Debug \
-  # other cmake options
+cmake -DCMAKE_BUILD_TYPE=RELEASE ...
 ```
 
-This implies building with `-g -O0`.
+For more debug (*i.e.* debug symbols on, and no optimization at all, `-g -O0`),
+which might be useful in some scenarios as the code is not altered by the
+optimizer:
 
-AliRoot needs to be recompiled (via `make`) after changing the build
-type.
+```bash
+cmake -DCMAKE_BUILD_TYPE=DEBUG ...
+```
+
+AliRoot Core and AliPhysics need to be removed completely and compiled from
+scratch (via `make`) if you want to change the build mode.
+
+Please note that this variable is **case-sensitive** (so, **Debug** is different
+than **DEBUG**).
+
+For more information on build modes,
+[see here](../install-aliroot/manual/#configure_and_build_aliroot_core).
 
 
 #### Your analysis
