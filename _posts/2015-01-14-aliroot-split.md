@@ -121,6 +121,7 @@ moved to AliPhysics. You therefore **must** change the load command to:
 gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/macros/AddTaskJets.C");
 ```
 
+
 #### Migrate now to ALICE_PHYSICS!
 
 For **backward compatibility** and in order to allow a gradual transition to the new
@@ -134,6 +135,22 @@ For AliRoot versions after the split they will point to different locations.
 > now**! It will then work seamlessly after the split.
 
 Check the next paragraph for the migration schedule.
+
+
+### The Analysis Plugin
+
+When running Grid analyses using the Analysis Plugin, it is now necessary to
+specify both the AliRoot Core version and the AliPhysics version:
+
+```c++
+AliAnalysisAlien *ana = new AliAnalysisAlien();
+
+ana->SetAliROOTVersion("v5-06-02");
+ana->SetAliPhysicsVersion("vAN-20150129");
+```
+
+You cannot pick any combination you want: a
+[compatibility list](http://alimonitor.cern.ch/packages/) is available.
 
 
 ### Schedule
@@ -166,7 +183,7 @@ from one of the relevant directories.
 
 This is a time-costly operation that will last several hours. For this reason,
 during this phase both AliRoot and AliPhysics will be in **read-only mode**,
-meaning that users will not be able to push code from there.
+meaning that users will not be able to push.
 
 
 ### Why the split?
