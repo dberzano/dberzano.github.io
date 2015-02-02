@@ -451,8 +451,19 @@ OK
 If `OK` is displayed, then you are good to go for building it:
 
 ```bash
-make -j$MJ
+make -j$MJ OPT='-O2 -g'
 ```
+
+With the above command, ROOT will be built with a "standard" optimization level
+(`-O2`) and debug symbols (`-g`). We recommend using the following options
+according to the "build type" you desire:
+
+* `OPT='-O2 -g'` *(default)*: ordinary use; gives mostly complete stacktraces
+  and decent running speed
+* `OPT='-O0 -g'`: **debug mode**: no optimization and debug symbols; stacktraces
+  are not optimized out, but running speed is slower
+* `OPT='-O3'`: **optimized mode**: no debug information, and "high" level of
+  compile-time optimization
 
 **Very important!** When you're done compiling ROOT, you must source
 **again** the environment script before you can use it!
