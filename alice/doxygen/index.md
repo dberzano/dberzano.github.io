@@ -3,9 +3,10 @@ title: "Doxygen documentation guidelines for AliRoot and AliPhysics"
 layout: tweet
 
 createtoc: true
-parnumbers: false
+parnumbers: true
 ---
 
+## How to write Doxygen documentation
 
 AliRoot Core and AliPhysics use [Doxygen](http://www.doxygen.org/) for
 documentation.
@@ -281,3 +282,77 @@ alidoxyimg.sh AliMyClass_cxx_whateveryouwant.C
 ```
 
 The corresponding updated `.png` file will be created.
+
+
+## Generate the documentation
+
+Before pushing any documentation change, you might want to check how it looks on
+your local computer.
+
+Generating Doxygen documentation is easy, and the tools you need are very
+straightforward to install.
+
+
+### Install required tools
+
+Apart from the usual
+[build tools](../install-aliroot/manual/#system-wide_prerequisites), you will
+need:
+
+* Doxygen
+* Graphviz
+
+On Ubuntu/Debian:
+
+```bash
+aptitude install doxygen graphviz
+```
+
+On OS X with Homebrew:
+
+```bash
+brew install doxygen graphviz
+```
+
+
+### Run Doxygen
+
+You don't even need to compile AliRoot or ROOT to install the documentation.
+
+If you follow the [installation instructions schema](../install-aliroot/manual),
+once your environment is loaded (the `alice-env.sh` file):
+
+* download AliRoot as described (`git clone`, `git-new-workdir`, etc.)
+* move into the build directory
+* run CMake as usual
+* **no need to run `make`**: if you don't want to build, stop here
+
+Now, inside the build directory, run:
+
+```bash
+make doxygen
+```
+
+Doxygen documentation will be generated in the build directory under
+`doxygen/html`. Open `doxygen/html/index.html` with a web browser to read the
+documentation.
+
+If you get the error:
+
+```console
+$> make doxygen
+make: *** No rule to make target `doxygen'.  Stop.
+```
+
+it means that CMake did not find Doxygen and Graphviz installed on your system.
+If you have installed them and you still get the error, remove the build
+directory and run CMake from scratch.
+
+If you want the documentation to be installed in your AliRoot Core installation
+directory (*i.e.* `$ALICE_ROOT`), type:
+
+```bash
+make install-doxygen
+```
+
+Open `$ALICE_ROOT/doxygen/index.html` to browse the documentation.
