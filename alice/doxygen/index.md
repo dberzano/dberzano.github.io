@@ -312,6 +312,32 @@ Formulas can be written in a separate block (clearer for long formulas):
 ```
 
 
+### Colored code blocks
+
+It is possible to add code snippets to your documentation by fencing your code
+block with three tildes:
+
+```
+~ ~ ~
+my code
+my code
+my code
+~ ~ ~
+```
+
+Code blocks will be syntax-colored if you specify the file format. For C++, for
+instance:
+
+```
+~ ~ ~{.cxx}
+void MyClass::MyClass(int a, float b, const char *s)
+  // code goes here
+}
+~ ~ ~
+```
+
+> Note that there is no space between tildes (*i.e.* `~~~`, not `~ ~ ~`)!
+
 
 ## Generate the documentation
 
