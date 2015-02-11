@@ -385,3 +385,256 @@ make install-doxygen
 ```
 
 Open `$ALICE_ROOT/doxygen/index.html` to browse the documentation.
+
+
+## Convert existing documentation to Doxygen
+
+In order to help converting the existing comments to Doxygen, by especially
+taking into consideration [special ROOT data member comments](#data_members), we
+provide a very spartan tool called `thtml2doxy.py`.
+
+
+### Prerequisites for thtml2doxy.py
+
+In order to use this tool, you need to have AliRoot Core installed (*i.e.* with
+`make install`) and an environment properly set. If you follow the [installation
+instructions](../install-aliroot) then you are set.
+
+The conversion tool uses the Python bindings of
+[libclang](http://clang.llvm.org/doxygen/group__CINDEX.html), which must be
+installed on your system.
+
+The tool has been solely tested using LLVM 3.5 on Ubuntu 14.04, and libclang has
+been installed like this:
+
+```bash
+aptitude instsall libclang1-3.5 libclang-common-3.5-dev
+```
+
+
+### How to use it: an example
+
+We are assuming that AliRoot has been installed. Let's take a couple of files as
+examples:
+
+* TPC/TPCcalib/AliTPCcalibBase.cxx
+* TPC/TPCcalib/AliTPCcalibBase.h
+
+First off, move to their directory in the source code:
+
+```bash
+cd "$ALICE_ROOT/../src/TPC/TPCcalib"
+```
+
+Look at the beginning of the .cxx file:
+
+```
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  Base class for the calibration components using
+//  as input TPCseeds and ESDs
+//  Event loop outside of the component
+//
+//
+// Base functionality to be implemeneted by component
+/*
+   //In some cases only one of this function to be implemented
+   virtual void     Process(AliESDEvent *event)
+   virtual void     Process(AliTPCseed *track)
+   //
+   virtual Long64_t Merge(TCollection *li);
+   virtual void     Analyze()
+   void             Terminate();
+*/
+// Functionality provided by base class for Algorith debuging:
+//  TTreeSRedirector * cstream =  GetDebugStreamer() - get debug streamer which can be use for numerical debugging
+//
+
+
+
+//  marian.ivanov@cern.ch
+//
+```
+
+Now run the conversion tool:
+
+```bash
+thtml2doxy.py -I$ALICE_ROOT/include AliTPCcalibBase.cxx AliTPCcalibBase.h
+```
+
+The two files have been modified in place. Your directory is under version
+control with Git, so you can:
+
+* check the differences: `git diff`
+* revert changes if you don't like them: `git checkout <filename>`
+* commit your changes: `git add <filename>`
+
+> Do not commit immediately without checking what has changed! You'll likely
+> need to amend some of the automatic conversions!
+
+We immediately notice that the new header looks like this:
+
+```
+/// \class AliTPCcalibBase
+/// \brief  Base class for the calibration components using
+///
+/// as input TPCseeds and ESDs
+/// Event loop outside of the component
+///
+/// Base functionality to be implemeneted by component
+///
+///  //In some cases only one of this function to be implemented
+///  virtual void     Process(AliESDEvent *event)
+///  virtual void     Process(AliTPCseed *track)
+///
+///  virtual Long64_t Merge(TCollection *li);
+///  virtual void     Analyze()
+///  void             Terminate();
+///
+/// Functionality provided by base class for Algorith debuging:
+/// TTreeSRedirector * cstream =  GetDebugStreamer() - get debug streamer which can be use for numerical debugging
+
+
+
+//  marian.ivanov@cern.ch
+//
+```
+
+In particular:
+
+* the `\brief` line is broken
+* the example code block is not marked as such
+* the author was not converted (it belonged to a different comment block)
+
+After a couple of manual edits, we make it look like this:
+
+```
+/// \class AliTPCcalibBase
+/// \brief Base class for the calibration components using as input TPCseeds and ESDs
+///
+/// Event loop outside of the component
+///
+/// Base functionality to be implemeneted by component
+///
+/// ~~~{.cxx}
+/// // In some cases only one of this function to be implemented
+/// virtual void     Process(AliESDEvent *event);
+/// virtual void     Process(AliTPCseed *track);
+///
+/// virtual Long64_t Merge(TCollection *li);
+/// virtual void     Analyze();
+/// void             Terminate();
+/// ~~~
+///
+/// Functionality provided by base class for Algorith debuging:
+///
+/// ~~~{.cxx}
+/// TTreeSRedirector * cstream =  GetDebugStreamer() - get debug streamer which can be use for numerical debugging
+/// ~~~
+///
+/// \author Marian Ivanov <marian.ivanov@cern.ch>
+```
+
+We have:
+
+* put the `\brief` on one line
+* put fences around the code blocks by specifying the syntax (`~~~{.cxx}`), so
+  that Doxygen will generate colored code
+* converted the author's email to the recommended format
+
+`thtml2doxy.py` takes as many files as you want as input. Remember to always
+specify the "include path" `-I$ALICE_ROOT/include`, as this is required by
+libclang.
+
+As you can see from the example, the original documentation did not have a clear
+convention, so a fully automated conversion is not possible. However, the
+conversion tool saves you some time.
+
+In fact, if you run `git diff`, you'll realize how the member functions comments
+are converted correctly, the `\cond CLASSIMP ... \endcond` has been added, and
+all data members have their description properly formatted.
+
+
+### Images from ROOT macros
+
+With ROOT's THtml it was possible to insert a special macro block generating an
+image. ROOT internally processed the macro, and the resulting HTML contained the
+image only.
+
+Whenever `thtml2doxy.py` finds a block in the form *(case insensitive)*:
+
+```
+BEGIN_MACRO
+...
+END_MACRO
+```
+
+the macro is extracted to an external file in the directory `imgdoc` under the
+current path.
+
+If the input file is, *i.e.*, `AliTPCGGVoltError.h`, all macros found in the
+file will be extracted to `imgdoc/AliTPCGGVoltError_h_<uuid>.C`.
+
+The code block corresponding to the macro will be substituted with a pointer to
+a static image, in Markdown format:
+
+```
+![Picture from ROOT macro](AliTPCGGVoltError_h_<uuid>.png)
+```
+
+See [how to insert images from ROOT macros](#images_from_root_macros) for more
+information.
+
+
+### LaTeX blocks from ROOT macros
+
+LaTeX blocks in the form *(case insensitive)*:
+
+```
+BEGIN_LATEX
+...
+END_LATEX
+```
+
+are also automatically converted to the
+[corresponding Doxygen Markdown format](#latex_formulas). The special ROOT
+"pound sign" syntax (*i.e.* `#sigma`) is automatically converted to the native
+LaTeX syntax (`\sigma`).
+
+
+### Adding your directories and images to Doxygen
+
+AliRoot Doxygen is configured to look in a list of directories for files to
+convert. Each single directory has to be specified, and the lookup is
+non-recursive.
+
+During the transition period, where not all the documentation has been converted
+to Doxygen, this method helps us generating only the documentation for the files
+that were actually converted to Doxygen.
+
+To include your directory to the Doxygen documentation, edit the file
+`doxygen/Doxyfile.in` and add your module's directory to the `INPUT` variable,
+*e.g.*:
+
+```bash
+INPUT = @CMAKE_SOURCE_DIR@/doxygen \
+        @CMAKE_SOURCE_DIR@/TPC \
+        @CMAKE_SOURCE_DIR@/TPC/Attic \
+        @CMAKE_SOURCE_DIR@/TPC/Base/test \
+        @CMAKE_SOURCE_DIR@/TPC/Cal \
+        @CMAKE_SOURCE_DIR@/TPC/CalibMacros \
+        @CMAKE_SOURCE_DIR@/TPC/DA \
+        @CMAKE_SOURCE_DIR@/TPC/fastSimul
+```
+
+If you have images to add in the `imgdoc` directory under your module's
+directory, you should add it to the image search path in the same file:
+
+```bash
+IMAGE_PATH = @CMAKE_SOURCE_DIR@/picts \
+             @CMAKE_SOURCE_DIR@/TPC/TPCbase/imgdoc
+```
+
+Probably you do not have push permissions for the `doxygen` directory, so just
+[open a JIRA ticket](https://alice.its.cern.ch/) and attach
+[the patch created with `git format-patch`](../git/#create_patch_files_and_import_them) to the issue.
