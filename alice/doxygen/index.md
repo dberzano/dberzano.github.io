@@ -283,6 +283,35 @@ alidoxyimg.sh AliMyClass_cxx_whateveryouwant.C
 
 The corresponding updated `.png` file will be created.
 
+> Remember to `git add` and `commit` **both** the macro file and the generated
+> image! If editing the macro, **regenerate the image**.
+
+
+### LaTeX formulas
+
+ALICE Doxygen documentation uses [MathJax](http://www.mathjax.org/) for
+rendering formulas natively in the browser: this means that formulas can be
+inserted in the code in the native LaTeX syntax, and no intermediate image will
+be generated.
+
+Doxygen supports two types of LaTeX blocks. Inline formulas are written on a
+single line:
+
+```
+... \f$ latex_formula_goes_here \f$ ...
+```
+
+Formulas can be written in a separate block (clearer for long formulas):
+
+```
+\f[
+...
+...
+...
+\f]
+```
+
+
 
 ## Generate the documentation
 
