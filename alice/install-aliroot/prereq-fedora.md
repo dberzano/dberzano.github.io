@@ -10,13 +10,7 @@ AliRoot.
 Required packages
 -----------------
 
-Update the list of available packages. As root, or with `sudo`:
-
-```bash
-yum update
-```
-
-Then install (always as root or by prepending `sudo`) all the required
+Install (always as root or by prepending `sudo`) all the required
 packages with a single command *(please note that it is a long line)*:
 
 ```bash
