@@ -183,6 +183,10 @@ appended.
 If your download fails because you cannot find the specified version,
 try to strip the final dash and the number, and try again.
 
+> Please note that **you must strip the build number when downloading sources**,
+> but when you launch jobs **on the Grid you will need the full version,
+> including the build number!**
+
 
 #### Syntax of the environment script
 
