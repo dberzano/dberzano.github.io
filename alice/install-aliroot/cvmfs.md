@@ -150,9 +150,9 @@ Choose one. For instance:
 alienv enter VO_ALICE@AliRoot::vAN-20141006
 ```
 
-Do not forget the `VO_ALICE@AliRoot::` prefix. A new shell is opened
-where you have your ALICE programs available, and all dependencies are
-automatically set:
+Do not forget the `VO_ALICE@AliRoot::` or `VO_ALICE@AliPhysycs::` prefix. A new
+shell is opened where you have your ALICE programs available, and all dependencies
+are automatically set:
 
 ```console
 $> which aliensh
@@ -172,6 +172,24 @@ To "unload" the current environment, just exit the shell:
 ```bash
 exit
 ```
+
+
+### Loading multiple packages
+
+In case you load AliPhysics, please note that the appropriate AliRoot version is
+loaded automatically.
+
+There are cases where you would like to enable additional packages (FastJet is
+a common one).
+
+In this case, just enter the ALICE environment like this:
+
+```bash
+alienv enter AliPhysics::vAN-20150219,fastjet::v3.0.6_1.012
+```
+
+In practice, multiple packages can be specified and they can be separated via
+commas.
 
 
 ### Load an AliRoot version inside a shell script
