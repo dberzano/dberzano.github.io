@@ -438,6 +438,27 @@ aptitude instsall libclang1-3.5 libclang-common-3.5-dev
 ```
 
 
+#### Getting the scripts without having AliRoot
+
+There are two conversion scripts needed for the conversion:
+
+* [thtml2doxy.py](https://git.cern.ch/web/AliRoot.git/blob_plain/HEAD:/doxygen/thtml2doxy.py)
+* [alidoxyimg.sh](https://git.cern.ch/web/AliRoot.git/blob_plain/HEAD:/doxygen/alidoxyimg.sh)
+
+You can get them from the [CERN Git web
+interface](https://git.cern.ch/web/AliRoot.git/tree/HEAD:/doxygen) without
+downloading or installing the full AliRoot.
+
+**Note:** you need a CERN account to access the above links. If you do not have
+one, you can clone the public AliRoot Core Git repository:
+
+```bash
+git clone http://git.cern.ch/pub/AliRoot.git
+```
+
+Scripts will be in the `doxygen/` subdirectory.
+
+
 ### How to use it: an example
 
 We are assuming that AliRoot has been installed. Let's take a couple of files as
