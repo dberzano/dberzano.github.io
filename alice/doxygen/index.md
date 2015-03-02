@@ -442,11 +442,11 @@ aptitude instsall libclang1-3.5 libclang-common-3.5-dev
 
 There are two conversion scripts needed for the conversion:
 
-* [thtml2doxy.py](https://git.cern.ch/web/AliRoot.git/blob_plain/HEAD:/doxygen/thtml2doxy.py)
-* [alidoxyimg.sh](https://git.cern.ch/web/AliRoot.git/blob_plain/HEAD:/doxygen/alidoxyimg.sh)
+* [thtml2doxy.py](https://git.cern.ch/pubweb/AliRoot.git/blob_plain/HEAD:/doxygen/thtml2doxy.py)
+* [alidoxyimg.sh](https://git.cern.ch/pubweb/AliRoot.git/blob_plain/HEAD:/doxygen/alidoxyimg.sh)
 
 You can get them from the [CERN Git web
-interface](https://git.cern.ch/web/AliRoot.git/tree/HEAD:/doxygen) without
+interface](https://git.cern.ch/pubweb/AliRoot.git/tree/HEAD:/doxygen) without
 downloading or installing the full AliRoot.
 
 **Note:** you need a CERN account to access the above links. If you do not have
