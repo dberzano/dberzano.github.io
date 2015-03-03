@@ -32,13 +32,12 @@ Register your certificate to ALICE
 In order to use the AliEn services for ALICE, you have to register
 your newly obtained certificate to the ALICE Virtual Organization.
 
-In practice this boils down to connecting to
-[this link](https://lcg-voms.cern.ch:8443/vo/alice/vomrs) and
-following the on-screen procedure.
+In practice you will need to go to
+[VOMS-Admin](https://voms2.cern.ch:8443/voms/alice) and follow the guided
+procedure.
 
-> When you click on the link, you might be asked to select a
-> certificate to authenticate to the page: be sure you are selecting
-> the correct one.
+> Note: you might be asked to select a certificate to authenticate to the page:
+> be sure you are selecting the correct one.
 
 
 Export the certificate to files
