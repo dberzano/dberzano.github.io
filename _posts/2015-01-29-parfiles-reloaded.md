@@ -95,15 +95,17 @@ the following files
 Adding the line above **does not generate a PARfile**, but it tells CMake to
 enable PARfile generation for a certain module.
 
-To effectively create the PARfile:
+To effectively create the PARfile, go in the AliRoot/AliPhysics build directory
+(you must have already created and configured it with CMake), and run:
 
 ```bash
 cd $ALICE_ROOT/../build  # or in general the AliRoot/AliPhysics build dir
+cmake ../src
 make MODULE.par
-make install
+make -j$MJ install
 ```
 
-You can find the result in:
+The resulting PARfile will be found in:
 
 ```
 $ALICE_ROOT/PARfiles/MODULE.par
