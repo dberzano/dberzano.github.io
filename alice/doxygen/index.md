@@ -62,24 +62,28 @@ Notes:
 
 #### Data members
 
-As you know, ROOT uses specially formatted comments for datamembers, to know
-what to do when saving a class instance to a file. For instance,
+You can append a specially-formatted comment to a ROOT class datamember for
+providing it with a Doxygen description.
 
-```{c++}
-Int_t fThisIsTransient;  //! This is a member's description
-```
+Other specially-formatted comments in ROOT have also a special meaning for I/O:
+that is, in some cases they indicate _how_ and _if_ saving this data member when,
+_e.g._, saving the class to a `.root` file.
 
-the `//!` comment tells ROOT not to save this datamember when saving the class
-instance to a file.
+This paragraph illustrates how to write specially-formatted comments in a way
+that they are both compatible with ROOT's intended behaviour and Doxygen.
 
-Doxygen uses specially formatted comments as well: **you have to be careful** in
-order to avoid conflicts between what ROOT and Doxygen understand.
+> Doxygen uses both `//!<` and `///<` to introduce a data member comment. Until
+> ROOT 5, this allowed using `//!<` for indicating a **transient** data member.
+> [ROOT 6 abruptly broke this compatibility](https://sft.its.cern.ch/jira/browse/ROOT-7125)
+> and `//!<` **does not mean transient anymore**: we are now forced to use
+> `//!<!` for introducing a Doxygen comment interpreted as transient in both
+> ROOT 5 and ROOT 6.
 
-Here we cover the most common cases. The `fRoot` variable is the one with the
-ROOT-only comment. The `fDoxygen` variable has the ROOT-compatible Doxygen
-comment (*i.e.*  the one you should use).
+The most common cases are covered. In the examples that follow, the `fRoot`
+variable is the one with the ROOT-only comment. The `fDoxygen` variable has the
+ROOT-compatible Doxygen comment (*i.e.*  the one you should use).
 
-**Normal members:**
+**Normal (non-transient) members:**
 
 ```{c++}
 Int_t fRoot;     // Description
@@ -90,7 +94,9 @@ Int_t fDoxygen;  ///< Description
 
 ```{c++}
 Int_t fRoot;     //! Description
-Int_t fDoxygen;  //!< Description
+Int_t fDoxygen;  //!<! Description (note the double exclamation mark!)
+
+Int_t fDontUseEver;  //!< Different behaviour in ROOT 5 and 6: don't use!!!
 ```
 
 **Arrays:**
