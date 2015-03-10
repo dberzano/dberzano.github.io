@@ -440,7 +440,7 @@ The tool has been solely tested using LLVM 3.5 on Ubuntu 14.04, and libclang has
 been installed like this:
 
 ```bash
-sudo aptitude install libclang1-3.5 libclang-common-3.5-dev
+sudo aptitude install libclang1-3.5 libclang-common-3.5-dev python-clang-3.5
 ```
 
 
