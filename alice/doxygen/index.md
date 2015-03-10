@@ -366,10 +366,10 @@ need:
 On Ubuntu/Debian:
 
 ```bash
-aptitude install doxygen graphviz
+sudo aptitude install doxygen graphviz
 ```
 
-On OS X with Homebrew:
+On OS X with Homebrew (no `sudo` here):
 
 ```bash
 brew install doxygen graphviz
@@ -440,7 +440,7 @@ The tool has been solely tested using LLVM 3.5 on Ubuntu 14.04, and libclang has
 been installed like this:
 
 ```bash
-aptitude instsall libclang1-3.5 libclang-common-3.5-dev
+sudo aptitude install libclang1-3.5 libclang-common-3.5-dev
 ```
 
 
