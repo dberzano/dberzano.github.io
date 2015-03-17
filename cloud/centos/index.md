@@ -10,10 +10,10 @@ parnumbers: true
 Download
 --------
 
-Latest image is **CentOS 6.5 (custom build v8) - Mar 17, 2015**:
+Latest image is **CentOS 6.6 (custom build v8) - Mar 17, 2015**:
 
-* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build8-compat0.10.qcow2) (~1.1 GB)
-* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build8-compat0.10.qcow2.sig)
+* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build8-compat0.10.qcow2) (~1.1 GB)
+* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build8-compat0.10.qcow2.sig)
 
 
 ### Features
@@ -380,10 +380,10 @@ With VMWare Fusion, we create a new Virtual Machine with:
 
 Through the Wizard we install CentOS via the "netinstall" image:
 
-* [Direct download of netinstall iso for CentOS 6.5](http://linuxsoft.cern.ch/centos/6.5/isos/x86_64/CentOS-6.5-x86_64-netinstall.iso)
+* [Direct download of netinstall iso for CentOS 6.6](http://linuxsoft.cern.ch/centos/6/isos/x86_64/CentOS-6.6-x86_64-netinstall.iso)
 
 Other CentOS install images are available
-[here](http://linuxsoft.cern.ch/centos/6.5/isos/x86_64/).
+[here](http://linuxsoft.cern.ch/centos/6/isos/x86_64/).
 
 
 ### Installation
@@ -847,16 +847,16 @@ qemu-img convert \
   -c \
   -o compat=0.10 \
   'Disk-000002.vmdk' \
-  CentOS65-x86_64-build<N>-compat0.10.qcow2
+  CentOS6-x86_64-build<N>-compat0.10.qcow2
 ```
 
 To sign with GPG:
 
 ```bash
-gpg --detach-sign CentOS65-x86_64-build<N>-compat0.10.qcow2
+gpg --detach-sign CentOS6-x86_64-build<N>-compat0.10.qcow2
 ```
 
-A binary file named `CentOS65-x86_64-build<N>-compat0.10.qcow2.sig`
+A binary file named `CentOS6-x86_64-build<N>-compat0.10.qcow2.sig`
 will be created and must be distributed along with the image.
 
 Notes:
