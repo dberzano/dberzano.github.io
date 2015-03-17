@@ -10,10 +10,10 @@ parnumbers: true
 Download
 --------
 
-Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
+Latest image is **CentOS 6.5 (custom build v8) - Mar 17, 2015**:
 
-* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build7-compat0.10.qcow2) (~700 MB)
-* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build7-compat0.10.qcow2.sig)
+* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build8-compat0.10.qcow2) (~1.1 GB)
+* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS65-x86_64-build8-compat0.10.qcow2.sig)
 
 
 ### Features
@@ -23,12 +23,12 @@ Latest image is **CentOS 6.5 (custom build v7) - Sep 25, 2014**:
 * **Single root partition** (no swap) that **automatically grows** to
   the full backing block device where applicable (*e.g.* virtual
   machines on LVM logical volumes)
-* **[cloud-init](http://cloudinit.readthedocs.org/) v0.7.4**
+* **[cloud-init](http://cloudinit.readthedocs.org/) v0.7.5**
   (configured with support for EC2 metadata server, packages
   installation, Yum repository addition, mount points manipulation)
-* **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.19**
+* **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.20**
   (unconfigured and disabled by default)
-* **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.2**
+* **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.7**
   (unconfigured and disabled by default)
 * **[EPEL](https://fedoraproject.org/wiki/EPEL/) 6.8**
 * **SELinux enabled** (it can be disabled at context time)
@@ -502,8 +502,27 @@ enabled=1
 gpgcheck=0
 ```
 
-> We are using the "stable" repositories for both HTCondor and
-> CernVM-FS.
+> We are using the "stable" repositories for both HTCondor and CernVM-FS by
+> default
+
+If you want to use CernVM-FS Testing instead, this is the manifest:
+
+```ini
+[cvmfs]
+name=CernVM-FS Testing
+baseurl=http://cvmrepo.web.cern.ch/cvmrepo/yum/cvmfs-testing/EL/$releasever/$basearch
+enabled=1
+gpgcheck=0
+```
+
+Extra WLCG packages are available from an additional repository. There is a RPM
+that performs the repository creation:
+
+```bash
+yum install -y http://linuxsoft.cern.ch/wlcg/sl6/x86_64/wlcg-repo-1.0.0-1.el6.noarch.rpm
+```
+
+The package is from [this directory](http://linuxsoft.cern.ch/wlcg/sl6/x86_64/).
 
 
 #### Upgrade your system
@@ -538,15 +557,15 @@ ALICE software will **not** run): this is the
 yum install gcc gcc-c++ gcc-gfortran libXpm compat-libgfortran-41 redhat-lsb-core tcl compat-libtermcap
 ```
 
-If you want to play safe, install a WLCG metapackage with all required
-stuff for all LHC experiments:
+If you want to play safe, install a WLCG metapackage with all required stuff for
+all LHC experiments. This comes from the WLCG repo we've configured earlier:
 
 ```bash
-yum install -y http://linuxsoft.cern.ch/wlcg/sl6/x86_64/HEP_OSlibs_SL6-1.0.16-0.el6.x86_64.rpm
+yum install -y HEP_OSlibs_SL6
 ```
 
-This is a superset of the minimal list provided above. The CentOS
-image ready to download has such metapackages installed.
+This is a superset of the minimal list provided above. The CentOS image ready to
+download has such metapackage, and all related packages, installed.
 
 > **Beware:** this metapackage **increases the image size of ~50%!**
 
@@ -635,8 +654,8 @@ system_info:
 We have enabled modules for mounting filesystems, adding repositories
 and installing/upgrading packages.
 
-Moreover, the default user "cloud-user" will have `sudo` permissions
-without password.
+In addition, the default user "cloud-user" will have `sudo` permissions without
+password.
 
 
 #### Clean up before shutting down
@@ -651,6 +670,7 @@ rm -f /root/.bash_history /home/*/.bash_history
 rm -f /var/lib/dhclient/*
 rm -f /etc/sysconfig/iptables
 service iptables restart
+yum clean all
 rm -rf /var/cache/yum/*
 rm -rf /root/.ssh/ /home/*/.ssh/
 
