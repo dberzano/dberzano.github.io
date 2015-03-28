@@ -333,7 +333,7 @@ git remote update --prune origin
 ```
 
 > **Stop! (Mar 28, 2015):** The new installation procedure for ROOT requires a
-> source, build and installation directory ([read here](/2015/03/28/geant3-cmake)).
+> source, build and installation directory ([read here](/2015/03/28/new-g3-root-install)).
 >
 > If you are too lazy to read, this command will do the right thing:
 >
@@ -522,7 +522,7 @@ git remote update --prune
 ```
 
 > **Stop! (Mar 28, 2015):** Geant 3 v2-0 uses CMake and it requires a source,
-> build and installation directory ([read here](/2015/03/28/geant3-cmake)).
+> build and installation directory ([read here](/2015/03/28/new-g3-root-install)).
 >
 > If you are too lazy to read, this command will do the right thing:
 >
