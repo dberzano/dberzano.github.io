@@ -475,16 +475,12 @@ according to the "build type" you desire:
 
 ### Geant 3 (optional)
 
-> Geant 3 has been moved from SVN to Git. One practical implication:
-> *trunk* does not exist anymore, use *master* instead.
-
 The Geant 3 package is optional: if you do not want to install it, do not
 specify a `geant3=` entry in the tuple, and skip this section.
 
 If you want to install it, **load your environment variables** first.
 
-The first time you install Geant 3 you need to create the local Git
-clone. Do:
+The first time you install Geant 3 you need to create the local Git clone. Do:
 
 ```bash
 mkdir -p "$ALICE_PREFIX/geant3/git"
@@ -492,7 +488,7 @@ cd "$ALICE_PREFIX/geant3/git"
 git clone http://root.cern.ch/git/geant3.git .
 ```
 
-If you have already created the Geant 3 clone, immediately skip to the
+If you have already created the Geant 3 clone, skip this command and jump to the
 next step.
 
 Update your Git clone:
@@ -502,21 +498,84 @@ cd "$ALICE_PREFIX/geant3/git"
 git remote update --prune
 ```
 
+> **Stop! (Mar 28, 2015):** Geant 3 v2-0 uses CMake and it requires a source,
+> build and installation directory ([read here](/2015/03/28/geant3-cmake)).
+>
+> If you are too lazy to read, this command will do the right thing:
+>
+> ```bash
+> [[ -f "$ALICE_PREFIX/geant3/$G3_SUBDIR/README" ]] && rm -rf "$ALICE_PREFIX/geant3/$G3_SUBDIR"
+> ```
+
 Checkout your desired version (you need `git-new-workdir` for that):
 
 ```bash
-git-new-workdir "$ALICE_PREFIX/geant3/git" "$GEANT3DIR" "$G3_VER"
+git-new-workdir "$ALICE_PREFIX/geant3/git" "$ALICE_PREFIX/geant3/$G3_SUBDIR/src" "$G3_VER"
 ```
 
-Move to it and build:
+The rest of the installation process differs whether you are using Geant 3 v2-0
+or a less recent version.
+
+
+#### Geant 3 < v2-0 (no CMake)
+
+**If you are using Geant 3 < v2-0** there is no CMake there. Copy your source to
+the build directory:
 
 ```bash
-cd "$GEANT3DIR"
+rsync -cva "$ALICE_PREFIX/geant3/$G3_SUBDIR/src/" "$ALICE_PREFIX/geant3/$G3_SUBDIR/build/"
+```
+
+> Trailing slashes are **fundamental** for rsync! **Do not omit them!**
+
+Move to the build directory and compile:
+
+```bash
+cd "$ALICE_PREFIX/geant3/$G3_SUBDIR/build/"
 make -j$MJ
 ```
 
-Once again, **you need to re-source `alice-env.sh`** for using Geant 3
-and before building AliRoot.
+When done, run the following commands to copy the important files to the
+installation directory (there is no `make install` there):
+
+```bash
+rm -rf "$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/"
+mkdir -p "$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/include/TGeant3/"
+cp -v "$ALICE_PREFIX/geant3/$G3_SUBDIR/build/TGeant3/"*.h "$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/include/TGeant3/"
+rsync -av "$ALICE_PREFIX/geant3/$G3_SUBDIR/build/lib/tgt_$(root-config --arch)/" "$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/lib/"
+```
+
+
+#### Geant 3 >= v2.0 (with CMake)
+
+**If you are using at least Geant 3 v2-0** the build process is steered by
+CMake.
+
+Create the build directory:
+
+```bash
+mkdir -p "$ALICE_PREFIX/geant3/$G3_SUBDIR/build"
+```
+
+Move to it and run CMake:
+
+```bash
+cd "$ALICE_PREFIX/geant3/$G3_SUBDIR/build/"
+cmake "$ALICE_PREFIX/geant3/$G3_SUBDIR/src/" -DCMAKE_INSTALL_PREFIX="$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/"
+```
+
+Build Geant 3:
+
+```bash
+make -j$MJ
+```
+
+Install it (by cleaning the old installation first):
+
+```bash
+rm -rf "$ALICE_PREFIX/geant3/$G3_SUBDIR/inst/"
+make -j$MJ install
+```
 
 
 ### FastJet and FastJet contrib (optional)
