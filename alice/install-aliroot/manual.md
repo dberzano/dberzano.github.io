@@ -324,59 +324,61 @@ The last command is expected to take some time.
 
 #### Select your ROOT version, stage it and compile it
 
-Your environment variables must be sourced. Move to the Git clone
-directory and update the list of remote branches:
+Your environment variables must be sourced. Move to the Git clone directory and
+update the list of remote branches:
 
 ```bash
 cd "$ALICE_PREFIX/root/git"
 git remote update --prune origin
 ```
 
-Checkout your desired ROOT version:
+> **Stop! (Mar 28, 2015):** The new installation procedure for ROOT requires a
+> source, build and installation directory ([read here](/2015/03/28/geant3-cmake)).
+>
+> If you are too lazy to read, this command will do the right thing:
+>
+> ```bash
+> [[ -f "$ALICE_PREFIX/root/$ROOT_SUBDIR/LICENSE" ]] && rm -rf "$ALICE_PREFIX/root/$ROOT_SUBDIR"
+> ```
+
+If you have already created a Git working directory for your desired branch,
+jump to the next step. If not, do it:
 
 ```bash
-git checkout "$ROOT_VER"
+mkdir -p "$ALICE_PREFIX/root/$ROOT_SUBDIR"
+git-new-workdir "$ALICE_PREFIX/root/git/" "$ALICE_PREFIX/root/$ROOT_SUBDIR/src/" "$ROOT_VER"
 ```
 
-**Please note** that the SVN *trunk* does not exist anymore. In Git's
-speech, it is now called *the master branch*.
-
-If your ROOT version is either a `master` or a development branch (such
-as `v5-34-00-patches`), update it:
+If your ROOT version is either a `master` or a development branch (such as
+`v5-34-00-patches`), update it:
 
 ```bash
+cd "$ALICE_PREFIX/root/$ROOT_SUBDIR/src/"
 git pull --rebase
 ```
 
-This obviously does not apply to tagged versions (such as `v5-34-07`).
-In case you accidentally executed the command for a "non-updatable"
-version, the command will fail without any consequences.
+This obviously does not apply to tagged versions (such as `v5-34-26`). In case
+you accidentally execute the command for a "non-updatable" version, the command
+will fail without any consequences.
 
-To avoid the confusion of having several versions of ROOT under the
-same directory, stage the checked out version in a separate
-directory:
-
-```
-rsync -avc --exclude '**/.git' "$ALICE_PREFIX/root/git/" "$ROOTSYS"
-```
-
-**Please note** that with `rsync` the trailing slash on the source
-path is **non-optional**!
-
-Now, move into ROOT's source directory:
+Create now the build directory, and move to it (we will build out of source,
+*i.e.* not in the source directory):
 
 ```bash
-cd "$ROOTSYS"
+mkdir -p "$ALICE_PREFIX/root/$ROOT_SUBDIR/build/"
+cd "$ALICE_PREFIX/root/$ROOT_SUBDIR/build/"
 ```
 
-The following step is very important, because it is the place where
-you customize your own ROOT installation based on your needs: Geant 3
-and AliRoot will rely on ROOT's configuration to compile.
+The following step is very important, because it is the place where you
+customize your own ROOT installation based on your needs: Geant 3 and AliRoot
+will rely on ROOT's configuration to compile.
+
+Configuration options depend on your operating system and desired compiler.
 
 On **OS X** configure it with:
 
 ```bash
-./configure \
+"$ALICE_PREFIX/root/$ROOT_SUBDIR/src/configure" \
   --with-pythia6-uscore=SINGLE \
   --with-alien-incdir=$GSHELL_ROOT/include \
   --with-alien-libdir=$GSHELL_ROOT/lib \
@@ -394,13 +396,18 @@ On **OS X** configure it with:
   --with-cxx=$( which clang++ ) \
   --with-ld=$( which clang++ ) \
   --disable-fink \
-  --enable-cocoa
+  --enable-cocoa \
+  --prefix="$ROOTSYS" \
+  --incdir="$ROOTSYS/include" \
+  --libdir="$ROOTSYS/lib" \
+  --datadir="$ROOTSYS" \
+  --etcdir="$ROOTSYS/etc"
 ```
 
 On **Linux (gcc)**:
 
 ```bash
-./configure \
+"$ALICE_PREFIX/root/$ROOT_SUBDIR/src/configure" \
   --with-pythia6-uscore=SINGLE \
   --with-alien-incdir=$GSHELL_ROOT/include \
   --with-alien-libdir=$GSHELL_ROOT/lib \
@@ -415,13 +422,18 @@ On **Linux (gcc)**:
   --with-f77=$( which gfortran ) \
   --with-cc=$( which gcc ) \
   --with-cxx=$( which g++ ) \
-  --with-ld=$( which g++ )
+  --with-ld=$( which g++ ) \
+  --prefix="$ROOTSYS" \
+  --incdir="$ROOTSYS/include" \
+  --libdir="$ROOTSYS/lib" \
+  --datadir="$ROOTSYS" \
+  --etcdir="$ROOTSYS/etc"
 ```
 
 On **Linux (clang)**:
 
 ```bash
-./configure \
+"$ALICE_PREFIX/root/$ROOT_SUBDIR/src/configure" \
   --with-pythia6-uscore=SINGLE \
   --with-alien-incdir=$GSHELL_ROOT/include \
   --with-alien-libdir=$GSHELL_ROOT/lib \
@@ -437,22 +449,29 @@ On **Linux (clang)**:
   --with-f77=$( which gfortran ) \
   --with-cc=$( which clang ) \
   --with-cxx=$( which clang++ ) \
-  --with-ld=$( which clang++ )
+  --with-ld=$( which clang++ ) \
+  --prefix="$ROOTSYS" \
+  --incdir="$ROOTSYS/include" \
+  --libdir="$ROOTSYS/lib" \
+  --datadir="$ROOTSYS" \
+  --etcdir="$ROOTSYS/etc"
 ```
 
-**Note:** you may need to use different `--enable-` or `--disable-`
-switches to suit your needs: bear in mind that enabling some switches
-is likely to require external packages not mentioned in this guide.
+**Note:** you may need to use different `--enable-` or `--disable-` switches to
+suit your needs: bear in mind that enabling some switches will likely require
+additional external packages not mentioned in this guide.
 
-After configuring it, make sure that the list of "enabled features"
-contains **opengl**. You can quickly check with:
+After configuring it, make sure that the list of "enabled features" contains
+**opengl** and **alien**. You can quickly check with:
 
 ```console
-$> root-config --features | grep -q opengl && echo OK
+$> bin/root-config --features | grep -q opengl && echo OK
+OK
+$> bin/root-config --features | grep -q alien && echo OK
 OK
 ```
 
-If `OK` is displayed, then you are good to go for building it:
+If `OK` is displayed in both cases, proceed with the build:
 
 ```bash
 make -j$MJ OPT='-O2 -g'
@@ -469,8 +488,12 @@ according to the "build type" you desire:
 * `OPT='-O3'`: **optimized mode**: no debug information, and "high" level of
   compile-time optimization
 
-**Very important!** When you're done compiling ROOT, you must source
-**again** the environment script before you can use it!
+Now clean the old installation directory and install ROOT:
+
+```bash
+rm -rf "$ROOTSYS"
+make -j$MJ install
+```
 
 
 ### Geant 3 (optional)
