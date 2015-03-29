@@ -646,6 +646,17 @@ tar xzf source.tar.gz
 tar xzf contrib.tar.gz
 ```
 
+> **Stop! (Mar 28, 2015):** The new installation procedure for FastJet requires
+> a source, build and installation directory ([read
+> here](/2015/03/28/new-g3-root-install)).
+>
+> If you are too lazy to read, this command will do the right thing:
+>
+> ```bash
+> rm -rf "$ALICE_PREFIX/fastjet/$FASTJET_VER/"{bin,include,lib}
+> ```
+
+
 Now, move to the FastJet source directory:
 
 ```bash
