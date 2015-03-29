@@ -332,8 +332,9 @@ cd "$ALICE_PREFIX/root/git"
 git remote update --prune origin
 ```
 
-> **Stop! (Mar 28, 2015):** The new installation procedure for ROOT requires a
-> source, build and installation directory ([read here](/2015/03/28/new-g3-root-install)).
+> **Stop! (Mar 29, 2015):** The new installation procedure for ROOT requires a
+> source, build and installation directory
+> ([read here](/2015/03/29/new-g3-root-fj-install)).
 >
 > If you are too lazy to read, this command will do the right thing:
 >
@@ -521,8 +522,9 @@ cd "$ALICE_PREFIX/geant3/git"
 git remote update --prune
 ```
 
-> **Stop! (Mar 28, 2015):** Geant 3 v2-0 uses CMake and it requires a source,
-> build and installation directory ([read here](/2015/03/28/new-g3-root-install)).
+> **Stop! (Mar 29, 2015):** Geant 3 v2-0 uses CMake and it requires a source,
+> build and installation directory
+> ([read here](/2015/03/29/new-g3-root-fj-install)).
 >
 > If you are too lazy to read, this command will do the right thing:
 >
@@ -646,9 +648,9 @@ tar xzf source.tar.gz
 tar xzf contrib.tar.gz
 ```
 
-> **Stop! (Mar 28, 2015):** The new installation procedure for FastJet requires
-> a source, build and installation directory ([read
-> here](/2015/03/28/new-g3-root-install)).
+> **Stop! (Mar 29, 2015):** The new installation procedure for FastJet requires
+> a source, build and installation directory
+> ([read here](/2015/03/29/new-g3-root-fj-install)).
 >
 > If you are too lazy to read, this command will do the right thing:
 >
