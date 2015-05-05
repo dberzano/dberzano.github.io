@@ -142,6 +142,9 @@ In this file you define some **software "tuples"**, *i.e.* a
 combination of ROOT, Geant 3, AliRoot and AliPhysics (plus other
 components if you wish) to use together.
 
+> It is possible to use pre-built packages for some components:
+> [see here how](/2015/05/05/external-packages).
+
 You must "source" the `alice-env.sh` script every time you intend to
 run or build the framework: an interactive menu will be presented,
 allowing you to choose one of the defined tuples.
