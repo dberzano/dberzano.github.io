@@ -16,7 +16,7 @@ and [OS X](http://www.apple.com/osx). Check whether your version is
 supported, and be sure it complies with the **prerequisites**:
 
 * [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
-  14.04 LTS, 14.10
+  14.04 LTS, 14.10, 15.04
 * [Fedora 64 bit](prereq-fedora) 20
 * [CERN CentOS 7](prereq-cc7)
 * [OS X](prereq-osx) Mavericks (10.9) and Yosemite (10.10)
@@ -48,7 +48,7 @@ of the component compatible with each operating system.
 | ---------------------- |:---------:|:-------:|
 | **Ubuntu**             | ≥ 5.34.08 | ≥ 3.0.6 |
 | **OS X Mavericks**     | ≥ 5.34.18 | ≥ 3.0.6 |
-| **OS X Yosemite**      | ≥ 5.34.22 | ≥ 3.0.6 |
+| **OS X Yosemite**      | ≥ 5.34.30 | ≥ 3.0.6 |
 
 **Note:** Fastjet 2 is no longer supported.
 
