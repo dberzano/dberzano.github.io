@@ -815,15 +815,22 @@ cd "$ALICE_PREFIX"/aliroot/git
 git remote update --prune origin
 ```
 
-Create a Git source directory based on the local Git clone, using the
-[git-new-workdir](https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir)
-utility (which must be in your `$PATH`):
+**If you are cloning the selected version of AliRoot Core for the first time**,
+use [git-new-workdir](https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir)
+(which must be in your `$PATH`):
 
 ```bash
 git-new-workdir "${ALICE_PREFIX}/aliroot/git" "$(dirname "$ALICE_ROOT")/src" "$ALICE_VER"
 ```
 
-As for ROOT, the old SVN *trunk* is now called the *master* branch.
+**If you are updating or upgrading an already downloaded version of AliRoot
+Core** (for instance, you want to update your *master*), move to the source
+directory and pull:
+
+```bash
+cd "$(dirname "$ALICE_ROOT")/src"
+git pull --rebase origin "$ALICE_VER"
+```
 
 **Please note** that AliRoot's Git repository has **two different
 URLs**: pick one of them depending whether you have push rights
@@ -981,12 +988,21 @@ cd "$ALICE_PREFIX"/aliphysics/git
 git remote update --prune origin
 ```
 
-Create a working copy for the branch you intend to use; this will be your
-**source directory**, *i.e.* the directory where you'll edit your code, make
-your commits and push them:
+**If you are cloning the selected version of AliPhysics for the first time**,
+use [git-new-workdir](https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir)
+(which must be in your `$PATH`):
 
 ```bash
 git-new-workdir "${ALICE_PREFIX}/aliphysics/git" "$(dirname "$ALICE_PHYSICS")/src" "$ALIPHYSICS_VER"
+```
+
+**If you are updating or upgrading an already downloaded version of AliPhysics**
+(for instance, you want to update your *master*), move to the source directory
+and pull:
+
+```bash
+cd "$(dirname "$ALICE_PHYSICS")/src"
+git pull --rebase origin "$ALIPHYSICS_VER"
 ```
 
 As for AliRoot Core, AliPhysics has two different Git URLs:
