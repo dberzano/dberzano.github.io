@@ -107,6 +107,41 @@ bash <(curl -fsSL http://alien.cern.ch/alice-installer) --aliphysics --no-downlo
 ```
 
 
+### Using Git-over-SSH from outsice CERN
+
+The experimental Git-over-SSH service provided by CERN IT is not accessible from
+outside CERN network. If you are using it from outside CERN, you can use a SSH
+tunnel from lxplus to use the service.
+
+One way of doing that is creating, or editing, your `~/.ssh/config` file by
+adding appropriate tunneling configurations:
+
+```
+Host lxplus.cern.ch
+  LocalForward 62222 git.cern.ch:22
+  ServerAliveInterval 60
+  User <your_cern_username>
+
+Host git.cern.ch
+  HostName localhost
+  Port 62222
+  User <your_cern_username>
+```
+
+You don't need to change Git's URL: `ssh://git.cern.ch` will still be valid
+thanks to the SSH configuration file.
+
+To use the forward, you need to **SSH to lxplus first**:
+
+```bash
+ssh lxplus.cern.ch
+```
+
+A tunnel pointing local port 62222 to port 22 of git.cern.ch will be
+automatically created. You must keep your shell on lxplus open in order to work
+with Git-over-SSH.
+
+
 ### Use your SSH key to login (experimental)
 
 In principle you can map a SSH _public_ key to your CERN account, and use it for
