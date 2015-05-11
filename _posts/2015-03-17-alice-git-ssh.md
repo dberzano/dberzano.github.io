@@ -107,7 +107,7 @@ bash <(curl -fsSL http://alien.cern.ch/alice-installer) --aliphysics --no-downlo
 ```
 
 
-### Using Git-over-SSH from outsice CERN
+### Using Git-over-SSH from outside CERN
 
 The experimental Git-over-SSH service provided by CERN IT is not accessible from
 outside CERN network. If you are using it from outside CERN, you can use a SSH
