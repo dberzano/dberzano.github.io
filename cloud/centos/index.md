@@ -10,10 +10,10 @@ parnumbers: true
 Download
 --------
 
-Latest image is **CentOS 6.6 (custom build v8) - Mar 17, 2015**:
+Latest image is **CentOS 6.6 (custom build v10) - May 27, 2015**:
 
-* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build8-compat0.10.qcow2) (~1.1 GB)
-* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build8-compat0.10.qcow2.sig)
+* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build10-compat0.10.qcow2) (~1.1 GB)
+* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build10-compat0.10.qcow2.sig)
 
 
 ### Features
@@ -28,10 +28,12 @@ Latest image is **CentOS 6.6 (custom build v8) - Mar 17, 2015**:
   installation, Yum repository addition, mount points manipulation)
 * **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.20**
   (unconfigured and disabled by default)
-* **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.7**
+* **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.8**
   (unconfigured and disabled by default)
 * **[EPEL](https://fedoraproject.org/wiki/EPEL/) 6.8**
 * **SELinux enabled** (it can be disabled at context time)
+* **CERN CA certificates v20150218**
+* **OpenAFS v1.6.10** (disabled by default)
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
 > can be disabled during contextualization as explained
@@ -63,7 +65,7 @@ Contextualize the image
 -----------------------
 
 This image supports **[cloud-init](http://cloudinit.readthedocs.org/)
-v0.7.4**: check **/etc/cloud/cloud.cfg** to see in more detail what
+v0.7.5**: check **/etc/cloud/cloud.cfg** to see in more detail what
 modules and datasources are enabled by default.
 
 In the following sections, sample cloud-init contextualizations are
@@ -230,8 +232,8 @@ write_files:
  - content: |
      # written by cloud-init
      DAEMON_LIST = MASTER, STARTD
-     CONDOR_HOST = <IP_FOR_HTCONDOR_HEAD>
-     CONDOR_ADMIN = root@<IP_FOR_HTCONDOR_HEAD>
+     CONDOR_HOST = <IP_FOR_CONDOR_HEAD>
+     CONDOR_ADMIN = root@<IP_FOR_CONDOR_HEAD>
      UID_DOMAIN = *
      TRUST_UID_DOMAIN = True
      SOFT_UID_DOMAIN = True
@@ -357,6 +359,13 @@ with something sensible:
 
 > This context was created for a specific use case, so do not expect
 > it to work for you if you blindly copy-paste it!
+
+
+### Other cloud-init examples
+
+Other cloud-init user-data examples (for instance, CERN OpenAFS and Kerberos
+configuration can be found
+[here on GitHub](https://github.com/dberzano/cern-alice-setup/tree/master/cloud/centos6).
 
 
 How the image was created
@@ -524,6 +533,13 @@ yum install -y http://linuxsoft.cern.ch/wlcg/sl6/x86_64/wlcg-repo-1.0.0-1.el6.no
 
 The package is from [this directory](http://linuxsoft.cern.ch/wlcg/sl6/x86_64/).
 
+If you want to use [OpenAFS](http://www.openafs.org/), install the repository
+for version 1.6.10 (the latest being packetized at the time of writing):
+
+```
+yum install -y http://openafs.org/dl/openafs/1.6.10/openafs-release-rhel-1.6.10-1.noarch.rpm
+```
+
 
 #### Upgrade your system
 
@@ -535,18 +551,45 @@ yum -y distro-sync
 yum -y upgrade
 ```
 
+**Note:** if you want to lock kernel-related packages (for instance, for
+OpenAFS, which is very sensitive to kernel chages), do:
+
+```bash
+yum -y upgrade --exclude=kernel*
+```
+
 Reboot when finished (not needed if kernel did not change):
 
 ```bash
 reboot
 ```
 
+Right after the reboot, check for older kernel packages. See current kernel
+version with:
+
+```bash
+uname -r
+```
+
+See all old kernel packages:
+
+```bash
+rpm -qa | grep ^kernel | grep -v `uname -r` # | xargs yum remove -y
+```
+
+
 #### Extra packages
 
 Install some base extra packages:
 
 ```bash
-yum install -y cloud-utils cloud-init parted git vim-enhanced
+yum install -y cloud-utils cloud-init parted git vim-enhanced ntp screen
+```
+
+Enable the NTP service at boot (by default it is disabled):
+
+```bash
+chkconfig ntpd on
 ```
 
 Install the following packages required by ALICE (*i.e.* without them,
@@ -568,6 +611,37 @@ This is a superset of the minimal list provided above. The CentOS image ready to
 download has such metapackage, and all related packages, installed.
 
 > **Beware:** this metapackage **increases the image size of ~50%!**
+
+Install the following packages to use Kerberos, AFS and LDAP from within CERN
+(some extra configuration will be needed):
+
+```bash
+yum install -y perl-WWW-Curl perl-Authen-Krb5 msktutil pam_krb5 krb5-workstation pam_afs_session sssd
+```
+
+Disable SSSD (it should be disabled already by default):
+
+```bash
+chkconfig sssd off
+```
+
+The OpenAFS client is installed like this:
+
+```bash
+yum install -y openafs openafs-client openafs-krb5 kmod-openafs
+```
+
+Please check very carefully whether this OpenAFS precompiled kernel module
+matches your kernel version. If it does not, then you will have to create a 
+
+The `cern-get-keytab` utility does not come from any package. Install it manually
+under `/usr/local/sbin/cern-get-keytab`. It must be executable.
+
+Install the CERN CAs (pick latest from [here](http://linuxsoft.cern.ch/cern/updates/slc61/i386/RPMS/repoview/CERN-CA-certs.html):
+
+```
+yum install http://linuxsoft.cern.ch/cern/updates/slc61/i386/RPMS/CERN-CA-certs-20150218-1.slc6.noarch.rpm
+```
 
 Install HTCondor and CernVM-FS:
 
