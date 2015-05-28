@@ -10,10 +10,10 @@ parnumbers: true
 Download
 --------
 
-Latest image is **CentOS 6.6 (custom build v10) - May 27, 2015**:
+Latest image is **CentOS 6.6 (custom build v11) - May 28, 2015**:
 
-* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build10-compat0.10.qcow2) (~1.1 GB)
-* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build10-compat0.10.qcow2.sig)
+* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build11-compat0.10.qcow2) (~1.1 GB)
+* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build11-compat0.10.qcow2.sig)
 
 
 ### Features
