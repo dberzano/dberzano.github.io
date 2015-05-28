@@ -577,6 +577,13 @@ See all old kernel packages:
 rpm -qa | grep ^kernel | grep -v `uname -r` # | xargs yum remove -y
 ```
 
+Explicitly install kernel headers for our current version (they are required by
+glibc and we do not want Yum to attemt installing the latest version):
+
+```bash
+yum install kernel-headers-$(uname -r)
+```
+
 
 #### Extra packages
 
@@ -597,14 +604,14 @@ ALICE software will **not** run): this is the
 [minimal list](http://alien2.cern.ch/index.php?option=com_content&view=article&id=134:cvmfs&catid=7&Itemid=140):
 
 ```bash
-yum install gcc gcc-c++ gcc-gfortran libXpm compat-libgfortran-41 redhat-lsb-core tcl compat-libtermcap
+yum install gcc gcc-c++ gcc-gfortran libXpm compat-libgfortran-41 redhat-lsb-core tcl compat-libtermcap --exclude=kernel*
 ```
 
 If you want to play safe, install a WLCG metapackage with all required stuff for
 all LHC experiments. This comes from the WLCG repo we've configured earlier:
 
 ```bash
-yum install -y HEP_OSlibs_SL6
+yum install -y HEP_OSlibs_SL6 --exclude=kernel*
 ```
 
 This is a superset of the minimal list provided above. The CentOS image ready to
