@@ -2,8 +2,8 @@
 title: "Virtual CERN Analysis Facility for administrators"
 layout: tweet
 
-parnumbers: false
-createtoc: false
+parnumbers: true
+createtoc: true
 ---
 
 
