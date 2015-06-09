@@ -10,7 +10,7 @@ createtoc: false
 The CERN Analysis Facility is a PROOF-based virtual cluster running at
 [CERN OpenStack](https://openstack.cern.ch/).
 
-* [Quick start for users](quickstart)
+* [User's guide](usersguide)
 * [For administrators: managing the Virtual Cluster](admin)
 
 For inquiries [open a JIRA ticket](https://alice.its.cern.ch/) on the AAF
