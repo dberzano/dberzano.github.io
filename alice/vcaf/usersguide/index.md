@@ -34,6 +34,16 @@ CERN credentials:
 
 Any node will work.
 
+> Select a node randomly for now. A load balancer is being set up.
+
+If you want to use the ROOT GUI make sure you connect with `-Y`:
+
+```bash
+ssh username@alivaf-003.cern.ch -Y
+```
+
+It is however recommended for performance reasons not to use X forwarding.
+
 AFS is available from all the above nodes: your home directory on those nodes is
 shared and it is the same home directory you have on **lxplus.cern.ch**.
 
@@ -42,7 +52,7 @@ shared and it is the same home directory you have on **lxplus.cern.ch**.
 >
 > ```bash
 > ssh username@lxplus.cern.ch -L 5522:alivaf-001.cern.ch:22
-> ssh username@localhost -p 5522
+> ssh username@localhost -p 5522 -Y
 > ```
 
 Those login nodes contain all the software you need and the PROOF analysis will
