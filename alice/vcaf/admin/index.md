@@ -81,6 +81,34 @@ Points 1. and 2. are performed from the
 **ALICE CERN Analysis Facility** project.
 
 
+### Registering the key
+
+When launching a new node, you might notice that the **AliceVCAF** key is not
+available in your list of keys. This is because OpenStack SSH keys are per user
+and not per project.
+
+In practice you need to register the same key with the same name under your user
+for convenience.
+
+The public key can be found here:
+
+```
+/afs/cern.ch/alice/offline/vaf/private/AliceVCAF.pub
+```
+
+Go on the CERN OpenStack web interface, go to **Access & Security**, then
+**Import Key Pair**.
+
+Use **AliceVCAF** as the key name (do not use an arbitrary name!) and paste the
+given public key in the textbox.
+
+The corresponding private key, readable from AFS only by the admins, is:
+
+```
+/afs/cern.ch/alice/offline/vaf/private/AliceVCAF.pem
+```
+
+
 ### Starting the head node
 
 Click on the **Launch Instance** button, then:
