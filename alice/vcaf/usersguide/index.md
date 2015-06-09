@@ -162,7 +162,7 @@ which aliroot
 Inside the environment you can start your PROOF session by doing:
 
 ```bash
-vafctl --start
+vafctl start
 ```
 
 If you want, you can check if your PoD/PROOF server is up by typing:
@@ -269,10 +269,77 @@ When your working day is finished, remember to turn off your PROOF cluster to
 free resources:
 
 ```bash
-vafctl --stop
+vafctl stop
 ```
 
 This will be done automatically in any case if you forget.
+
+
+How to specify a dataset
+------------------------
+
+The Virtual CAF reads data directly from AliEn. As dataset name you should use
+a string that looks for data from the AliEn File Catalog.
+
+The following minimal example is used to match AODs: in principle you should
+only replace year, period, run number, pass and AOD level to get the data you
+want.
+
+Consider the following minimal example:
+
+```cpp
+// Open PROOF connection
+TProof::Open("pod://", "masteronly");
+
+// Dataset specification: identical to AliEn "find". This is a single string: it
+// is suggested to split it like in this example for readability reasons
+TString dataset = "Find;"
+                  "BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/;"
+                  "FileName=root_archive.zip;"
+                  "Anchor=AliAOD.root;"
+                  "Tree=/aodTree;",
+
+// Always show the dataset before running!
+gProof->ShowDataSet( dataset.Data() );
+```
+
+The `BasePath` and `FileName` parameters select the same data the following
+AliEn shell command selects (test it from `aliensh`):
+
+```bash
+find /alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/ root_archive.zip
+```
+
+`%` is a "jolly" character. In the context above, it matches all files inside
+any subfolder (`%`) of `AOD134`.
+
+The `Anchor` parameter tells PROOF that we want to analyze `AliAOD.root` from
+inside the `root_archive.zip` file.
+
+The `Tree` parameter tells PROOF that we should consider data coming from the
+`/aodTree`.
+
+> Always test the search before starting the analysis on a potentially enormous
+> dataset! `gProof->ShowDataSet()` is your friend!
+
+
+### Example with ESDs
+
+This example is the template to use to match ESD files: in principle you should
+only replace year, period, run number and pass to get the data you want.
+
+```cpp
+TString dataset = "Find;"
+                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/%.%/;"
+                  "FileName=root_archive.zip;"
+                  "Anchor=AliESDs.root;"
+                  "Tree=/esdTree;"
+```
+
+Note that the tree name is different, as well as the anchor.
+
+In this case, the `%` ("jolly character") matches all files contained in a
+subdirectory of `pass2` whose name contains a dot, `%.%`.
 
 
 Keep PROOF running even if SSH fails
@@ -376,8 +443,8 @@ screen -rd 1857
 screen. Be sure to detach your current screen before attaching a new one.
 
 
-A sample analysis
------------------
+Example analysis
+----------------
 
 To get started with the Virtual Analysis Facility you can copy to your home
 directory a sample analysis located on AFS:
@@ -393,8 +460,9 @@ consistently on the whole cluster by editing the `~/.vaf/vaf.conf` file.
 To run it from the VAF environment:
 
 ```bash
+vafctl stop
 vafctl start
-vafreq 3  # or the desired number of workers
+vafreq 30  # or the desired number of workers
 ```
 
 Wait for a certain number of available workers (you can check with `vafcount`),
