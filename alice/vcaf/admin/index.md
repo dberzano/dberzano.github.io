@@ -147,3 +147,27 @@ Once elastiq is up and running, it is possible to, for instance, periodically
 refresh or update a stuck cluster by simply deleting from the OpenStack
 interface all the VMs whose name starts with **server-**: elastiq will detect
 the missing VMs and will respawn them automatically.
+
+
+Logging in to the virtual machines
+----------------------------------
+
+Virtual machines are configured to allow unprivileged logins from all CERN users
+from the **alice-member** egroup using their CERN password with Kerberos
+authentication. An AFS token is also automatically created at login.
+
+For administering the machine you need to have the private key corresponding to
+the **AliceVCAF** key you have used when starting the virtual machines from
+OpenStack.
+
+You cannot login as root; instead, you will log in as user **cloud-user**:
+
+```bash
+ssh cloud-user@alivaf-000.cern.ch -i ~/.ssh/AliceVCAF.pem
+```
+
+This user has passwordless sudo privileges. To become root:
+
+```bash
+sudo -sE
+```
