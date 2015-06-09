@@ -65,3 +65,85 @@ but the contextualization changes.
 * **Execute nodes:** users cannot login there. Those nodes merely execute
   submitted jobs. Their names are automatically assigned by OpenStack: since
   they are launched via the EC2 API it is not possible to pick a name.
+
+
+How to launch a new cluster
+---------------------------
+
+As system administrator you will have to perform the following steps:
+
+1. Launch the single **head node**
+2. Launch the number of **submit nodes** you wish
+3. Configure the head node to control workers deployment automatically
+
+Points 1. and 2. are performed from the
+[CERN OpenStack](https://openstack.cern.ch/) web interface, under the
+**ALICE CERN Analysis Facility** project.
+
+
+### Starting the head node
+
+Click on the **Launch Instance** button, then:
+
+* Instance Name: **alivaf-000** (do not use any other name!)
+* Flavor: **m1.medium** (we do not need a larger VM for this purpose)
+* Instance Boot Source: **Boot from image**
+* Image Name: **CentOS6-buildXXX** (substitute XXX with the most recent number)
+
+On the **Access & Security** tab you must pick the **AliceVCAF** keypair.
+
+On the **Post-Creation** tab, provide the contextualization file `cern-vaf-head`
+from the private area. This file is not public as it contains sensitive
+information.
+
+That is it, you can click the **Launch** button and wait.
+
+
+### Starting multiple submit nodes
+
+Click on the **Launch Instance** button, then:
+
+* Instance Name: **alivaf-000** (do not use any other name!)
+* Flavor: **m1.large** (we do not need a larger VM for this purpose)
+* Instance Boot Source: **Boot from image**
+* Image Name: **CentOS6-buildXXX** (substitute XXX with the most recent number)
+
+On the **Access & Security** tab you must pick the **AliceVCAF** keypair.
+
+On the **Post-Creation** tab, provide the contextualization file
+`cern-vaf-submit` from the private area. This file is not public as it contains
+sensitive information.
+
+That is it, you can click the **Launch** button and wait.
+
+
+### Managing worker nodes
+
+Worker nodes are launched by the [elastiq](https://github.com/dberzano/elastiq)
+daemon, which is turned off and unconfigured by default.
+
+The configuration file is available from the private area and it is called
+`elastiq.conf`.
+
+This file contains in particular a base64 one-line long string which contains
+the contextualization to use for the worker nodes.
+
+In principle elastiq can be configured to automatically turn on and off nodes
+based on the effective use of the cluster: since VM deployment appears to be
+slow on CERN OpenStack we are configuring it with an identical minimum and a
+maximum quota to always keep the same number of VMs alive whatever the effective
+use is.
+
+Once configured, elastiq should be (re)started:
+
+```bash
+service elastiq restart
+```
+
+It is convenient to use elastiq as it automatically detects VMs in error and
+tries to recover.
+
+Once elastiq is up and running, it is possible to, for instance, periodically
+refresh or update a stuck cluster by simply deleting from the OpenStack
+interface all the VMs whose name starts with **server-**: elastiq will detect
+the missing VMs and will respawn them automatically.
