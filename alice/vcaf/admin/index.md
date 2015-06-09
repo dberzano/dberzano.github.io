@@ -220,3 +220,45 @@ though).
 
 See [here](https://github.com/dberzano/virtual-analysis-facility) for more
 information.
+
+
+### Private configuration
+
+The **private** directory is not readable by users. It contains:
+
+* The three contextualization files for the three classes of nodes
+* The configuration file for elastiq
+* Public and private key for accessing the VMs as administrator
+* A file to source in order to have EC2 credentials in the environment
+
+
+### Make the private directory "private"!
+
+Since we are on AFS, `chmod 0700` will not be sufficient! From a privileged user
+(**alibrary** is the service account owning the files):
+
+```bash
+cd /afs/cern.ch/alice/offline/vaf/private
+fs setacl -dir $PWD -acl system:anyuser none
+fs setacl -dir $PWD -acl dberzano write
+fs setacl -dir $PWD -acl litmaath write
+```
+
+AFS permissions are explained
+[here](https://www.cs.cmu.edu/~help/afs/afs_acls.html): in our case we are
+giving users **dberzano** (Dario Berzano) and **litmaath** (Maarten Litmaath)
+write permissions, *i.e.* they can change files (but not the ACL).
+
+To list current permissions (`la` means `listacl`):
+
+```bash
+$> fs la /afs/cern.ch/alice/offline/vaf/private
+Access list for /afs/cern.ch/alice/offline/vaf/private is
+Normal rights:
+  z2:admin rlidwka
+  system:administrators rlidwka
+  litmaath rlidwk
+  dberzano rlidwk
+```
+
+> It is critical that information inside this directory is private!
