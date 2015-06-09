@@ -120,9 +120,9 @@ Click on the **Launch Instance** button, then:
 
 On the **Access & Security** tab you must pick the **AliceVCAF** keypair.
 
-On the **Post-Creation** tab, provide the contextualization file `cern-vaf-head`
-from the private area. This file is not public as it contains sensitive
-information.
+On the **Post-Creation** tab, provide the contextualization file
+`cern-vaf-head.txt` from the private area. This file is not public as it
+contains sensitive information.
 
 That is it, you can click the **Launch** button and wait.
 
@@ -139,8 +139,8 @@ Click on the **Launch Instance** button, then:
 On the **Access & Security** tab you must pick the **AliceVCAF** keypair.
 
 On the **Post-Creation** tab, provide the contextualization file
-`cern-vaf-submit` from the private area. This file is not public as it contains
-sensitive information.
+`cern-vaf-submit.txt` from the private area. This file is not public as i
+contains sensitive information.
 
 That is it, you can click the **Launch** button and wait.
 
