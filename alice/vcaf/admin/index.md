@@ -171,3 +171,52 @@ This user has passwordless sudo privileges. To become root:
 ```bash
 sudo -sE
 ```
+
+
+Configuration on AFS
+--------------------
+
+Most of the configuration is read directly from AFS. Everything is stored under:
+
+```
+/afs/cern.ch/alice/offline/vaf
+```
+
+### The AliceVaf.par file
+
+This file is a special PARfile required to load the ALICE environment. It is
+stored in the aforementioned directory, and users load it directly from there.
+
+The file is generated following the procedure from
+[here](https://github.com/dberzano/cern-alice-setup/tree/master/aaf_packages).
+
+Replacing this package means updating it for all users.
+
+
+### User quotas
+
+The **condor** directory contains a file with all the necessary information to
+enforce user quotas on the cluster.
+
+There are three variables to configure (do not touch the rest!):
+
+* `POWER_USERS`: a comma-separated list of users with "more" quota. Use CERN
+  usernames here.
+* `MAX_RUNNING_JOBS_PER_NORMAL_USER`: quota for users *not* in the list of power
+  users. During special occasions it might be possible to set this to zero, and
+  to allow only one power user to utilize the full cluster, for instance.
+* `MAX_RUNNING_JOBS_PER_POWER_USER`: quota for the power users.
+
+Change this file directly on AFS. After changing it, Condor needs to be
+restarted on the head node and all submit nodes!
+
+
+### ALICE environment
+
+The **etc** directory contains scripts read by `vaf-enter` when setting the
+user environment. Changing the files from AFS affects all VAF users immediately,
+no need to restart any service (they will have to re-enter the VAF environment
+though).
+
+See [here](https://github.com/dberzano/virtual-analysis-facility) for more
+information.
