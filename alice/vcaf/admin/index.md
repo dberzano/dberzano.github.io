@@ -184,6 +184,9 @@ Virtual machines are configured to allow unprivileged logins from all CERN users
 from the **alice-member** egroup using their CERN password with Kerberos
 authentication. An AFS token is also automatically created at login.
 
+In addition, non-ALICE users can be granted VAF access if they are members of
+**alice-vaf-external-users**.
+
 For administering the machine you need to have the private key corresponding to
 the **AliceVCAF** key you have used when starting the virtual machines from
 OpenStack.
