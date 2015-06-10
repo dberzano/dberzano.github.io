@@ -239,7 +239,12 @@ There are three variables to configure (do not touch the rest!):
 * `MAX_RUNNING_JOBS_PER_POWER_USER`: quota for the power users.
 
 Change this file directly on AFS. After changing it, Condor needs to be
-restarted on the head node and all submit nodes!
+reloaded on the head node and all submit nodes! Note that it is sufficient to
+*reload* it and it is not needed to perform a costly *restart* operation:
+
+```bash
+service condor reload
+```
 
 
 ### ALICE environment
