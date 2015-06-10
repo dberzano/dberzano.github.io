@@ -174,14 +174,15 @@ pod-info -lcns
 
 ### Request PROOF workers
 
-When your PROOF session is up, you must request some workers. To do so
-simply run:
+When your PROOF session is up, you must request some workers. To do so simply
+run:
 
 ```bash
 vafreq <NUM_OF_WORKERS>
 ```
 
 where you will substitute the number of desired workers to `<NUM_OF_WORKERS>`.
+The Virtual CAF is configured to allow one worker per core.
 
 You can do it many times to add workers to a currently running PROOF session.
 For instance, if you notice that the workers you have are not enough, you will
@@ -234,7 +235,7 @@ Datasets have also different names with respect to the CAF. Names used here are
 
 #### The AliceVaf.par package
 
-Use the `AliceVaf.par` package to enalbe and control AliRoot options on the
+Use the `AliceVaf.par` package to enable and control AliRoot options on the
 client, master and all the workers. Such options include things as connecting to
 AliEn or enabling extra libraries.
 
@@ -260,7 +261,7 @@ The following options are available:
   needed if you want your workers to access `alien://` files.
 
 None of the options above is mandatory, except `ALIROOT_ENABLE_ALIEN` which must
-be set to 1.
+be set to 1 if input data comes from AliEn (*i.e.* `alien://` URLs).
 
 
 ### Turn off your PROOF cluster
@@ -426,10 +427,10 @@ In this case there is only one named screen, that you can connect to by typing:
 screen -rd JPsiAnalysis
 ```
 
-If you have only one session, you can avoid to specify the name:
+If you have only one session, you can omit the screen name:
 
 ```bash
-screen -rd JPsiAnalysis
+screen -r
 ```
 
 If you have multiple sessions with the same name, you can use the session ID
