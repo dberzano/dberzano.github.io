@@ -32,6 +32,13 @@ CERN credentials:
 * **alivaf-003.cern.ch**
 * **alivaf-004.cern.ch**
 
+> **Jun 11, 2015:** due to a temporary disruption of IT services, the four nodes
+> above are unavailable. A second copy of the CAF has been created. Please use
+> the following two replacement nodes:
+>
+> * **alivaf-101.cern.ch**
+> * **alivaf-102.cern.ch**
+
 Any node will work.
 
 > Select a node randomly for now. A load balancer is being set up.
