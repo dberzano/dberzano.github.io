@@ -306,7 +306,8 @@ TString dataset = "Find;"
                   "BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliAOD.root;"
-                  "Tree=/aodTree;",
+                  "Tree=/aodTree;"
+                  "Mode=remote;",
 
 // Always show the dataset before running!
 gProof->ShowDataSet( dataset.Data() );
@@ -327,6 +328,10 @@ inside the `root_archive.zip` file.
 
 The `Tree` parameter tells PROOF that we should consider data coming from the
 `/aodTree`.
+
+The `Mode` parameter, when set to `remote`, tells PROOF not to check (open)
+every file while creating a dataset. Always set it to `remote` when running on
+data that comes from AliEn to allow for much quicker dataset creation.
 
 > Always test the search before starting the analysis on a potentially enormous
 > dataset! `gProof->ShowDataSet()` is your friend!
