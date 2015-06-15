@@ -338,6 +338,7 @@ TString dataset = "Find;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliESDs.root;"
                   "Tree=/esdTree;"
+                  "Mode=remote;"
 ```
 
 Note that the tree name is different, as well as the anchor.
