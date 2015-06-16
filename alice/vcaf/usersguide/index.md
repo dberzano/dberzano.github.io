@@ -215,7 +215,6 @@ This boils down to the following snippet:
 ```cpp
 // List of AliRoot parameters
 TList *list = new TList();
-list->Add(new TNamed("ALIROOT_MODE", "AliRoot"));
 list->Add(new TNamed("ALIROOT_EXTRA_LIBS", "OADB:ESD"));
 list->Add(new TNamed("ALIROOT_ENABLE_ALIEN", "1"));
 
@@ -247,9 +246,6 @@ seen from the code snippet above.
 
 The following options are available:
 
-* `ALIROOT_MODE`: set it to `AliRoot`, `sim` or `rec` to respectively load on
-  all workers the macro `$ALICE_ROOT/macros/loadlibs.C`, `loadlibssim.C` or
-  `loadlibsrec.C`.
 * `ALIROOT_EXTRA_LIBS`: list of colon-separated extra AliRoot libraries to load,
   such as `OADB:ESD:STEERbase`. Names with or without the leading `lib` are both
   accepted.
@@ -257,6 +253,16 @@ The following options are available:
   with respect to `$ALICE_ROOT`, such as `STEER:TOF:PWG/FLOW/Base`.
 * `ALIROOT_ENABLE_ALIEN`: set it to `1` to enable AliEn on all workers - this is
   needed if you want your workers to access `alien://` files.
+
+The following extra options are still provided for compatibility with legacy CAF
+and old AliRoot versions, but **should not be normally used**:
+
+* `ALIROOT_MODE`: normally not used anymore since 2015. Set it to `aliroot`,
+  `sim` or `rec` to load on all the workers all libraries specified respectively
+  in `$ALICE_ROOT/macros/loadlibs.C`, `loadlibssim.C` or `loadlibsrec.C`. You
+  can also set it to `base` to load a set of base AliRoot libraries. Currently,
+  library loading occurs automatically in most cases: you should use only
+  `ALIROOT_EXTRA_LIBS` to specify libraries that are not loaded automatically.
 
 None of the options above is mandatory, except `ALIROOT_ENABLE_ALIEN` which must
 be set to 1 if input data comes from AliEn (*i.e.* `alien://` URLs).
