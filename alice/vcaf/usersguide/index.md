@@ -490,8 +490,9 @@ The analysis will show an histogram and will produce the usual
 Troubleshooting
 ---------------
 
-In case of problems (PROOF hangups, unexpected crashes, etc.) you can restart
-PROOF on your own without contacting the administrators by doing:
+As a general rule, in case of problems (PROOF hangups, unexpected crashes, etc.)
+you can restart PROOF on your own without contacting the administrators by
+issuing:
 
 ```bash
 vafctl stop
@@ -503,3 +504,44 @@ restart PoD/PROOF like this, you must ask for new workers again using `vafreq`.
 
 In case of inquiries please open a
 [JIRA ticket on the AAF project](https://alice.its.cern.ch/).
+
+
+### Cannot connect to AliEn
+
+It might happen that you get an output similar to the following:
+
+```
+Connecting to AliEn...
+Warning [Tue Jun 16 09:01:23 2015] GCLIENT::Reconnect
+Warning [Tue Jun 16 09:01:23 2015] GCLIENT::COMMAND command failed 1 times - max retry 1 reached - giving up.
+09:01:23 28302 Wrk-0.3 | Error in <TAlien::pwd>: Cannot get current working directory
+09:01:23 28302 Wrk-0.3 | Error in <TAlien::TAlien>: could not authenticate at:
+09:01:23 28302 Wrk-0.3 | Error in <TAlien::TAlien>: host: alien port: 0 user: aliceuser
+09:01:23 28302 Wrk-0.3 | Error in <server-xxx(worker)>: Cannot connect to AliEn
+```
+
+This means that for some reason your AliEn token is not valid anymore and you
+need to recreate it. This operation is triggered from the node where you login,
+and your credentials are automatically propagated on all workers.
+
+To reconnect to AliEn you need to start from a clean slate. From within the
+`vaf-enter` session, destroy your current token and exit:
+
+```bash
+# from vaf-enter
+alien-token-destroy
+exit
+```
+
+Now re-enter. You must stop your old VAF session and request new workers, as the
+old ones still have the old credentials:
+
+```bash
+vaf-enter
+vafctl stop
+vafctl start
+vafreq <NUM_OF_WORKERS>
+```
+
+Remember to enable AliEn when loading the ALICE PARfile as described
+[here](#running_a_proof_analysis).
