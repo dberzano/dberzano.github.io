@@ -262,6 +262,17 @@ It will be possible to load the ALICE environment variables by simply
 typing `ali` instead of the long `source` command.
 
 
+#### Additional environment configuration
+
+By default the `alice-env.sh` script adds to the shell prompt a message with the
+current Git branch, if you are inside a Git directory. If you do not want it to
+show up, add in your `alice-env.conf`:
+
+```bash
+ALICE_ENV_DONT_CHANGE_PS1=1
+```
+
+
 Get and build the software
 --------------------------
 
