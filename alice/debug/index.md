@@ -146,6 +146,30 @@ For more information on build modes,
 [see here](../install-aliroot/manual/#configure_and_build_aliroot_core).
 
 
+#### With the automatic installer
+
+The [automatic installer](/alice/install-aliroot/auto) now comes with a switch
+that compiles all supported software using the desired level of debug. To use
+it:
+
+```bash
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) \
+  --aliroot --root --fastjet --aliphysics \
+  --type [optimized|normal|debug]
+```
+
+The `--type` switch does the trick. You can choose between:
+
+* **optimized**: compiles using the maximum level of optimization considered
+  "safe" for each software
+* **normal** *(default)*: do not try to optimize too much, and keep debug
+  symbols
+* **debug**: all optimizations turned off, and debug symbols on
+
+> Use the `--clean-*` switches to completely clean your installations if they
+> were compiled using a different level of optimization.
+
+
 #### Your analysis
 
 Suppose your analysis task is called `AliAnalysisTaskDummyTask`. In
