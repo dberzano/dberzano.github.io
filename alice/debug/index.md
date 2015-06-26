@@ -490,6 +490,18 @@ warning, or what you probably meant when writing the code. Of course a
 compiler is a "stupid" piece of software and you should not always
 follow literally its advice, but do not overlook it!
 
+Two good examples clarifying why warnings should not be ignored:
+
+* GCC 5 (the default from Fedora 22) has turned many former warnings into errors
+  by default. We have evaluated the opportunity to pass GCC 5 some flags to
+  maintain the legacy behavior (*i.e.* revert some errors into warnings) but we
+  have found out that the compiler was right: those warnings were actually
+  faulty code that needed to be fixed. If the authors checked the warnings in
+  the first place they would have for sure recognized the logic errors in the
+  code.
+* Warnings clog compilation output and make more difficult to detect actual
+  errors when they occur.
+
 
 ### When to use pointers
 
