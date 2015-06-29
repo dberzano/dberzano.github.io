@@ -45,19 +45,34 @@ It is however recommended for performance reasons not to use X forwarding.
 AFS is available from all the above nodes: your home directory on those nodes is
 shared and it is the same home directory you have on **lxplus.cern.ch**.
 
-> If you are connecting from outside CERN, you can do a SSH tunnel via lxplus to
-> access any of the nodes:
->
-> ```bash
-> ssh username@lxplus.cern.ch -L 5522:alivaf-001.cern.ch:22
-> ssh username@localhost -p 5522 -Y
-> ```
-
 Those login nodes contain all the software you need and the PROOF analysis will
 be launched from there.
 
 Make sure you have your Grid credentials `userkey.pem` and `usercert.pem` under
 `~/.globus` of your AFS directory as they are required to use the Virtual CAF.
+
+
+### Connecting from outside CERN
+
+If you are connecting from outside CERN, you can do a SSH tunnel via lxplus to
+access any of the nodes. On your laptop, first do a SSH connection to lxplus:
+
+```bash
+ssh username@lxplus.cern.ch -L 5501:alivaf-001:22 -L 5502:alivaf-002:22
+```
+
+You can use any number of `-L` switches you want, and the first port number
+(5501 and 5502 in the above example) can be whatever you want.
+
+Now that the lxplus connection is open, type again in another terminal on your
+laptop (and **not** inside the just opened SSH session!):
+
+```
+ssh username@localhost -p 5501 -Y
+```
+
+The port number must be consistent with one of the two ports chosen with the
+first command.
 
 
 Running your analysis
