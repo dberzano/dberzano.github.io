@@ -36,13 +36,16 @@ is invisible to the end user.
 ### Virtual machines and contextualization
 
 The Virtual CAF is a cluster made of several virtual machines, sharing a single
-base image. The base image is a [CentOS 6](http://wiki.centos.org/) installation
-supporting [cloud-init](https://cloudinit.readthedocs.org/en/latest/):
-[more information is available here](/cloud/centos).
+base image. The base image is [CernVM](http://cernvm.cern.ch/) and the
+contextualization uses
+[cloud-init](https://cloudinit.readthedocs.org/en/latest/). This specific
+Virtual CAF configuration is made to work from the CERN network and with the
+virtual machines having a CERN registered IP address.
 
-The original VAF runs on [CernVM](http://cernvm.cern.ch/): this is not the case
-for the Virtual CERN Analysis Facility as it needs AFS for user home
-directories for their convenience.
+A vanilla implementation of the VAF featuring automatic scalability, that works
+on any cloud even outside CERN, can be graphically configured online using the
+[CernVM Online](https://cernvm-online.cern.ch/) portal by following the
+instructions [here](http://cernvm.cern.ch/portal/elasticclusters).
 
 The single base image is *contextualized* via cloud-config manifests interpreted
 at boot time by cloud-init.
