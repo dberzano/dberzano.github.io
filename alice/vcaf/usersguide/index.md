@@ -560,3 +560,42 @@ vafreq <NUM_OF_WORKERS>
 
 Remember to enable AliEn when loading the ALICE PARfile as described
 [here](#running_a_proof_analysis).
+
+
+### PoD starts but PROOF connection fails
+
+When attempting to do:
+
+```
+root [0] TProof::Open("pod://", "masteronly");
+```
+
+it might happen that the PROOF connection fails with a message similar to the
+following:
+
+```
+150707 16:54:11 001 Proofx-I: Conn::Login: alivaf-001.cern.ch: unable to instantiate object for client CERNUSERNAME
+150707 16:54:11 001 Proofx-E: Conn::GetAccessToSrv: client could not login at [alivaf-001.cern.ch:21002]
+150707 16:54:11 001 Proofx-E: Conn::Connect: failure: unable to instantiate object for client CERNUSERNAME
+150707 16:54:11 001 Proofx-E: XrdProofConn: XrdProofConn: severe error occurred while opening a connection to server [alivaf-001.cern.ch:21002]
+```
+
+In case it occurs, there is probably some leftover in your PROOF and/or PoD
+configuration causing the problem.
+
+The solution is to exit the current VAF environment, and remove all previous
+configuration artifacts:
+
+```bash
+rm -rf ~/.proof/
+rm -rf ~/.PoD/
+```
+
+You can then re-enter the VAF environment and restart PoD:
+
+```bash
+vaf-enter
+vafctl stop
+vafctl start
+# ...and so on
+```
