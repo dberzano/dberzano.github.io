@@ -1684,25 +1684,15 @@ also graphical tools showing:
 * allocation peaks: useful to see which are the parts of your code
   making the most memory allocations
 
-We recommend using the massif-visualizer tool. On Ubuntu 14.04, it can
-be installed by going to
-[this page](https://launchpad.net/ubuntu/trusty/+package/massif-visualizer)
-and selecting under "Published versions" the version corresponding to
-your architecture (*e.g.* the one ending with `amd64` for a 64 bit
-machine): on the page that opens, download the .deb file.
+We recommend using the massif-visualizer tool. On Ubuntu 14.04, it can be
+installed by
+[getting it from the Kubuntu repositories](http://askubuntu.com/questions/522263/installing-massif-visualizer-on-ubuntu-14-04):
 
-For convenience, here is a direct link to the 64 bit version:
-
-» [massif-visualizer 0.3 for Ubuntu 14.04](http://launchpadlibrarian.net/119729130/massif-visualizer_0.3-0ubuntu2_amd64.deb)
-
-Install the .deb package by running:
-
-```bash
-sudo gdebi massif-visualizer_0.3-0ubuntu2_amd64.deb
 ```
-
-Or you can just open the package through the graphical interface and
-follow the instructions to install it.
+sudo add-apt-repository ppa:kubuntu-ppa/backports
+sudo apt-get update
+sudo apt-get install massif-visualizer
+```
 
 Run your program under Valgrind's memory check. The following command
 is suitable for AliRoot (see `man valgrind` for more details):
