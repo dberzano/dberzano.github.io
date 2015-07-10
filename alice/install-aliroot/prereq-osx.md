@@ -174,15 +174,15 @@ Install CMake
 -------------
 
 [CMake](http://www.cmake.org/) is required to build AliRoot. You need
-to have at least **version 2.8.8**. Check with:
+to have at least **version 2.8.12**. Check with:
 
 ```console
 $> cmake --version
 cmake version 3.0.2
 ```
 
-Before installing CMake, **remove any previous version** left on the
-system. Open a terminal and type:
+Before installing CMake, **remove any previous version** left on the system.
+Open a terminal and type:
 
 ```bash
 cd /usr/bin

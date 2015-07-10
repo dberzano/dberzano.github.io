@@ -16,7 +16,7 @@ a single command *(please note that it is a long line)*:
 yum install autoconf automake libtool cmake zlib-devel libxml2-devel openssl-devel gcc-c++ gcc-gfortran make libX11-devel libXpm-devel libXft-devel libXext-devel mesa-libGLU-devel CGAL-devel subversion git
 ```
 
-Please note that you should have at least **CMake v2.8.8**. You can
+Please note that you should have at least **CMake v2.8.12**. You can
 check with:
 
 ```console

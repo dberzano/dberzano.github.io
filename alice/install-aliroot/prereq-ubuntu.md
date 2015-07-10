@@ -63,7 +63,7 @@ sudo apt-get install clang-3.4
 **Note:** the `clang-3.5` package on Ubuntu 14.10 has known problems
 preventing ROOT from compiling, while 3.4 works without flaws.
 
-Please note that you should have at least **CMake v2.8.8**. You can
+Please note that you should have at least **CMake v2.8.12**. You can
 check with:
 
 ```console
@@ -71,9 +71,8 @@ $> cmake --version
 cmake version 2.8.12.2
 ```
 
-If you do not have this version available with your Ubuntu version,
-you will need to
-[install one manually](http://www.cmake.org/download/).
+If you do not have this version available with your Ubuntu version, you will
+need to [install one manually](http://www.cmake.org/download/).
 
 
 git-new-workdir
