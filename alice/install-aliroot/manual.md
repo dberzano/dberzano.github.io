@@ -404,6 +404,7 @@ On **OS X** configure it with:
   --enable-roofit \
   --enable-soversion \
   --disable-bonjour \
+  --enable-builtin-ftgl \
   --enable-builtin-freetype \
   --with-clang \
   --with-f77=$( which gfortran ) \
@@ -433,6 +434,7 @@ On **Linux (gcc)**:
   --enable-roofit \
   --enable-soversion \
   --disable-bonjour \
+  --enable-builtin-ftgl \
   --enable-builtin-freetype \
   --with-f77=$( which gfortran ) \
   --with-cc=$( which gcc ) \
@@ -459,6 +461,7 @@ On **Linux (clang)**:
   --enable-roofit \
   --enable-soversion \
   --disable-bonjour \
+  --enable-builtin-ftgl \
   --enable-builtin-freetype \
   --with-clang \
   --with-f77=$( which gfortran ) \
