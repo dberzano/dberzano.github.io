@@ -44,8 +44,47 @@ Install (always as root or by prepending `sudo`) all the required packages with
 a single command *(please note that it is a long line)*:
 
 ```bash
-yum install autoconf automake libtool cmake zlib-devel libxml2-devel openssl-devel gcc-c++ gcc-gfortran make libX11-devel libXpm-devel libXft-devel libXext-devel mesa-libGLU-devel subversion git CGAL-devel
+yum install autoconf automake libtool zlib-devel libxml2-devel openssl-devel gcc-c++ gcc-gfortran make libX11-devel libXpm-devel libXft-devel libXext-devel mesa-libGLU-devel subversion git CGAL-devel
 ```
+
+**Note:** system's CMake is not recent enough to build AliRoot. It has to be
+installed separately as explained [below](#install_cmake).
+
+
+Install CMake
+-------------
+
+You need at least CMake 2.8.12 to build ALICE software. The first step is to
+make sure you do not have `cmake` coming from a package:
+
+```
+yum remove -y cmake
+```
+
+Pick a CMake version from the [downloads page](http://www.cmake.org/download/):
+please download the `.tar.gz`. The latest version usually works.
+
+Then unpack it in a temporary directory:
+
+```bash
+tar xzf /path/to/your/cmake-<your_cmake_version>.tar.gz
+cd cmake-<your_cmake_version>
+```
+
+Now build it (do not do it as root):
+
+```bash
+./bootstrap
+make -j$(grep -c bogomips /proc/cpuinfo)
+```
+
+Now install it (you need root permissions here):
+
+```
+sudo make install
+```
+
+Installation will occur under `/usr/local`.
 
 
 git-new-workdir

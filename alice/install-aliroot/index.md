@@ -17,7 +17,7 @@ supported, and be sure it complies with the **prerequisites**:
 
 * [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
   14.04 LTS, 14.10, 15.04
-* [Fedora 64 bit](prereq-fedora) 20
+* [Fedora 64 bit](prereq-fedora) 21
 * [CERN CentOS 7](prereq-cc7)
 * [OS X](prereq-osx) Mavericks (10.9) and Yosemite (10.10)
 
