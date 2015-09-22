@@ -441,8 +441,8 @@ histogram from the file:
 
 ```c++
 TFile *myFile = TFile::Open("myfile.root");
+gROOT->cd();
 TH1F *histo = (TH1F *)myFile->Get("myHist");
-histo->SetDirectory(0);
 delete myFile;
 histo->Draw();
 ```
@@ -454,6 +454,10 @@ it**:
 // when done...
 delete histo;
 ```
+
+Note that you could also use `histo->SetDirectory(0)` for being able to close
+the file, but it is better to attach it to the "ROOT root directory" in order to
+use it for instance in `TTree::Draw`.
 
 Please note that there are in particular **two objects** that are
 automatically associated to a `TFile`, mostly for performance reasons:
@@ -1765,7 +1769,7 @@ KCachegrind. An output similar to the following is presented:
 
 ![KCachegrind](kcachegrind.jpg)
 
-where coloed blocks indentify graphically which are the functions
+where colored blocks indentify graphically which are the functions
 where your program spends most of its time.
 
 <!--
