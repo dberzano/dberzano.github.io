@@ -304,8 +304,31 @@ alien-token-init
 
 ### ROOT
 
-[ROOT](http://root.cern.ch) has its source available on
-[Git](http://git-scm.com).
+> As of Oct 5, 2015 we are supporting only ROOT versions patched by ALICE and
+> not the upstream ones. Read on for information.
+
+ALICE-patched ROOT releases are [available on
+GitHub](https://github.com/alisw/root): our patching policy allows us to apply
+custom patches and backport minor fixes to earlier ROOT versions.
+
+We currently patch the following ROOT releases:
+
+| ROOT version | Our custom Git branch |      | 
+| ------------ | --------------------- | ---- | 
+| v5-34-08     | alice/v5-34-08        | [diff](https://github.com/alisw/root/compare/v5-34-08...alisw:alice/v5-34-08) |
+| v5-34-30     | alice/v5-34-30        | [diff](https://github.com/alisw/root/compare/v5-34-30...alisw:alice/v5-34-30) |
+
+This means that, for instance, you have to specify **our custom Git branch** in
+your tuple, like this:
+
+```bash
+AliTuple[1]="root=alice/v5-34-30
+             geant3=v2-0 \
+             aliroot=master
+             aliphysics=master"
+```
+
+Note the `alice/` prefix in front of the version name.
 
 
 #### Clone the Git ROOT repository (only once)
@@ -330,7 +353,7 @@ Move into that directory and clone the repository:
 
 ```bash
 cd "$ALICE_PREFIX/root/git"
-git clone http://root.cern.ch/git/root.git .
+git clone https://github.com/alisw/root.git .
 ```
 
 The last command is expected to take some time.

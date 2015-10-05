@@ -15,16 +15,10 @@ Instructions for compiling AliRoot from source are provided for
 and [OS X](http://www.apple.com/osx). Check whether your version is
 supported, and be sure it complies with the **prerequisites**:
 
-* [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10,
-  14.04 LTS, 14.10, 15.04
+* [Ubuntu 64 bit](prereq-ubuntu) 12.04 LTS, 12.10, 13.04, 13.10, 14.04 LTS, 14.10, 15.04
 * [Fedora 64 bit](prereq-fedora) 21
 * [CERN CentOS 7](prereq-cc7)
-* [OS X](prereq-osx) Mavericks (10.9) and Yosemite (10.10)
-
-> Your operating system's version has to be considered as **not
-> supported** unless it is **explicitly** mentioned in the above list.
->
-> Only **64 bit operating systems** are supported.
+* [OS X](prereq-osx) Yosemite (10.10) and El Capitan (10.11)
 
 Each of the operating systems listed above has been tested: it is possible that
 *similar* or *derived* distributions (such as Linux Mint for Ubuntu or SLC6 for
@@ -37,20 +31,16 @@ Two installation options are possible:
 * [Manual installation](manual)
 
 
-### Compatibility grid
+### Support policy
 
-Some components of the ALICE framework might have compatibility
-problems with certain operating systems: the following grid
-illustrates such special cases and indicates the correct version range
-of the component compatible with each operating system.
+> Your Operating System is **not supported** unless it is explicitly listed
+> above. Only 64 bit architectures are supported.
 
-|                        | ROOT      | FastJet |
-| ---------------------- |:---------:|:-------:|
-| **Ubuntu**             | ≥ 5.34.08 | ≥ 3.0.6 |
-| **OS X Mavericks**     | ≥ 5.34.18 | ≥ 3.0.6 |
-| **OS X Yosemite**      | ≥ 5.34.30 | ≥ 3.0.6 |
+For Ubuntu we support the latest release, plus all the LTS that did not reach
+their [end of life](https://wiki.ubuntu.com/Releases) yet.
 
-**Note:** Fastjet 2 is no longer supported.
+For OS X, a rapidly changing Operating System, we support only the **latest two
+releases**. Betas and Developer Previews are not supported.
 
 
 Use AliRoot without compiling it

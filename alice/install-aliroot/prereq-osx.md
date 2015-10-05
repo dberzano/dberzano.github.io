@@ -48,8 +48,8 @@ in a terminal:
 
 ```console
 $> clang -v
-Apple LLVM version 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
-Target: x86_64-apple-darwin14.0.0
+Apple LLVM version 7.0.0 (clang-700.0.72)
+Target: x86_64-apple-darwin15.0.0
 Thread model: posix
 ```
 
@@ -163,8 +163,14 @@ also points to it.
 For your convenience, we provide direct links for gfortran on various
 OS X versions:
 
-* [gfortran for OS X Yosemite (10.10)](http://coudert.name/software/gfortran-4.9.1-Yosemite.dmg)
-* [gfortran for OS X Mavericks (10.9)](http://coudert.name/software/gfortran-4.9.0-Mavericks.dmg)
+* [gfortran 5.2 for OS X El Capitan (10.11)](http://coudert.name/software/gfortran-5.2-Yosemite.dmg)
+* [gfortran 4.9.1 for OS X Yosemite (10.10)](http://coudert.name/software/gfortran-4.9.1-Yosemite.dmg)
+
+The installer might complain that the package comes from an "unidentified
+developer": you can either disable package checking system-wide from System
+Preferences (not reccommended) or opening the package with the right click while
+keeping the Option key pressed: this will show you the same warning dialog but
+with an "Open" button to proceed regardless.
 
 > Even if you already have gfortran on your system, **upgrade it if
 > you have just upgraded your OS X version!**
@@ -178,7 +184,7 @@ to have at least **version 2.8.12**. Check with:
 
 ```console
 $> cmake --version
-cmake version 3.0.2
+cmake version 3.3.2
 ```
 
 Before installing CMake, **remove any previous version** left on the system.
@@ -223,9 +229,12 @@ If nothing appears, you do not have it installed. Install it
 system-wide:
 
 ```sh
-sudo curl -L https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir -o /usr/bin/git-new-workdir
-sudo chmod +x /usr/bin/git-new-workdir
+sudo curl -L https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir -o /usr/local/bin/git-new-workdir
+sudo chmod +x /usr/local/bin/git-new-workdir
 ```
+
+> From El Capitan you cannot install anything under `/usr/bin`, even with
+> `sudo`, for security reasons.
 
 
 Install autotools
@@ -238,4 +247,15 @@ Simply do (**don't** do it as root, **don't** prepend `sudo`):
 
 ```sh
 brew install automake autoconf libtool
+```
+
+
+Getting stacktraces without password
+------------------------------------
+
+To get the usual ROOT automatic stacktrace when something crashes without being
+prompted for a password, just type:
+
+```bash
+sudo /usr/sbin/DevToolsSecurity --enable
 ```
