@@ -230,7 +230,7 @@ system-wide:
 
 ```sh
 sudo curl -L https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir -o /usr/local/bin/git-new-workdir
-sudo chmod +x /usr/local/bin/git-new-workdir
+sudo chmod 0777 /usr/local/bin/git-new-workdir
 ```
 
 > From El Capitan you cannot install anything under `/usr/bin`, even with

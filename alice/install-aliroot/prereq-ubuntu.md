@@ -90,5 +90,5 @@ system-wide:
 
 ```sh
 sudo curl -L https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir -o /usr/bin/git-new-workdir
-sudo chmod +x /usr/bin/git-new-workdir
+sudo chmod 0777 /usr/bin/git-new-workdir
 ```

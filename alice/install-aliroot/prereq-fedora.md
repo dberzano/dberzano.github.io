@@ -42,5 +42,5 @@ If nothing appears, you do not have it installed. Install it system-wide:
 
 ```sh
 sudo curl -kL https://raw.github.com/gerrywastaken/git-new-workdir/master/git-new-workdir -o /usr/bin/git-new-workdir
-sudo chmod +x /usr/bin/git-new-workdir
+sudo chmod 0777 /usr/bin/git-new-workdir
 ```
