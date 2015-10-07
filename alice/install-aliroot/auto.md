@@ -24,10 +24,6 @@ Completion messages are hidden by the script, but they are still
 available on log files. If the automatic procedure fails, the last
 lines of this script are shown.
 
-> The way of invoking the script has changed slightly as of Sep 15,
-> 2014:
-> [please have a look at what changed](/2014/09/15/alice-inst-changes).
-
 
 In trouble? Ask for support!
 ----------------------------
@@ -49,18 +45,29 @@ more efficient as other users might benefit from a single reply.
 Quickstart: install (or upgrade) everything
 -------------------------------------------
 
-First of all, prepare your system, download the `alice-env.sh`
-script and configure it by following the same steps described in the
-[manual installation procedure](../manual#prepare_your_environment).
+ALICE software needs an "environment" script to setup your shell environment
+according to your requirements. Create the directory where all your software
+will go, and launch the command that will automatically download the environment
+script:
 
-Source the `alice-env.sh` script selecting the triad you wish to
-install.
+```bash
+mkdir $HOME/alice
+cd $HOME/alice
+bash <(curl -fsSL http://alien.cern.ch/alice-installer) --get-alice-env
+```
 
-Then, to install **everything** using all the available cores:
+Source the `alice-env.sh` script: a default `alice-env.conf` will be created and
+must be edited according to your needs. Please refer to the
+[manual](/alice/manual) to know how to edit it!
+
+When done, source it again selecting the software combination you wish to
+install, then run:
 
 ```bash
 bash <(curl -fsSL http://alien.cern.ch/alice-installer) --all
 ```
+
+This will install everything using all the available cores on your system.
 
 To install everything using only one parallel thread *(useful if you
 are doing some work while installing)*:
