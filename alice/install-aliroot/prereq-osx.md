@@ -32,8 +32,8 @@ after installing or upgrading Xcode.
 
 * Open Xcode
 * Click on the **Xcode** boldface menu next to the apple sign
-* Go to **Open Developer Tool → More Developer Tools...** like shown
-  in the picture below
+* Go to **Open Developer Tool → More Developer Tools...** as shown in the
+  picture below
 
 ![Install command line tools](/images/xcode_cmd_line.jpg)
 
