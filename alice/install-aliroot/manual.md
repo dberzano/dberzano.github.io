@@ -427,6 +427,8 @@ On **OS X** configure it with:
   --enable-roofit \
   --enable-soversion \
   --disable-bonjour \
+  --disable-rfio \
+  --disable-castor \
   --enable-builtin-ftgl \
   --enable-builtin-freetype \
   --with-clang \
