@@ -280,25 +280,31 @@ Get and build the software
 ### AliEn
 
 First of all source the environment variables. Then, copy and paste
-the following command:
+the following commands:
 
 ```bash
 cd /tmp
-bash <(curl -fSsL http://alien.cern.ch/alien-installer) -install-dir "$ALIEN_DIR" -batch -notorrent -type compile
+bash <(curl -fSsL http://alien.cern.ch/alien-installer) -install-dir "$ALIEN_DIR" -batch -notorrent -type compile && alien-token-destroy
 ```
 
-AliEn will be compiled for your system.
+AliEn will be compiled for your system, and any token created with a previous
+AliEn version will be destroyed (note that this is non-optional).
 
 **In case you are using OS X** you need Autotools installed for this
 step to work. If you have followed the [instructions](../prereq-osx)
 then you already have them installed.
 
-After reinstalling AliEn, you **must** destroy any token created with
-previous versions before creating a new one:
+> **OS X El Capitan**, released on Oct 2015, sometimes strips some environment
+> variables security reasons. Read on to know how this affects AliEn and how to
+> make it work again.
+
+**In case you are using OS X version 10.11 (El Capitan) or greater**, you need
+a workaround to make AliEn libraries visible by other applications: they must be
+linked to a system location. If you use Homebrew you already have user
+permissions on `/usr/local`, so just do:
 
 ```bash
-alien-token-destroy
-alien-token-init
+for L in $GSHELL_ROOT/lib/*.{dylib,so}; do ln -nfs $L /usr/local/lib; done
 ```
 
 
