@@ -64,6 +64,26 @@ make sure that everything is cleaned up before installing:
 bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-all --all
 ```
 
+### AliEn libraries
+
+El Capitan has a new security enforcing feature called System Integrity
+Protection that, among other things, affects the propagation of some environment
+variables to programs launched by other programs. Notably, `LD_LIBRARY_PATH` and
+`DYLD_LIBRARY_PATH` are stripped in such a case.
+
+This is not a problem for the majority of ALICE software, as OS X-compiled
+programs usually maintain in different ways a full-path reference to the linked
+library, so that those variables are in most cases not needed anymore.
+
+The way AliEn is used and compiled fails to work with this new security model.
+Although there is a way to turn off it completely (absolutely not recommended),
+we suggest a procedure to work around the AliEn problem that implies linking
+AliEn libraries to a user-writable system location.
+
+The procedure is available in the updated [AliEn installation
+instructions](/alice/install-aliroot/manual/#alien). It is much easier to follow
+it if Homebrew is installed.
+
 ### Support
 
 Please address your inquiries to our [ALICE JIRA](https://alice.its.cern.ch/),
