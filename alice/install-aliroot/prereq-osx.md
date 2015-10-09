@@ -259,3 +259,32 @@ prompted for a password, just type:
 ```bash
 sudo /usr/sbin/DevToolsSecurity --enable
 ```
+
+
+System Integrity Protection
+---------------------------
+
+Starting from **El Capitan (OS X 10.11)** Apple has introduced [System Integrity
+Protection](http://www.macworld.com/article/2986118/security/how-to-modify-system-integrity-protection-in-el-capitan.html),
+also known as "rootless mode". As explained
+[here](/2015/10/05/el-capitan#system_integrity_protection) this might have an
+impact to library loading when you have scripts (or applications) invoking other
+scripts.
+
+While we are working on a solution to make ALICE software compliant to this new
+security feature you might want to turn it off completely.
+
+> We are not liable for any damage caused by turning System Integrity Protection
+> off. Do it only if you know what you are doing!
+
+To turn SIP off:
+
+* Reboot your Mac in Recovery Mode. That is, before OS X starts up, hold down
+  Command-R and keep both keys pressed until the Apple logo appears along with
+  a progress bar.
+* From the Utilities menu open a Terminal.
+* At the shell type: `csrutil disable`: a message will notify the success of
+  your operation.
+* Now from the  menu select Restart.
+
+**Note:** to reenable it use `csrutil enable` instead.

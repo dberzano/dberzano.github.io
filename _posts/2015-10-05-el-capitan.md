@@ -64,25 +64,31 @@ make sure that everything is cleaned up before installing:
 bash <(curl -fsSL http://alien.cern.ch/alice-installer) --clean-all --all
 ```
 
-### AliEn libraries
+### System Integrity Protection
 
 El Capitan has a new security enforcing feature called System Integrity
-Protection that, among other things, affects the propagation of some environment
-variables to programs launched by other programs. Notably, `LD_LIBRARY_PATH` and
-`DYLD_LIBRARY_PATH` are stripped in such a case.
+Protection (most people call it "rootless mode") that, among other things,
+prevents the propagation of some environment variables to programs launched by
+other programs. Notably, `LD_LIBRARY_PATH` and `DYLD_LIBRARY_PATH` are affected.
 
 This is not a problem for the majority of ALICE software, as OS X-compiled
 programs usually maintain in different ways a full-path reference to the linked
 library, so that those variables are in most cases not needed anymore.
 
-The way AliEn is used and compiled fails to work with this new security model.
-Although there is a way to turn off it completely (absolutely not recommended),
-we suggest a procedure to work around the AliEn problem that implies linking
-AliEn libraries to a user-writable system location.
+Problems have been spotted in cases where a library not linked against an
+executable is loaded at runtime: this is what happens in C applications when you
+do `dlopen()` or in ROOT applications with `gSystem->Load()`. Other problems
+have been seen in some of our tests where we have applications (or scripts)
+calling other applications.
 
-The procedure is available in the updated [AliEn installation
-instructions](/alice/install-aliroot/manual/#alien). It is much easier to follow
-it if Homebrew is installed.
+In most cases your software can run flawlessly just by applying a workaround to
+the AliEn installation as described in the updated [AliEn installation
+instructions](/alice/install-aliroot/manual/#alien) (works better if Homebrew is
+installed).
+
+> It is possible to turn SIP off completely ([extensive description and
+> procedure here](/alice/install-aliroot/prereq-osx/#system_integrity_protection)),
+> but you must know what you are doing first!
 
 ### Support
 
