@@ -6,11 +6,20 @@ parnumbers: false
 createtoc: false
 ---
 
+Use ALICE precompiled binaries
+------------------------------
 
-Compile AliRoot from source
----------------------------
+You can use the same AliPhysics, AliRoot, etc. versions available on the Grid
+without compiling them.
 
-Instructions for compiling AliRoot from source are provided for
+* [Get ALICE software via CVMFS](cvmfs)
+* [Install RPMs using Yum](rpms)
+
+
+Compile ALICE software from source
+----------------------------------
+
+Instructions for compiling ALICE software from source are provided for
 [Ubuntu](http://www.ubuntu.com/), [Fedora](http://fedoraproject.org/)
 and [OS X](http://www.apple.com/osx). Check whether your version is
 supported, and be sure it complies with the **prerequisites**:
@@ -43,10 +52,3 @@ For OS X, a rapidly changing Operating System, we support only the **latest two
 releases**. Betas and Developer Previews are not supported.
 
 
-Use AliRoot without compiling it
---------------------------------
-
-If you want you can use the same AliRoot versions available on the
-Grid without compiling them by means of cvmfs.
-
-* [Use AliRoot from cvmfs](cvmfs)

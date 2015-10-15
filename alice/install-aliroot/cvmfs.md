@@ -1,5 +1,5 @@
 ---
-title: "Use AliRoot from cvmfs"
+title: "Get ALICE software via CVMFS"
 layout: tweet
 
 createtoc: true
@@ -7,16 +7,16 @@ parnumbers: true
 ---
 
 
-ALICE jobs running on the Grid use AliRoot versions from cvmfs: if you
-do not need to compile your own AliRoot version, you can do that too,
-provided that you have access to a computer, or a virtual machine,
-running a compatible operating system.
+ALICE jobs running on the Grid use software versions from CVMFS: if you do not
+want to compile your own software you can install CVMFS and automatically get
+new versions of ALICE software from there, provided that you are running a
+compatible operating system.
 
 
 Compatible platforms
 --------------------
 
-AliRoot software is compiled for all the operating systems compatible
+ALICE software is compiled for all the operating systems compatible
 with **RedHat Enterprise Linux 6 (RHEL 6)**: as RHEL 6 is a commercial
 operating system, several free binary-compatible OSes exist.
 
