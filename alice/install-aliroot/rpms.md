@@ -9,6 +9,9 @@ parnumbers: true
 If you are running a RPM-based distribution, such as Scientific Linux, you can
 now get the same versions of ALICE software we deploy on the Grid via Yum.
 
+> RPM support is currently under testing. Only tagged AliPhysics versions are
+> available for now.
+
 
 Install the CERN CA certificate
 -------------------------------
