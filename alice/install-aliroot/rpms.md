@@ -20,20 +20,32 @@ Our packages are downloadable from a HTTPS server whose certificate is signed by
 CERN. This is to ensure that data transferred during package download does not
 get tampered by a third party.
 
-You need to have the CERN Certification Authority certificates installed on your
-machine in order to use our RPMs. If you are running Scientific Linux CERN, or
-CERN CentOS, you should have them installed already. Check with:
+
+### SLC5, SLC6, CC7
+
+There exists a package for that. Check if you have it installed and install it
+if missing. As root:
 
 ```bash
 rpm -q CERN-CA-certs || yum install CERN-CA-certs
 ```
 
-Alternatively, from CentOS/RHEL 6 on, you can use the following sequence:
+Prior to CC7 you also need to run (once again as root):
+
+```bash
+update-ca-trust enable && update-ca-trust
+```
+
+
+### Other RHEL-compatible distributions
+
+Alternatively you can use the following sequence:
 
 ```bash
 curl -o /etc/pki/ca-trust/source/anchors/CERN_Grid_CA.pem \
      https://cafiles.cern.ch/cafiles/certificates/CERN%20Grid%20Certification%20Authority.crt && \
 update-ca-trust enable && \
+update-ca-trust && \
 echo "all ok"
 ```
 
@@ -42,8 +54,9 @@ there is some [extensive
 documentation](https://www.happyassassin.net/2015/01/14/trusting-additional-cas-in-fedora-rhel-centos-dont-append-to-etcpkitlscertsca-bundle-crt-or-etcpkitlscert-pem/)
 on the web.
 
-The link where you can manually download the CERN Grid CA certificate is
-[here](https://cafiles.cern.ch/cafiles/certificates/Grid.aspx).
+You can also [check out the
+place](https://cafiles.cern.ch/cafiles/certificates/Grid.aspx) where to
+manually download the CERN Grid CA certificate.
 
 
 Configure the ALICE Yum repository
