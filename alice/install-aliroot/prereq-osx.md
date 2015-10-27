@@ -57,28 +57,20 @@ Thread model: posix
 > version of Xcode is installed**: it is easy to forget doing that
 > since Xcode might get automatic updates from the App Store.
 
-Please also note that you might get prompted, on the command line, for
-accepting Xcode's license the first time you use a command line tool
-(such as `git`). You might notice it because, for instance, the
-[automatic installer](../auto) fails unexpectedly.
-
-If this happens, **it means you have installed the
-command line tools without following these instructions**: if you do
-as suggested in this paragraph, you are prompted for the license
-**graphically** when you execute Xcode.
+Please also note that you might get prompted, on the command line, for accepting
+the license the first time you use a command line tool (such as `git`). You
+might notice it because, for instance, the [automatic installer](../auto) fails
+unexpectedly.
 
 
 Install Homebrew
 ----------------
 
-> Installing Homebrew is optional but strongly recommended.
+[Homebrew](http://brew.sh) is a package manager for OS X. Various utilities are
+conveniently distributed through it.
 
-[Homebrew](http://brew.sh) is a package manager for OS X. Various
-utilities are conveniently distributed via Homebrew.
-
-[The website](http://brew.sh) has ridicolously simple instructions for
-installing it: look for the **Install Homebrew** section at the bottom
-of the page.
+[The website](http://brew.sh) has some ridicolously simple installation
+instructions.
 
 > Please note that using several package managers for OS X at the same
 > time (Homebrew, Fink, MacPorts) is not a good idea!
@@ -89,14 +81,12 @@ After you have installed Homebrew, run, as suggested by the installer:
 brew doctor
 ```
 
-This command will tell you if there is something wrong or some
-potential pitfall on your system. **Do not overlook its output!** In
-particular, pay attention to:
+This command will tell you if there is something wrong or some potential pitfall
+on your system. **Do not overlook its output!** In particular, pay attention to:
 
-* Warnings for old compilers: **immediately upgrade Xcode and the
-  command line tools** if warned to do so!
-* Warning for an old XQuartz version: **upgrade XQuartz** as explained
-  later on.
+* Warnings for old compilers: **immediately upgrade Xcode and the command line
+  tools** if warned to do so!
+* Warning for an old XQuartz version: **upgrade XQuartz** as explained later on.
 
 
 ### Upgrade Homebrew and its packages
@@ -130,6 +120,46 @@ Follow the instructions from
 for working around this problem.
 
 
+Install required Homebrew packages
+----------------------------------
+
+After installing Homebrew, do:
+
+```bash
+brew install cmake automake autoconf libtool cgal openssl
+```
+
+From El Capitan you also need to run:
+
+```
+brew link --force openssl
+```
+
+because under certain conditions Apple does not install the OpenSSL headers
+anymore.
+
+Note that the `cgal` package is required only if using FastJet.
+
+
+### CMake
+
+At least CMake 2.8.12 is required for ALICE. It is recommended to use Homebrew
+to get it. If you have another version of CMake already installed, you have to
+remove it manually like this:
+
+```bash
+cd /usr/bin
+sudo rm -f ccmake cmake cmake-gui cmakexbuild cpack ctest
+```
+
+You can check the CMake version with:
+
+```console
+$> cmake --version
+cmake version 3.3.2
+```
+
+
 Install XQuartz
 ---------------
 
@@ -157,7 +187,7 @@ your own.
 A researcher named François-Xavier Coudert kindly maintains binary
 packages for gfortran on OS X and publishes them on his
 [website](http://coudert.name/). The official
-[gscc's gfortran webpage](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
+[gfortran webpage of GCC](http://gcc.gnu.org/wiki/GFortranBinaries#MacOS)
 also points to it.
 
 For your convenience, we provide direct links for gfortran on various
@@ -175,45 +205,6 @@ with an "Open" button to proceed regardless.
 > Even if you already have gfortran on your system, **upgrade it if
 > you have just upgraded your OS X version!**
 
-
-Install CMake
--------------
-
-[CMake](http://www.cmake.org/) is required to build AliRoot. You need
-to have at least **version 2.8.12**. Check with:
-
-```console
-$> cmake --version
-cmake version 3.3.2
-```
-
-Before installing CMake, **remove any previous version** left on the system.
-Open a terminal and type:
-
-```bash
-cd /usr/bin
-sudo rm -f ccmake cmake cmake-gui cmakexbuild cpack ctest
-```
-
-CMake is simply installed with Homebrew:
-
-```bash
-brew install cmake
-```
-
-
-Install CGAL (for FastJet)
---------------------------
-
-> You need to install [CGAL](http://www.cgal.org/) only if you use
-> [FastJet](http://fastjet.fr/). This procedure assumes you have
-> Homebrew installed.
-
-Simply do (**don't** do it as root, **don't** prepend `sudo`):
-
-```sh
-brew install cgal
-```
 
 git-new-workdir
 ---------------
@@ -235,19 +226,6 @@ sudo chmod 0777 /usr/local/bin/git-new-workdir
 
 > From El Capitan you cannot install anything under `/usr/bin`, even with
 > `sudo`, for security reasons.
-
-
-Install autotools
------------------
-
-> You need autotools to compile AliEn. The following instructions
-> assume you have Homebrew installed.
-
-Simply do (**don't** do it as root, **don't** prepend `sudo`):
-
-```sh
-brew install automake autoconf libtool
-```
 
 
 Getting stacktraces without password
