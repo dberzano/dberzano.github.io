@@ -301,3 +301,59 @@ Normal rights:
 ```
 
 > It is critical that information inside this directory is private!
+
+
+Monitoring
+----------
+
+Monitoring daemon and scripts can be found on AFS:
+
+```
+/afs/cern.ch/alice/offline/vaf/monitor
+```
+
+To enable monitoring on all nodes put this line in the crontab for user
+`cloud-user` (or any other unprivileged one):
+
+```
+@reboot  /afs/cern.ch/alice/offline/vaf/monitor/aaf-apmon-run.sh
+0 * * * *  /afs/cern.ch/alice/offline/vaf/monitor/aaf-apmon-run.sh
+```
+
+On the master node add the `-master` parameter:
+
+```
+@reboot  /afs/cern.ch/alice/offline/vaf/monitor/aaf-apmon-run.sh -master
+0 * * * *  /afs/cern.ch/alice/offline/vaf/monitor/aaf-apmon-run.sh -master
+```
+
+### Monitoring information
+
+VAF monitoring occurs via ApMon and it is visible on MonALISA. Every host sends
+default ApMon information (such as `bogomips` and network traffic), plus the
+following variable:
+
+* `disk_root_free_mb`: MB free on the disk mounted as root.
+
+Default monitoring information is sent to the following cluster:
+
+```
+PROOF::CAF::STORAGE_xrootd_Nodes
+```
+
+The master node sends the following information:
+
+* `running_users`: number of users with running jobs. This can be considered as
+  the number of connected users.
+* `total_slots`: available job slots.
+* `free_slots`: free job slots.
+* `running_workers`: total number of running PoD workers.
+* `waiting_workers`: total number of waiting PoD workers.
+
+Global information is sent to the following cluster:
+
+```
+PROOF::CAF::STORAGE_manager_xrootd_Services
+```
+
+All information is sent to `aliendb1.cern.ch`.
