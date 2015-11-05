@@ -357,3 +357,61 @@ PROOF::CAF::STORAGE_manager_xrootd_Services
 ```
 
 All information is sent to `aliendb1.cern.ch`.
+
+Parallel SSH on all VAF nodes
+-----------------------------
+
+A convenient `mpssh` slightly adapted for VAF is available. To use it, run:
+
+```bash
+/afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf [-f 'filter'] 'remote command line'
+```
+
+The correct key, readable only by VAF admins from AFS, will be used, and all
+commands are executed as `cloud-user`. To execute commands as `root` simply
+append `sudo` to the remote command line.
+
+The list of nodes is grabbed automatically via the EC2 interface for the correct
+tenant. The optional `-f <filter>` option allows specifying an additional `grep`
+to filter (out) the desired hosts: this filter will be applied to the
+`euca-describe-instances` output.
+
+For example, to execute `uptime` on all head nodes, whose name contains `alivaf`:
+
+```bash
+/afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf -f alivaf uptime
+```
+
+To execute the same command on all nodes *not* matching `alivaf`:
+
+```bash
+/afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf -f '-v alivaf' uptime
+```
+
+Common problems
+---------------
+
+### Disk full
+
+In case something goes wrong, stale data might fill up the disks. In case this
+happens, the quickest way to solve the problem is to identify the culprits by
+either using [the monitoring](http://alimonitor.cern.ch/stats?page=CAF2/table)
+(you can sort by the *Disk free* column) and checking the available spaces, or
+by running:
+
+```bash
+/afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf -f '-v alivaf' 'df -h /'
+```
+
+Nodes with a low disk space can be fixed on the fly by simply deleting them from
+the OpenStack interface, and `elastiq` will bring new ones up again
+automatically. This is by far the most effective solution.
+
+For a more fine-grained approach, bear in mind that the directories that tend to
+fill up are `/tmp` and the Condor execute directories. Just stop Condor, clean
+them up and restart it:
+
+```bash
+/afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf -f '-v alivaf' \
+  'sudo service condor stop; sudo rm -rf /tmp/*; sudo rm -rf /var/lib/condor/execute/*; sudo service condor start'
+```
