@@ -237,8 +237,9 @@ list->Add(new TNamed("ALIROOT_ENABLE_ALIEN", "1"));
 TProof::Open("pod://");
 
 // Upload and enable package
-gProof->UploadPackage("/afs/cern.ch/alice/offline/vaf/AliceVaf.par");
-gProof->EnablePackage("/afs/cern.ch/alice/offline/vaf/AliceVaf.par", list);
+TFile::Cp("http://alibrary.web.cern.ch/alibrary/vaf/AliceVaf.par", "AliceVaf.par");
+gProof->UploadPackage("AliceVaf.par");
+gProof->EnablePackage("AliceVaf.par", list);
 ```
 
 Datasets have also different names with respect to the CAF. Names used here are

@@ -388,6 +388,33 @@ To execute the same command on all nodes *not* matching `alivaf`:
 /afs/cern.ch/alice/offline/vaf/tools/mpssh/mpssh-vaf -f '-v alivaf' uptime
 ```
 
+
+Web hosting of example files
+----------------------------
+
+For those sites that do not have AFS there is an active CERN webservice where
+some files can be downloaded.
+
+This web space belongs to the service account **alibrary** and, once logged in,
+can be [administered from here](https://webservices.web.cern.ch/webservices/Services/ManageSite/Default.aspx?SiteName=alibrary).
+
+The user has the following AFS directory exported:
+
+```
+/afs/cern.ch/alice/offline/www
+```
+
+which maps to [this URL](https://alibrary.web.cern.ch/alibrary) (forbidden by
+default).
+
+The `vaf` subdirectory contains a symbolic link to the `AliceVaf.par` and the
+examples:
+
+ * `AliceVaf.par` → `../../vaf/AliceVaf.par`
+ * `examples` → `../../vaf/examples`
+
+Changes in the PARfile and in the examples are immediately visible on HTTP.
+
 Common problems
 ---------------
 
