@@ -349,6 +349,54 @@ data that comes from AliEn to allow for much quicker dataset creation.
 > dataset! `gProof->ShowDataSet()` is your friend!
 
 
+### Specifying multiple datasets
+
+It is possible to specify multiple datasets by specifying multiple `Find`
+strings. They will be treated as a single big dataset and the final result will
+be a single merged file.
+
+Multiple datasets can be specified in a long string separating them with the
+pipe, `|`. You can split the string into multiple lines to make your code more
+readable. For instance:
+
+```cpp
+// Two datasets, run 137748 and 137751
+TString dataset = "Find;"
+                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/%.%/;"
+                  "FileName=root_archive.zip;"
+                  "Anchor=AliESDs.root;"
+                  "Tree=/esdTree;"
+                  "Mode=remote;|"
+                  "Find;"
+                  "BasePath=/alice/data/2010/LHC10h/000137751/ESDs/pass2/%.%/;"
+                  "FileName=root_archive.zip;"
+                  "Anchor=AliESDs.root;"
+                  "Tree=/esdTree;"
+                  "Mode=remote;"
+```
+
+If the number of datasets is large, you can write the `Find` lines in a text
+file, *e.g.* `datasets.txt`, like this:
+
+```
+Find;BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+
+# Empty lines are ignored, so are lines starting with the pound sign
+#Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+```
+
+then, in your steering macro:
+
+```cpp
+TString dataset = gSystem->GetFromPipe("cat datasets.txt");
+```
+
+Note from the example above that you can begin your lines  with `#` for
+commenting them out. This is useful *e.g.* if you want to temporarily exclude
+datasets from processing.
+
+
 ### Example with ESDs
 
 This example is the template to use to match ESD files: in principle you should
