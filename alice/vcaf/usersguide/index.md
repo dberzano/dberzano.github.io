@@ -548,8 +548,39 @@ root RunPoD.C  # add -b for batch mode
 ```
 
 The analysis will show an histogram and will produce the usual
-`AnalysisResults.root` file.
+`AnalysisResults*.root` file.
 
+
+### Multiple runs with multiple AnalysisResults
+
+Within the same directory you can find a shell script called
+`runMultipleDatasets.sh`. This script will run `RunPoD.C` several times, using
+a run number as a parameter. It also takes care of opening the PROOF session
+and requesting a number of workers for you.
+
+Every run produces a file named `AnalysisResults_runXXXXXX.root`. In case the
+script finds that a run did not produce any result, it will skip it and it will
+automatically restart the PROOF session, assuming that a crash might have
+occurred. The cleanup is performed as a preventive measure to get rid of
+potentially broken dangling sessions.
+
+The example script is very useful, expecially if run inside a `screen`, in case
+you need to process many runs but you still want the results stored in separate
+files.
+
+You can tune a couple of variables for convenience:
+
+* `REQWORKERS`: number of workers to request
+* `WAITWORKERS`: number of workers to wait for
+
+At the end of the execution the script will produce a file named
+`status_runs.txt` containing the status of each analysis. A run number will be
+marked as "bad" in case its output file is not found:
+
+```
+195949: OK
+195950: BAD
+```
 
 Troubleshooting
 ---------------
