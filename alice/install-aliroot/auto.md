@@ -58,7 +58,7 @@ bash <(curl -fsSL http://alien.cern.ch/alice-installer) --get-alice-env
 
 Source the `alice-env.sh` script: a default `alice-env.conf` will be created and
 must be edited according to your needs. Please refer to the
-[manual](/alice/manual) to know how to edit it!
+[manual](../manual) to know how to edit it!
 
 When done, source it again selecting the software combination you wish to
 install, then run:
@@ -181,7 +181,7 @@ by means of the `--type` option.
 * `--type optimized`: no debug symbols and maximum optimization
 * `--type debug`: debug symbols and no optimization
 
-Please refer to the [manual installation guide](manual) for more information
+Please refer to the [manual installation guide](../manual) for more information
 about the flags.
 
 If you have built a component with a certain set of build flags and you want to
