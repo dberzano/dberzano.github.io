@@ -319,7 +319,7 @@ TString dataset = "Find;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliAOD.root;"
                   "Tree=/aodTree;"
-                  "Mode=remote;",
+                  "Mode=remote;";
 
 // Always show the dataset before running!
 gProof->ShowDataSet( dataset.Data() );
