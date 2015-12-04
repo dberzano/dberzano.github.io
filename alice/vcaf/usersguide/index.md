@@ -315,7 +315,7 @@ TProof::Open("pod://", "masteronly");
 // Dataset specification: identical to AliEn "find". This is a single string: it
 // is suggested to split it like in this example for readability reasons
 TString dataset = "Find;"
-                  "BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/;"
+                  "BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/*/;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliAOD.root;"
                   "Tree=/aodTree;"
@@ -329,11 +329,11 @@ The `BasePath` and `FileName` parameters select the same data the following
 AliEn shell command selects (test it from `aliensh`):
 
 ```bash
-find /alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/ root_archive.zip
+find /alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/*/ root_archive.zip
 ```
 
-`%` is a "jolly" character. In the context above, it matches all files inside
-any subfolder (`%`) of `AOD134`.
+`*` is a "jolly" character. In the context above, it matches all files inside
+any subfolder (`*`) of `AOD134`.
 
 The `Anchor` parameter tells PROOF that we want to analyze `AliAOD.root` from
 inside the `root_archive.zip` file.
@@ -362,13 +362,13 @@ readable. For instance:
 ```cpp
 // Two datasets, run 137748 and 137751
 TString dataset = "Find;"
-                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/%.%/;"
+                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/*.*/;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliESDs.root;"
                   "Tree=/esdTree;"
                   "Mode=remote;|"
                   "Find;"
-                  "BasePath=/alice/data/2010/LHC10h/000137751/ESDs/pass2/%.%/;"
+                  "BasePath=/alice/data/2010/LHC10h/000137751/ESDs/pass2/*.*/;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliESDs.root;"
                   "Tree=/esdTree;"
@@ -379,11 +379,11 @@ If the number of datasets is large, you can write the `Find` lines in a text
 file, *e.g.* `datasets.txt`, like this:
 
 ```
-Find;BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
-Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+Find;BasePath=/alice/data/2013/LHC13e/000195949/ESDs/muon_pass2/AOD134/*/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/*/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
 
 # Empty lines are ignored, so are lines starting with the pound sign
-#Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/%/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
+#Find;BasePath=/alice/data/2013/LHC13e/000195951/ESDs/muon_pass2/AOD134/*/;FileName=root_archive.zip;Anchor=AliAOD.root;Tree=/aodTree;Mode=remote;
 ```
 
 then, in your steering macro:
@@ -404,7 +404,7 @@ only replace year, period, run number and pass to get the data you want.
 
 ```cpp
 TString dataset = "Find;"
-                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/%.%/;"
+                  "BasePath=/alice/data/2010/LHC10h/000137748/ESDs/pass2/*.*/;"
                   "FileName=root_archive.zip;"
                   "Anchor=AliESDs.root;"
                   "Tree=/esdTree;"
@@ -413,8 +413,9 @@ TString dataset = "Find;"
 
 Note that the tree name is different, as well as the anchor.
 
-In this case, the `%` ("jolly character") matches all files contained in a
-subdirectory of `pass2` whose name contains a dot, `%.%`.
+In this case, the `*` ("jolly character") matches all files contained in a
+subdirectory of `pass2` whose name contains a dot, `*.*`. This is the common
+format for reconstructed data.
 
 
 Keep PROOF running even if SSH fails
