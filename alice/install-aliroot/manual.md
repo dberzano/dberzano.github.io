@@ -319,8 +319,8 @@ custom patches and backport minor fixes to earlier ROOT versions.
 
 We currently patch the following ROOT releases:
 
-| ROOT version | Our custom Git branch |      | 
-| ------------ | --------------------- | ---- | 
+| ROOT version | Our custom Git branch |      |
+| ------------ | --------------------- | ---- |
 | v5-34-08     | alice/v5-34-08        | [diff](https://github.com/alisw/root/compare/v5-34-08...alisw:alice/v5-34-08) |
 | v5-34-30     | alice/v5-34-30        | [diff](https://github.com/alisw/root/compare/v5-34-30...alisw:alice/v5-34-30) |
 
@@ -719,7 +719,7 @@ below.
 On **OS X**:
 
 ```bash
-export CXXFLAGS='-lgmp -O2 -g'
+export CXXFLAGS='-lgmp -lCGAL -O2 -g'
 export CXX=$(which clang++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
@@ -727,7 +727,7 @@ export CXX=$(which clang++)
 On **Linux (gcc)**:
 
 ```bash
-export CXXFLAGS='-Wl,--no-as-needed -lgmp -O2 -g'
+export CXXFLAGS='-Wl,--no-as-needed -lgmp -lCGAL -O2 -g'
 export CXX=$(which g++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
@@ -735,13 +735,14 @@ export CXX=$(which g++)
 On **Linux (clang)**:
 
 ```bash
-export CXXFLAGS='-Wl,--no-as-needed -lgmp -O2 -g'
+export CXXFLAGS='-Wl,--no-as-needed -lgmp -lCGAL -O2 -g'
 export CXX=$(which clang++)
 ./configure --enable-cgal --prefix="$FASTJET"
 ```
 
-Note that **enabling CGAL is optional**. Also note that there are two `CXX*`
-variables in the environment: **we will need them later** for FastJet contrib.
+Enabling CGAL is optional but strongly recommended. Also note that there are two
+`CXX*` variables in the environment: **we will need them later** for FastJet
+contrib too.
 
 Please note also that you can use optimization and debug switches different than
 `-O2 -g`. If you are unsure, leave them like this. If you know what you are
