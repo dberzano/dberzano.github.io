@@ -1138,8 +1138,38 @@ cd "${ALICE_PHYSICS}/../build"
 make -j$MJ install
 ```
 
-All the relevant files will be under `$ALICE_PHYSICS`, *i.e.* the installation
-directory.
+If this step succeeds, it does not necessarily imply that your AliPhysics
+installation will work: in fact library loading might break at runtime. To test
+if library loading works in one go, run, **from the build directory**:
+
+```bash
+ctest --output-on-failure && echo All tests OK
+```
+
+You will see the message *All tests OK* only if all tests pass. If some library
+won't load, an extended output will tell you what went wrong.
+
+> If you have errors related to FastJet or CGAL, it is probably not your fault:
+> clean your FastJet installation and
+> [rebuild it from scratch](#fastjet_and_fastjet_contrib_(optional)), then run
+> the tests again.
+
+Errors in loading libraries (missing symbols, missing dependencies, etc.)
+usually boil down to one of the following scenarios:
+
+* You have just added a class, but you have forgotten to add it to the
+  `LinkDef.h`.
+* You have just added a class to a library requiring another library, but you
+  have forgotten to add the dependency to the `CMakeLists.txt` (it is normally
+  in a variable called `LIBDEPS`).
+
+> **Do not push if tests fail!** Contact an expert if you don't understand the
+> error. Daily tags are skipped upon failed tests!
+
+Credits for adding the library loading test suite go to **Jochen Klein**!
+
+After `make install` all the relevant files will be under `$ALICE_PHYSICS`,
+*i.e.* the installation directory.
 
 > There is no need to re-run CMake for development, just run `make install` in
 > the build directory.
