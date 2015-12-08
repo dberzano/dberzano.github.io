@@ -1181,7 +1181,7 @@ directories:
  * `$ALICE_PHYSICS` is the installation directory of AliPhysics
  * both variables are set in your current local environment, and also on the
    Grid: if you write code that uses them **it will work seamlessly locally and
-   on the Grid
+   on the Grid**
  * **never refer for any reason to source files**: *i.e.*, do not put
    references to things like `$ALICE_PHYSICS/../src/blahblah`: source is only
    available on your computer, and it increases exponentially the chances of
