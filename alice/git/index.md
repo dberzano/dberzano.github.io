@@ -386,7 +386,7 @@ $> tig --all
 ![References with tig](tig-refs.png)
 
 > Navigate history view in tig:
-> 
+>
 > * **Up** and **Down** arrows to highlight a commit
 > * **Enter** to show the commit
 > * **Q** to exit the commit view and to exit tig
@@ -395,7 +395,7 @@ $> tig --all
 This is what we understand at a glance by looking at tig:
 
 * The most recent commit is shown on top.
-* By highlighting a commit, its *hash* is shown at the bottom. 
+* By highlighting a commit, its *hash* is shown at the bottom.
 * The commit with message *"Base "AliRoot-like" structure"* has two successors,
   which means that after that, the history splits in two.
 * **Local branches** are in square brackets:
@@ -796,7 +796,7 @@ $> tig status
 ![Status with tig](tig-status.png)
 
 > Navigate status view in tig:
-> 
+>
 > * **Up** and **Down** arrows to highlight a file
 > * **U** to add or remove the highlighted file to the commit
 > * **Enter** to show the diff
@@ -1530,7 +1530,7 @@ not only `git pull --rebase`. For instance they can happen when doing
 will tell you and produce text files containing the conflicting parts.
 
 
-### Change the latest commit
+### Change the last commit
 
 You have just committed something: your commit has not been pushed yet, and you
 want to change something.
@@ -1558,6 +1558,166 @@ What if you want to change the *author* of the latest commit?
 $> git commit --amend --author="your_cern_username <first.last@cern.ch>"
 ```
 
+
+### Finding a faulty commit
+
+Assume your code breaks at some point and you want to find exactly what is the
+commit that broke it. The [git bisect](https://git-scm.com/docs/git-bisect)
+command can help you doing that by:
+
+* helping you isolating the faulty commit
+* or even attempting to find it automatically
+
+Let's suppose we have the following situation. With `tig`:
+
+![Faulty commit](git-bisect-faulty.png)
+
+Our code does not currently compile, and we intend to find what is the commit
+that broke it. Start the bisect session:
+
+```bash
+git bisect start
+```
+
+Let's tell `git-bisect` that the current commit is broken:
+
+```bash
+git bisect bad
+```
+
+We did not specify any commit hash, so `git-bisect` will assume that the topmost
+commit (or `HEAD`) is broken.
+
+Let's tell it what is the first working commit we remember:
+
+```bash
+git bisect good <commit_hash>
+```
+
+For instance:
+
+```bash
+$> git bisect good e4b32fd70d
+Bisecting: 3 revisions left to test after this (roughly 2 steps)
+[ee94c178c528884f335767d2d63bae94e7d4e958] Changing the README
+```
+
+The bisect process is a time machine that brought our working directory to the
+first working commit. We can verify where we are with `git status` as usual if
+we are unsure.
+
+Once there, let's manually try to compile (in our case we assume that `make` is
+sufficient). We notice that it compiles, therefore we mark the commit as OK:
+
+```bash
+git bisect good
+```
+
+We obtain:
+
+```console
+$> git bisect good
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[a5643ef3fbd3924f06122c412b6479d48cf56de3] Change test2
+```
+
+We were moved to another commit. Let's repeat the test: we see that it fails,
+therefore we mark the commit as bad:
+
+```bash
+git bisect bad
+```
+
+We obtain:
+
+```console
+$> git bisect bad
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[5ce896d777b528d1c17022c5df6d0b2710c5fed8] THIS COMMIT BREAKS COMPILATION
+```
+
+If we see where we are from the `tig` screenshot, we are restricting the area
+where the bad commit is. Now, as we have given a clear commit description to our
+faulty commit, we know already that this is going to break, but we do not know
+that in the real life.
+
+Let's try: it fails, and we mark this commit as bad once again with the usual
+command. This time we obtain:
+
+```console
+$> git bisect bad
+5ce896d777b528d1c17022c5df6d0b2710c5fed8 is the first bad commit
+commit 5ce896d777b528d1c17022c5df6d0b2710c5fed8
+Author: dberzano <dario.berzano@cern.ch>
+Date:   Tue Dec 15 23:42:49 2015 +0100
+
+    THIS COMMIT BREAKS COMPILATION
+
+:100644 100644 c7d5bcecfb833aa5ac139cc6da2a87fe4d58a4d5 6926d14e4d4c00966127eae2e1e2503d8cc7f5ea M	myprog.cpp
+```
+
+The `git-bisect` command has found the culprit and it is telling us that it has
+found the first bad commit. Note that if we run `git status` we see that we are
+still in an unclean state, so if we want to fix something we need to revert to
+our original working directory:
+
+```bash
+git bisect reset
+```
+
+Now we know that there is a certain commit that breaks compilation. With `tig`,
+or `git show`, we can examine its content and fix it. The quick and dirty
+solution is to revert it:
+
+```bash
+git revert <hash>
+```
+
+Note that it is possible to see at any time what commits were marked as good or
+bad using `git bisect log`.
+
+Instead of running `make` (or whatever command is used for building) and
+specifying good or bad commits manually, you can tell `git-bisect` to
+automatically run `make` between a series of commits until it automatically
+finds the one that does not compile.
+
+Using our example, this will result in the following lines:
+
+```console
+$> git bisect start
+$> git bisect bad
+$> git bisect good b927ae940
+$> git bisect run sh -c 'make clean; make'
+running sh -c make clean; make
+make: *** No rule to make target `clean'.  Stop.
+myprog.cpp:4:3: error: use of undeclared identifier 'printf'
+  printf("hello world %d\n", 42);
+  ^
+1 error generated.
+make: *** [myprog] Error 1
+Bisecting: 0 revisions left to test after this (roughly 1 step)
+[ee94c178c528884f335767d2d63bae94e7d4e958] Changing the README
+running sh -c make clean; make
+make: *** No rule to make target `clean'.  Stop.
+5ce896d777b528d1c17022c5df6d0b2710c5fed8 is the first bad commit
+commit 5ce896d777b528d1c17022c5df6d0b2710c5fed8
+Author: dberzano <dario.berzano@cern.ch>
+Date:   Tue Dec 15 23:42:49 2015 +0100
+
+    THIS COMMIT BREAKS COMPILATION
+
+:100644 100644 c7d5bcecfb833aa5ac139cc6da2a87fe4d58a4d5 6926d14e4d4c00966127eae2e1e2503d8cc7f5ea M	myprog.cpp
+bisect run success
+```
+
+The command has automatically found the faulty commit. Note that in AliRoot or
+AliPhysics the build directory and the source directory are separated, so you
+would run `git-bisect` from the source directory, but the `run` command would
+be similar to:
+
+```bash
+git bisect run sh -c 'cd <build_dir>; make -j8'
+```
 
 <!--Todo
 ----
