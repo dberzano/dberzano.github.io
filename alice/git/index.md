@@ -106,7 +106,7 @@ brew install tig
 Git principles
 --------------
 
-We have said already that every used has the full copy of the central
+We have said already that every user has the full copy of the central
 repository.
 
 Such copy is called a **clone**, and it is created in practice via
