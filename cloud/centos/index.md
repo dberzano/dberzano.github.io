@@ -10,10 +10,10 @@ parnumbers: true
 Download
 --------
 
-Latest image is **CentOS 6.6 (custom build v11) - May 28, 2015**:
+Latest image is **CentOS 6.6 (custom build v13) - Feb 26, 2016**:
 
-* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build11-compat0.10.qcow2) (~1.1 GB)
-* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build11-compat0.10.qcow2.sig)
+* [Download image](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build13-compat0.10.qcow2) (~1.1 GB)
+* [GPG signature](http://personalpages.to.infn.it/~berzano/cloud-images/CentOS6-x86_64-build13-compat0.10.qcow2.sig)
 
 
 ### Features
@@ -26,14 +26,15 @@ Latest image is **CentOS 6.6 (custom build v11) - May 28, 2015**:
 * **[cloud-init](http://cloudinit.readthedocs.org/) v0.7.5**
   (configured with support for EC2 metadata server, packages
   installation, Yum repository addition, mount points manipulation)
-* **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.1.20**
+* **[CernVM-FS](http://cernvm.cern.ch/portal/startcvmfs) v2.2.1**
   (unconfigured and disabled by default)
 * **[HTCondor](http://research.cs.wisc.edu/htcondor/) v8.2.8**
   (unconfigured and disabled by default)
 * **[EPEL](https://fedoraproject.org/wiki/EPEL/) 6.8**
 * **SELinux enabled** (it can be disabled at context time)
-* **CERN CA certificates v20150218**
+* **CERN CA certificates**
 * **OpenAFS v1.6.10** (disabled by default)
+* Robust EC2 context retrieval
 
 > **Caveat!** Image comes with a default root password *(pippo123)*: it
 > can be disabled during contextualization as explained
@@ -551,11 +552,12 @@ yum -y distro-sync
 yum -y upgrade
 ```
 
-**Note:** if you want to lock kernel-related packages (for instance, for
-OpenAFS, which is very sensitive to kernel chages), do:
+**Note:** in general if you want to exclude the most critical packages (for
+instance OpenAFS is very sensitive to kernel changes therefore you would like
+to keep both the kernel and OpenAFS as they are), do:
 
 ```bash
-yum -y upgrade --exclude=kernel*
+yum -y upgrade --exclude=kernel* --exclude=kmod-openafs* --exclude=condor* --exclude=cloud-init*
 ```
 
 Reboot when finished (not needed if kernel did not change):
@@ -590,13 +592,19 @@ yum install kernel-headers-$(uname -r)
 Install some base extra packages:
 
 ```bash
-yum install -y cloud-utils cloud-init parted git vim-enhanced ntp screen
+yum install -y cloud-utils cloud-init parted git vim-enhanced ntp nscd screen
 ```
 
 Enable the NTP service at boot (by default it is disabled):
 
 ```bash
 chkconfig ntpd on
+```
+
+Enable DNS caching at boot (by default it is disabled):
+
+```bash
+chkconfig nscd on
 ```
 
 Install the following packages required by ALICE (*i.e.* without them,
@@ -644,7 +652,7 @@ matches your kernel version. If it does not, then you will have to create a
 The `cern-get-keytab` utility does not come from any package. Install it manually
 under `/usr/local/sbin/cern-get-keytab`. It must be executable.
 
-Install the CERN CAs (pick latest from [here](http://linuxsoft.cern.ch/cern/updates/slc61/i386/RPMS/repoview/CERN-CA-certs.html):
+Install the CERN CAs (pick latest from [here](http://linuxsoft.cern.ch/cern/updates/slc61/i386/RPMS/repoview/CERN-CA-certs.html)):
 
 ```
 yum install http://linuxsoft.cern.ch/cern/updates/slc61/i386/RPMS/CERN-CA-certs-20150218-1.slc6.noarch.rpm
@@ -656,8 +664,7 @@ Install HTCondor and CernVM-FS:
 yum install -y condor cvmfs
 ```
 
-Disable them (we can enable them if we need them during
-contextualization):
+Disable them (we can enable them if we need them during contextualization):
 
 ```
 chkconfig condor off
@@ -738,6 +745,72 @@ and installing/upgrading packages.
 In addition, the default user "cloud-user" will have `sudo` permissions without
 password.
 
+#### Prefetching EC2 context
+
+In order to work around some EC2 metadata server overloads, and some cloud-init
+glitches, we want to add a script that makes sure we will be getting the EC2
+metadata _before_ running any cloud-init contextualization.
+
+Here is the short script, put it to `/usr/bin/ec2-to-nocloud.sh`:
+
+```bash
+#!/bin/bash
+METAINDEX=$(mktemp)
+CLOUDSEED=/var/lib/cloud/seed/nocloud-net
+function getmeta() {
+  SLEEP=1
+  for ((I=1; I<=10; I++)); do
+    curl -sf -o "$2" "http://169.254.169.254/2009-04-04/$1" && return 0
+    [[ $I < 4 ]] && SLEEP=$I || SLEEP=$((RANDOM % 10))
+    echo "getmeta: getting $1 -> $2 failed, retrying in $SLEEP seconds" >&2
+    sleep $SLEEP
+  done
+}
+sed -i -e "s/^datasource_list:.*$/datasource_list: [ 'NoCloud' ]/" \
+          /etc/cloud/cloud.cfg
+userdel cloud-user || true
+rm -rf /var/lib/cloud/instance/* \
+       /home/cloud-user \
+       $CLOUDSEED
+mkdir -p $CLOUDSEED
+getmeta '' $METAINDEX
+grep -q user-data $METAINDEX && \
+  getmeta user-data $CLOUDSEED/user-data && chmod 0400 $CLOUDSEED/user-data
+getmeta meta-data $METAINDEX
+grep -q public-keys $METAINDEX && SSHKEY=$(getmeta meta-data/public-keys/0/openssh-key /dev/stdout)
+rm -f $METAINDEX
+cat > $CLOUDSEED/meta-data <<EOF
+public-keys:
+  openssh-key: [ $SSHKEY, '' ]
+EOF
+chmod 0400 $CLOUDSEED/meta-data
+```
+
+Then ensure it can be run:
+
+```
+chmod 0755 /usr/bin/ec2-to-nocloud.sh
+```
+
+You have to open `/etc/init.d/cloud-init-local` (the first cloud-init script
+being run), go into the `start()` function and add a call to our script:
+
+```bash
+start() {
+    # ...
+    [ -e /.prefetch-ec2 ] && /usr/bin/ec2-to-nocloud.sh
+    # ...
+}
+```
+
+As you can see we have made it optional: it runs only if `/.prefetch-ec2`
+exists. We create the file:
+
+```bash
+touch /.prefetch-ec2
+```
+
+**Note:** it is sufficient to remove the file for the more generic case.
 
 #### Clean up before shutting down
 
@@ -829,7 +902,8 @@ rm -rf \
   /var/log/tuned/tuned.log \
   /var/log/wtmp* \
   /var/named/data/named.run \
-  /var/log/cloud-init.log
+  /var/log/cloud-init.log \
+  /var/lib/dbus/machine-id
 ```
 
 **Note:** it is recommended to create under the root user a script
