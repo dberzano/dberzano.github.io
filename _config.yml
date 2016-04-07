@@ -8,18 +8,21 @@ permalink: pretty
 paginate: 3
 paginate_path: /page:num
 
+gems:
+ - "jekyll-paginate"
+
 markdown: redcarpet
 
 redcarpet:
   extensions: [ "tables", "strikethrough" ]
 
-highlighter: pygments
+highlighter: rouge
 
 defaults:
   -
     scope:
       path: "" # empty string for all files
-      type: post
+      type: posts
     values:
       layout: tweet
       createtoc: false
