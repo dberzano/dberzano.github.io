@@ -11,7 +11,7 @@ paginate_path: /page:num
 gems:
  - "jekyll-paginate"
 
-markdown: redcarpet
+markdown: kramdown
 
 redcarpet:
   extensions: [ "tables", "strikethrough" ]
