@@ -804,4 +804,4 @@ Resources
 
 * [Software recipes](https://github.com/alisw/alidist)
 * [aliBuild](https://github.com/alisw/alibuild)
-* [aliBuild documentation](https://alisw.github.io/)
+* [aliBuild documentation](https://alisw.github.io/alibuild)
