@@ -199,6 +199,59 @@ the original environment by simply typing `exit` in this subshell (just like on
 CVMFS).
 
 
+Install aliBuild
+----------------
+
+Stable `aliBuild` installations can be "pipped" on all systems having `pip` by
+running:
+
+```
+pip install alibuild
+```
+
+If performed as root, the installation is done system-wide and the `aliBuild`
+and `alienv` commands will likely be found in your `$PATH` out of the box. If
+not performed as root you might need to add some variables to your `$PATH`.
+
+
+### Upgrade aliBuild from pip
+
+If installed with `pip`, `aliBuild` can be upgraded with:
+
+```
+pip install --upgrade alibuild
+```
+
+
+### Getting aliBuild from GitHub
+
+If you want to use an unstable version of `aliBuild`, or you want to contribute
+to it, you can get [aliBuild from GitHub](https://github.com/alisw/alibuild):
+
+```
+cd $HOME/alice
+git clone https://github.com/alisw/alibuild
+```
+
+and then you can directly use `aliBuild` and `alienv` from
+`$HOME/alice/alibuild`:
+
+```
+$HOME/alice/alibuild/aliBuild
+$HOME/alice/alibuild/alienv
+```
+
+
+### Install environment modules
+
+In order to use `alienv` you need to install Environment Modules. This is simply
+done for instance:
+
+* On Ubuntu: `apt-get install environment-modules`
+* On Red Hat systems: `yum install environment-modules`
+* On OSX: `brew install modules`
+
+
 Work on a "tuple"
 -----------------
 
@@ -524,3 +577,211 @@ of a pull request to `alidist`
 Note that the main [alidist page](https://github.com/alisw/alidist) welcomes you
 with a documentation on how to write a new recipe and how to handle external
 software.
+
+
+Dependencies and system packages
+--------------------------------
+
+If you want to know what are the dependencies of a given software, a tool called
+`aliDeps` is available in the
+[aliBuild repository](https://github.com/alisw/alibuild) to generate a graph.
+
+If we look at the dependency tree for AliPhysics (the most common toplevel
+package), we will see plenty of packages:
+
+![AliPhysics dependencies](aliphysics_deps.png)
+
+
+### Disabling unneeded packages
+
+Apart from some relatively small externals (like `cgal` or `GSL`), you might be
+seeing some packages that you don't need. If you don't want GEANT3, GEANT4 and
+fastjet, you can build your software with:
+
+```
+aliBuild -z -w ../sw -d build AliPhysics --disable GEANT3,GEANT4_VMC,fastjet
+```
+
+and the compilation will surely be faster for you.
+
+
+### Packages from the system
+
+In most cases you would not want to recompile a package which is available from
+your Linux distribution or from Homebrew on OSX. For instance, you might see
+`boost`, which you would commonly install with `yum` or `apt-get`.
+
+Recipes have a small section called `prefer_system_check:` that contains a
+script that determines whether the system version of a package can be used, thus
+preventing to run the recipe in order to prefer the system version. If the
+script returns 0 (success), then the system version is used.
+
+If you want to know in advance what packages can be used from the system, use
+from a directory containing `alidist` the following command:
+
+```
+aliDoctor
+```
+
+To check boost you can do:
+
+```
+aliDoctor 2>&1 | grep boost:
+```
+
+The output might be something like:
+
+```
+boost: exit code 1
+```
+
+which means that we either don't have it, or we don't have the *development*
+version of it, or we have a version which does not work with our recipes.
+
+In most cases recipes are configured to pick as much as possible from the
+system. What packages are picked from the system, which ones are compiled and
+which others are in development mode are printed out at the very beginning
+of the build process (`aliBuild build`). For AliPhysics in the `ali-master`
+example above, on a recent El Capitan installation, this gives:
+
+```
+Using package libxml2 from the system as preferred choice.
+Using package SWIG from the system as preferred choice.
+Using package zlib from the system as preferred choice.
+Using package CMake from the system as preferred choice.
+Using package autotools from the system as preferred choice.
+System package boost cannot be used. Building our own copy.
+System package GSL cannot be used. Building our own copy.
+Write store disabled since some packages will be picked up from local checkout.
+Local packages: AliRoot AliPhysics
+```
+
+You can see plenty of **Using package XXX from the system...** which is what you
+want.
+
+
+Managing the environment
+------------------------
+
+Environment management is done in a very different way with respect to
+`alice-env.sh`. The main difference is that you don't need to "source" the
+environment in order to build the software with `aliBuild`, and you don't have
+"tuples" anymore: you simply select a toplevel package, and all its dependencies
+will be loaded automatically.
+
+This behavior is identical to what you would do on CVMFS or on the Grid.
+
+
+### Installing the environment script
+
+If you have installed `aliBuild` either with `pip` or by cloning from GitHub, it
+is convenient to download
+[this script](https://raw.githubusercontent.com/alisw/alibuild/master/alienv.bashrc)
+and have it in your `.bashrc` (or whatever shell you are using), along with:
+
+```
+export ALICE_WORK_DIR=$HOME/alice/sw
+```
+
+Do not forget the `/sw` part, because this is where `alienv` will look for
+software.
+
+Close and reopen your terminal, and then you are able to use the `alienv`
+command easily.
+
+The full guide is available by simply typing `alienv help`, and [here](http://alisw.github.io/alibuild/quick.html) too.
+
+
+### Listing available packages
+
+To list all available packages do `alienv q`. To list all available AliPhysics
+packages:
+
+```
+alienv q aliphysics
+```
+
+### Entering or loading the environment
+
+To enter a new shell with the correct environment loaded, do:
+
+```
+alienv enter AliPhysics/latest-ali-master
+```
+
+or the correct package name. All the dependencies are set automatically. This is
+a new shell and it can be exited by typing `exit`.
+
+If you prefer to load the environment in the current shell, and you are loading
+the `alienv.bashrc` helper in your `.bashrc`, you can type:
+
+```
+alienv load AliPhysics/latest-ali-master
+```
+
+to load the package in the *current* environment. Check the loaded packages
+with `alienv list`. To unload the package (and its dependencies too):
+
+```
+alienv unload AliPhysics/latest-ali-master
+```
+
+You can even execute a single command with the correct environment without
+altering your current shell:
+
+```
+alienv setenv AliPhysics/latest-ali-master -c aliroot -b
+```
+
+
+Example: compile ROOT 6
+-----------------------
+
+As an example of how to use `aliBuild` we can try to compile ROOT 6. Since
+ROOT 6 is not used by ALICE in production, we keep the ROOT 6 compatible recipes
+in a separate `alidist` branch called `IB/master/root6`.
+
+Let's init the environment for ROOT 6 in a directory called `root6`:
+
+```
+cd $HOME/alice
+aliBuild init ROOT --dist IB/master/root6 -z root6
+```
+
+Let's move there, and compile:
+
+```
+cd root6
+aliBuild -z -d -w ../sw build ROOT
+```
+
+When ready we can use it with:
+
+```
+alienv enter ROOT/latest-root6
+```
+
+and then type `root` at the prompt.
+
+Since ROOT by default is downloaded from the ALICE mirror, which only constantly
+updates the ALICE patch branches we need for production, it is convenient to
+also point the ROOT clone we have created to the *official* repository by adding
+another "remote" in Git (we'll call it `upstream`, while ours is called
+`origin`):
+
+```
+cd $HOME/alice/root6/ROOT
+git remote add upstream https://github.com/root-mirror/root
+git checkout master
+git pull --rebase upstream master  # get changes from the official repo
+```
+
+After we've done that we can use the `aliBuild` command to build it.
+
+
+Resources
+---------
+
+* [Software recipes](https://github.com/alisw/alidist)
+* [aliBuild](https://github.com/alisw/alibuild)
+* [aliBuild documentation](https://alisw.github.io/)
