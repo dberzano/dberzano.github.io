@@ -145,8 +145,8 @@ update.
 > **development packages**.
 
 Now, we did not download any other software dependency (such as AliEn, or ROOT).
-This does not mean they won't be built. They will be built, but `aliBuild` will
-be doing the right thing and download the correct versions of your dependencies.
+This does not mean they won't be built. They will be, but `aliBuild` will be
+doing the right thing and download the correct versions of your dependencies.
 
 This system allows you to concentrate on the code you need to develop (in most
 cases it's actually AliRoot and AliPhysics), and leave the working directory
@@ -154,6 +154,26 @@ uncluttered from the rest.
 
 > It is easy to add other packages to the syntax above if you need to work on
 > their source code too (for instance, ROOT).
+
+Please note that `aliBuild` will consider a package being in "development mode"
+whenever it finds sources checked out in the current directory under
+`$PackageName` (*e.g.*, `AliPhysics`) - please respect the case.
+
+You can in principle clone such sources manually with an ordinary `git clone`,
+but there is an advantage in using `aliBuild init`: a considerable amount of
+space is going to be saved, more or less the same way we suggested to use
+`git-new-workdir` in the past. The actual working directory will be there as
+usual, but the big part of the Git repository (the "objects storage") will be
+saved inside `sw/MIRROR/packagename` (*e.g.* `sw/MIRROR/aliphysics`) as a bare
+repository and will be shared by all local checkouts of the same package created
+via `aliBuild init`.
+
+The big difference in operations with respect to `git-new-workdir` is that you
+can have multiple checkouts of the same branch without Git getting confused and
+altering your working directory.
+
+> Please note that if you remove `sw/MIRROR/packagename` all the local checkouts
+> are going to be broken!
 
 ```
 cd ali-master
