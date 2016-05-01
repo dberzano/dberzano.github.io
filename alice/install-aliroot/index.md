@@ -50,5 +50,3 @@ their [end of life](https://wiki.ubuntu.com/Releases) yet.
 
 For OS X, a rapidly changing Operating System, we support only the **latest two
 releases**. Betas and Developer Previews are not supported.
-
-

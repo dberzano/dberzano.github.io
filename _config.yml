@@ -11,12 +11,10 @@ paginate_path: /page:num
 gems:
  - "jekyll-paginate"
 
-markdown: kramdown
-
-redcarpet:
-  extensions: [ "tables", "strikethrough" ]
-
 highlighter: rouge
+markdown: kramdown
+kramdown:
+  input: GFM
 
 defaults:
   -
