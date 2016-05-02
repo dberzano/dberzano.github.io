@@ -1,13 +1,25 @@
 ---
-title: "AliRoot installation"
+title: "ALICE software installation"
 layout: tweet
 
 parnumbers: false
 createtoc: false
 ---
 
-Use ALICE precompiled binaries
-------------------------------
+Compile ALICE software with aliBuild
+-------------------------------------
+
+[aliBuild](https://alisw.github.io/alibuild) is the ALICE build tool used to
+build all ALICE software and gracefully handle dependencies. It is not limited
+to AliRoot and AliPhysics, but it supports a wide range of software packages via
+[build recipes](https://github.com/alisw/alidist).
+
+* [Get started with aliBuild](/alice/alibuild)
+* [aliBuild documentation](https://alisw.github.io/alibuild)
+
+
+Binary software distribution
+----------------------------
 
 You can use the same AliPhysics, AliRoot, etc. versions available on the Grid
 without compiling them.
@@ -16,8 +28,12 @@ without compiling them.
 * [Install RPMs using Yum](rpms)
 
 
-Compile ALICE software from source
-----------------------------------
+Old ALICE installation method (deprecated)
+------------------------------------------
+
+> As of May 2, 2016 this installation method is **deprecated** and its
+> documentation will still be temporarily visible but it is no longer updated.
+> Please migrate to [aliBuild](/alice/aliBuild) at your earliest conveinence.
 
 Instructions for compiling ALICE software from source are provided for
 [Ubuntu](http://www.ubuntu.com/), [Fedora](http://fedoraproject.org/)

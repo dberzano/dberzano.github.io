@@ -4,6 +4,7 @@ layout: tweet
 
 createtoc: true
 parnumbers: true
+deprecated_notice: 'As of May 2, 2016 this installation method is no longer supported: <a href="/alice/alibuild">get started with aliBuild</a> at your earliest convenience.'
 ---
 
 
