@@ -680,8 +680,8 @@ You can see plenty of **Using package XXX from the system...** which is what you
 want.
 
 
-Managing the environment
-------------------------
+Manage the environment
+----------------------
 
 Environment management is done in a very different way with respect to
 `alice-env.sh`. The main difference is that you don't need to "source" the
@@ -692,36 +692,51 @@ will be loaded automatically.
 This behavior is identical to what you would do on CVMFS or on the Grid.
 
 
-### Installing the environment script
+### Install the environment script helper
 
-If you have installed `aliBuild` either with `pip` or by cloning from GitHub, it
-is convenient to download
-[this script](https://raw.githubusercontent.com/alisw/alibuild/master/alienv.bashrc)
-and have it in your `.bashrc` (or whatever shell you are using), along with:
+If you have installed `aliBuild` either with `pip` or by cloning from GitHub,
+you can add the following lines to your `~/.bashrc` in order to make easier to
+load and unload the environment in the current shell:
 
+```bash
+ALICE_WORK_DIR=$HOME/alice/sw
+eval "`alienv shell-helper`"
 ```
-export ALICE_WORK_DIR=$HOME/alice/sw
-```
 
-Do not forget the `/sw` part, because this is where `alienv` will look for
-software.
+> The command is enclosed in **double quotes** and **backticks**!
 
-Close and reopen your terminal, and then you are able to use the `alienv`
-command easily.
+Set the `ALICE_WORK_DIR` variable to the location of your `sw` directory. The
+example above sets the directory to what we have used so far.
+
+Although it is not mandatory to do that, there are two advantages:
+
+1. You can use the `alienv load` and `alienv unload` commands for loading the
+   environment in your _current_ shell directly, without wrapping them in an
+   `eval` directive _(see later on)_.
+2. You can run the `alienv` command from whatever directory you are in: you do
+   not need to `cd` in the ALICE software directory first.
+
+Once you have changed your shell configuration you must close and reopen your
+terminal.
+
+> The following shells are supported by the `alienv` helper: Bash, ZSH, KSH,
+> POSIX sh. C shells are not supported.
 
 The full guide is available by simply typing `alienv help`, and [here](http://alisw.github.io/alibuild/quick.html) too.
 
 
-### Listing available packages
+### List available packages
 
-To list all available packages do `alienv q`. To list all available AliPhysics
-packages:
+To list all available packages do `alienv q`. This command supports
+case-insensitive filters, *e.g.* for listing all available AliPhysics packages
+only:
 
 ```
 alienv q aliphysics
 ```
 
-### Entering or loading the environment
+
+### Enter a new environment shell
 
 To enter a new shell with the correct environment loaded, do:
 
@@ -730,10 +745,26 @@ alienv enter AliPhysics/latest-ali-master
 ```
 
 or the correct package name. All the dependencies are set automatically. This is
-a new shell and it can be exited by typing `exit`.
+a new shell and it can be exited by typing `exit`. At any moment you can see the
+list of loaded packages by using:
+
+```bash
+alienv list
+```
+
+Note that this method will ignore and override all your settings in your current
+`~/.bashrc` (or the equivalent for the shell you are using). This is to avoid
+any possible interference with `PATH`, `LD_LIBRARY_PATH`, etc. that you might
+have set there.
+
+> You can still load the environment in your _current_ shell as opposed to
+> opening a new one, see the next paragraph.
+
+
+### Load the environment in your current shell
 
 If you prefer to load the environment in the current shell, and you are loading
-the `alienv.bashrc` helper in your `.bashrc`, you can type:
+the `alienv` helper in your `.bashrc`, you can type:
 
 ```
 alienv load AliPhysics/latest-ali-master
@@ -746,12 +777,18 @@ with `alienv list`. To unload the package (and its dependencies too):
 alienv unload AliPhysics/latest-ali-master
 ```
 
+
+### Execute a single command with the right environment
+
 You can even execute a single command with the correct environment without
 altering your current shell:
 
 ```
 alienv setenv AliPhysics/latest-ali-master -c aliroot -b
 ```
+
+> This is useful for **scripting**: you can alter the environment only for the
+> commands that need it and leave the rest clean.
 
 
 Example: compile ROOT 6
