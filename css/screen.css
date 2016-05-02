@@ -172,7 +172,7 @@ h1 a:hover {
 /* Summary of posts */
 #posts {
   margin-top: 70px;
-} 
+}
 
 /* "Continue reading..." */
 p.postmore {
@@ -537,4 +537,44 @@ td, th {
 
 #itemcontent > p {
   margin: 0 0 15px 0;
+}
+
+#deprecated_notice {
+  margin: 0;
+  width: 100%;
+  height: auto;
+  min-height: 30px;
+  sbackground: repeating-linear-gradient(45deg,
+                                        #fecf34, #fecf34 10px,
+                                        #febf04 10px, #febf04 20px);
+  background: repeating-linear-gradient(45deg,
+                                        #fec82a, #fec82a 10px,
+                                        #febf04 10px, #febf04 20px);
+  box-shadow: 0px 0px 15px #ffd65e;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0px;
+  border-top: 1px solid #febf04;
+  display: flex;
+  justify-content: center;
+}
+
+#deprecated_notice > div {
+  width: 610px;
+  margin: 0 auto;
+  height: 100%;
+  overflow: hidden;
+  height: auto;
+  font-weight: 600;
+  color: #363636;
+  line-height: 1.7;
+  /*       t      r b      l */
+  padding: 0.5em 0 0.5em 0;
+  text-align: center;
+  align-self: center;
+}
+
+#deprecated_notice > div b {
+  font-weight: 600;
+  color: #aa0000;
 }
