@@ -44,7 +44,7 @@
       ga('send', 'pageview');
     </script>
   </head>
-  
+
   <body id="www-paperplanes-de">
 
     <div id="head">
@@ -99,6 +99,12 @@
       Inspired by <a href="http://www.paperplanes.de/">Paperplanes</a>.</p>
       </div>
     </div>
+
+    {% if page.deprecated_notice %}
+    <div id="deprecated_notice">
+      <div>{{ page.deprecated_notice }}</div>
+    </div>
+    {% endif %}
 
   </body>
 </html>

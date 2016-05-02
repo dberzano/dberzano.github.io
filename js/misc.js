@@ -12,10 +12,28 @@ var Misc = {
 
   init : function() {
 
-    if ( Misc.auto_anchors !== undefined ) {
+    if (Misc.auto_anchors !== undefined) {
       Misc.init_auto_anchors();
     }
+    if ($("#deprecated_notice").length) {
+      Misc.init_deprecated_filler("#deprecated_notice");
+      $(window).resize(function() {
+        Misc.init_deprecated_filler("#deprecated_notice");
+      });
+    }
 
+  },
+
+  init_deprecated_filler : function(selector) {
+    var height = Math.round($(selector).height() * 1.10);
+    var spacer_id = $(selector).attr("id")+"_spacer";
+    var spacer = $("#"+spacer_id);
+    if (!spacer.length) {
+      $("<div/>").attr("id", spacer_id)
+                 .insertAfter(selector);
+      spacer = $("#"+spacer_id);
+    }
+    spacer.css("margin-top", height+"px");
   },
 
   init_auto_anchors : function() {
