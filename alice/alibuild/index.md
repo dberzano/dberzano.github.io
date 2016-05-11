@@ -65,7 +65,7 @@ installation.
 
 In practice:
 
-> build tool + build recipes = built software
+> build tool + build recipes + source code = built software
 
 
 Instant gratification
@@ -73,7 +73,7 @@ Instant gratification
 
 Install aliBuild:
 
-```
+```bash
 pip install alibuild
 ```
 
@@ -84,7 +84,7 @@ dependencies:
 
 ```bash
 mkdir $HOME/alice && cd $HOME/alice
-aliBuild init AliRoot@v5-08-03a,AliPhysics -z ali-master
+aliBuild init AliRoot,AliPhysics -z ali-master
 cd ali-master
 aliBuild -z -w ../sw -d build AliPhysics
 alienv enter AliPhysics/latest-ali-master
@@ -93,10 +93,17 @@ alienv enter AliPhysics/latest-ali-master
 These lines should be sufficient to download all the software from scratch,
 build it for your system and enter an environment for using it.
 
+The lines above will download AliRoot and AliPhysics master. If you want a
+specific version you can use the following syntax:
+
+```bash
+aliBuild init AliRoot@<desired_aliroot_ver>,AliPhysics@<desired_aliphysics_ver> -z ali-master
+```
+
 
 ### What have we done here?
 
-```
+```bash
 mkdir $HOME/alice && cd $HOME/alice
 ```
 
@@ -104,8 +111,8 @@ All our ALICE software will be contained under this directory. This means that
 it is sufficient to get rid of it to completely remove all traces of ALICE
 software (install, build, source directories) from your system.
 
-```
-aliBuild init AliRoot@v5-08-03a,AliPhysics -z ali-master
+```bash
+aliBuild init AliRoot,AliPhysics -z ali-master
 ```
 
 We are telling `aliBuild` to initialize a directory called `ali-master` (the
@@ -113,23 +120,35 @@ name is arbitrary) containing a defined software combination. This is similar
 to what a "tuple" was in the old system, and roughly equivalent to the following
 `alice-env.conf` syntax:
 
-```
-AliTuple[1]='root=v5-34-08 aliroot=v5-08-03a aliphysics=master'
+```bash
+AliTuple[1]='root=v5-34-08 aliroot=master aliphysics=master'
 ```
 
 with a notable difference: you specify only the versions of the software you
 develop (AliRoot and AliPhysics), the others are set automatically. Another
 difference is that you are giving your tuple a name (`ali-master`).
 
-After running the command, we will find under `ali-master` the following three
-directories:
+The following variant:
+
+```bash
+aliBuild init AliRoot@<desired_aliroot_ver>,AliPhysics@<desired_aliphysics_ver> -z ali-master
+```
+
+corresponds to:
+
+```bash
+AliTuple[1]='root=v5-34-08 aliroot=<desired_aliroot_ver> aliphysics=<desired_aliphysics_ver>'
+```
+
+After running the command with no specified versions, we will find under
+`ali-master` the following three directories:
 
 ```
 + ali-master
 |
 \-+- alidist     # the software recipes
   |
-  +- AliRoot     # Git source, v5-08-03a checked out
+  +- AliRoot     # Git source, master checked out
   |
   \- AliPhysics  # Git source, master checked out
 ```
@@ -175,13 +194,13 @@ altering your working directory.
 > Please note that if you remove `sw/MIRROR/packagename` all the local checkouts
 > are going to be broken!
 
-```
+```bash
 cd ali-master
 ```
 
 Enter our "tuple" directory.
 
-```
+```bash
 aliBuild -z -w ../sw -d build AliPhysics
 ```
 
@@ -204,7 +223,7 @@ full list of `aliBuild` options do `aliBuild --help` or
 * `-d`: debug mode, be verbose. Facilitates finding errors by seeing what is
   going on in the build process (including warnings).
 
-```
+```bash
 alienv enter AliPhysics/latest-ali-master
 ```
 
@@ -225,7 +244,7 @@ Install aliBuild
 Stable `aliBuild` installations can be "pipped" on all systems having `pip` by
 running:
 
-```
+```bash
 pip install alibuild
 ```
 
@@ -238,7 +257,7 @@ not performed as root you might need to add some variables to your `$PATH`.
 
 If installed with `pip`, `aliBuild` can be upgraded with:
 
-```
+```bash
 pip install --upgrade alibuild
 ```
 
@@ -248,7 +267,7 @@ pip install --upgrade alibuild
 If you want to use an unstable version of `aliBuild`, or you want to contribute
 to it, you can get [aliBuild from GitHub](https://github.com/alisw/alibuild):
 
-```
+```bash
 cd $HOME/alice
 git clone https://github.com/alisw/alibuild
 ```
@@ -256,7 +275,7 @@ git clone https://github.com/alisw/alibuild
 and then you can directly use `aliBuild` and `alienv` from
 `$HOME/alice/alibuild`:
 
-```
+```bash
 $HOME/alice/alibuild/aliBuild
 $HOME/alice/alibuild/alienv
 ```
@@ -277,12 +296,18 @@ Work on a "tuple"
 
 ### Make changes
 
-Let's imagine that the base AliRoot version has changed. In the example we were
-using `v5-08-03a`, but we now want to use the `master`.
+Let's imagine that the base AliRoot version has changed. Say we have previously
+checked out AliRoot version `vX-YY-ZZ`:
 
-Let's do:
-
+```bash
+aliBuild -z ali-master init AliRoot@vX-YY-ZZ,AliPhysics
 ```
+
+and we now want to use the updated `master`.
+
+We do:
+
+```bash
 cd $HOME/alice/
 cd ali-master/
 cd AliRoot/
@@ -295,7 +320,7 @@ to checkout the master branch and download all the updates.
 Now, let's modify something in AliPhysics, commit it, download other people's
 changes, and push our commit:
 
-```
+```bash
 cd $HOME/alice/
 cd ali-master/
 cd AliPhysics/
@@ -308,8 +333,8 @@ git push
 Note that at the `git commit` part, Git might correctly point out that you did
 not set up properly your user and email. Do:
 
-```
-git config user.name 'your_cern_username'
+```bash
+git config user.name your_cern_username
 git config user.email 'your.email@cern.ch'
 ```
 
@@ -322,7 +347,7 @@ git config user.email 'your.email@cern.ch'
 From the `ali-master` directory we can simply fire `aliBuild` **the same way we
 did it the first time**:
 
-```
+```bash
 aliBuild -z -w ../sw -d build AliPhysics
 ```
 
@@ -346,7 +371,7 @@ manually from the build directory.
 The build directory for our version of AliPhysics will be stored in
 `$HOME/alice/sw`, so you can do:
 
-```
+```bash
 cd $HOME/alice/sw/BUILD/AliPhysics-latest-ali-master/AliPhysics/
 make -j50 install
 ```
@@ -381,7 +406,7 @@ there (as they were prepared with `aliBuild init`).
 The example above has only AliRoot and AliPhysics. If we want to add ROOT, for
 instance, we would do:
 
-```
+```bash
 cd $HOME/alice
 aliBuild init ROOT -z ali-master
 ```
@@ -410,7 +435,7 @@ Let's open the `root.sh` file (directly from
 The header is in [YAML format](https://en.wikipedia.org/wiki/YAML). Interesting
 parts:
 
-```
+```yaml
 package: ROOT
 version: "%(tag_basename)s-alice%(defaults_upper)s"
 tag: alice/v5-34-30
@@ -440,7 +465,7 @@ packages**, *i.e.* in case we did not prepare an editable ROOT clone by means of
 
 In case we want to develop ROOT (*i.e.*, ROOT becomes a development package):
 
-```
+```bash
 cd $HOME/alice
 aliBuild init ROOT -z ali-master
 ```
@@ -449,13 +474,13 @@ then by default a ROOT clone is created under `ali-master`, and **the version
 specified in the recipe is checked out**, *i.e.* `alice/v5-34-30`. If you want
 to override this, you can tell `aliBuild init` to checkout something different:
 
-```
+```bash
 aliBuild init ROOT@master -z ali-master
 ```
 
 or, you move into the ROOT directory and you do it with `git` commands:
 
-```
+```bash
 cd $HOME/alice
 cd ali-master/ROOT/
 git checkout master
@@ -534,7 +559,7 @@ master by using the `next` branch for testing - but on the Grid we use the
 
 When preparing a tuple with:
 
-```
+```bash
 aliBuild init AliPhysics -z ali-master
 ```
 
@@ -542,7 +567,7 @@ the current *stable* version of the recipes is downloaded under
 `ali-master/alidist`. If you want, you can explicitly download the development
 recipes set:
 
-```
+```bash
 aliBuild init AliPhysics -z ali-master --dist IB/v5-08/next
 ```
 
@@ -553,7 +578,7 @@ We periodically update the recipes, and you will need to *manually* download
 such updates. For instance, if we migrate from AliRoot v5-08-XX to v5-09-YY the
 production branch will change:
 
-```
+```bash
 cd $HOME/alice/ali-master/alidist
 git fetch
 git checkout IB/v5-09/prod
@@ -561,7 +586,7 @@ git checkout IB/v5-09/prod
 
 or, if you want to make sure you did not miss an update:
 
-```
+```bash
 cd $HOME/alice/ali-master/alidist
 git pull
 ```
@@ -618,7 +643,7 @@ Apart from some relatively small externals (like `cgal` or `GSL`), you might be
 seeing some packages that you don't need. If you don't want GEANT3, GEANT4 and
 fastjet, you can build your software with:
 
-```
+```bash
 aliBuild -z -w ../sw -d build AliPhysics --disable GEANT3,GEANT4_VMC,fastjet
 ```
 
@@ -639,13 +664,13 @@ script returns 0 (success), then the system version is used.
 If you want to know in advance what packages can be used from the system, use
 from a directory containing `alidist` the following command:
 
-```
+```bash
 aliDoctor
 ```
 
 To check boost you can do:
 
-```
+```bash
 aliDoctor 2>&1 | grep boost:
 ```
 
@@ -731,7 +756,7 @@ To list all available packages do `alienv q`. This command supports
 case-insensitive filters, *e.g.* for listing all available AliPhysics packages
 only:
 
-```
+```bash
 alienv q aliphysics
 ```
 
@@ -740,7 +765,7 @@ alienv q aliphysics
 
 To enter a new shell with the correct environment loaded, do:
 
-```
+```bash
 alienv enter AliPhysics/latest-ali-master
 ```
 
@@ -766,14 +791,14 @@ have set there.
 If you prefer to load the environment in the current shell, and you are loading
 the `alienv` helper in your `.bashrc`, you can type:
 
-```
+```bash
 alienv load AliPhysics/latest-ali-master
 ```
 
 to load the package in the *current* environment. Check the loaded packages
 with `alienv list`. To unload the package (and its dependencies too):
 
-```
+```bash
 alienv unload AliPhysics/latest-ali-master
 ```
 
@@ -783,7 +808,7 @@ alienv unload AliPhysics/latest-ali-master
 You can even execute a single command with the correct environment without
 altering your current shell:
 
-```
+```bash
 alienv setenv AliPhysics/latest-ali-master -c aliroot -b
 ```
 
@@ -800,21 +825,21 @@ in a separate `alidist` branch called `IB/master/root6`.
 
 Let's init the environment for ROOT 6 in a directory called `root6`:
 
-```
+```bash
 cd $HOME/alice
 aliBuild init ROOT --dist IB/master/root6 -z root6
 ```
 
 Let's move there, and compile:
 
-```
+```bash
 cd root6
 aliBuild -z -d -w ../sw build ROOT
 ```
 
 When ready we can use it with:
 
-```
+```bash
 alienv enter ROOT/latest-root6
 ```
 
@@ -826,7 +851,7 @@ also point the ROOT clone we have created to the *official* repository by adding
 another "remote" in Git (we'll call it `upstream`, while ours is called
 `origin`):
 
-```
+```bash
 cd $HOME/alice/root6/ROOT
 git remote add upstream https://github.com/root-mirror/root
 git checkout master
