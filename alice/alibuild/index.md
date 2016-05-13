@@ -100,6 +100,9 @@ specific version you can use the following syntax:
 aliBuild init AliRoot@<desired_aliroot_ver>,AliPhysics@<desired_aliphysics_ver> -z ali-master
 ```
 
+> aliBuild will **not** update your AliRoot/AliPhysics installation: how to
+> update [is explained later on](#get_updates_for_aliroot_and_aliphysics).
+
 
 ### What have we done here?
 
@@ -294,7 +297,7 @@ done for instance:
 Work on a "tuple"
 -----------------
 
-### Make changes
+### Get updates for AliRoot and AliPhysics
 
 Let's imagine that the base AliRoot version has changed. Say we have previously
 checked out AliRoot version `vX-YY-ZZ`:
@@ -315,7 +318,19 @@ git checkout master
 git pull
 ```
 
-to checkout the master branch and download all the updates.
+to checkout the master branch and download all the updates. If we want to check
+out a specific tag different from the initial one:
+
+```bash
+cd $HOME/alice/
+cd ali-master/
+cd AliRoot/
+git fetch && git remote update -p
+git checkout vAA-BB-CC
+```
+
+
+### Make changes
 
 Now, let's modify something in AliPhysics, commit it, download other people's
 changes, and push our commit:
