@@ -1719,11 +1719,26 @@ be similar to:
 git bisect run sh -c 'cd <build_dir>; make -j8'
 ```
 
-<!--Todo
-----
 
-* Editing commits (rebase -i)
-* What if my commits are rejected?-->
+### Which tags contain my commit?
+
+Suppose you have a certain commit hash and you want to know all the AliRoot tags
+containing this commit. First off update your local Git repository in order to
+download potential new tags from the remote:
+
+```bash
+git fetch && git remote update -p
+```
+
+List all tags containing commit `1e2a988831...` like this:
+
+```bash
+git tag --contains 1e2a988831e4908e2a3f990f85bb92301c586401
+```
+
+> Note that the command above does not tell you which tags contain the files as
+> if they were in the given commit: the files might have been changed by other
+> commits in the meanwhile.
 
 
 Additional Git documentation
