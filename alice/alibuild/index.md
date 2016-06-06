@@ -676,48 +676,42 @@ script that determines whether the system version of a package can be used, thus
 preventing to run the recipe in order to prefer the system version. If the
 script returns 0 (success), then the system version is used.
 
-If you want to know in advance what packages can be used from the system, use
-from a directory containing `alidist` the following command:
+If you want to know in advance what packages can be used from the system for
+building AliPhysics just run from a directory containing the recipes:
 
 ```bash
-aliDoctor
+aliDoctor AliPhysics
 ```
 
-To check boost you can do:
-
-```bash
-aliDoctor 2>&1 | grep boost:
-```
-
-The output might be something like:
-
-```
-boost: exit code 1
-```
-
-which means that we either don't have it, or we don't have the *development*
-version of it, or we have a version which does not work with our recipes.
+This will give you a detailed list of packages that could not be picked up from
+the system along with hints on what do to in order to install them.
 
 In most cases recipes are configured to pick as much as possible from the
 system. What packages are picked from the system, which ones are compiled and
 which others are in development mode are printed out at the very beginning
 of the build process (`aliBuild build`). For AliPhysics in the `ali-master`
-example above, on a recent El Capitan installation, this gives:
+example above, on a recent Ubuntu installation, this gives the following
+summary:
 
 ```
-Using package libxml2 from the system as preferred choice.
-Using package SWIG from the system as preferred choice.
-Using package zlib from the system as preferred choice.
-Using package CMake from the system as preferred choice.
-Using package autotools from the system as preferred choice.
-System package boost cannot be used. Building our own copy.
-System package GSL cannot be used. Building our own copy.
-Write store disabled since some packages will be picked up from local checkout.
-Local packages: AliRoot AliPhysics
-```
+==> The following packages will be picked up from the system:
 
-You can see plenty of **Using package XXX from the system...** which is what you
-want.
+    - CMake
+    - libxml2
+    - zlib
+    - OpenSSL
+    - GCC-Toolchain
+    - autotools
+
+    If this is not you want, you have to uninstall / unload them.
+
+==> The following packages will be build by aliBuild because they couldn't be picked up from the system:
+
+    - SWIG
+    - boost
+
+    This is not a real issue, but it might take longer the first time you invoke aliBuild.
+```
 
 
 Manage the environment
