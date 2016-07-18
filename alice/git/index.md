@@ -700,12 +700,12 @@ Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
-	modified:   HLT/README
+        modified:   HLT/README
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
-	HLT/Analysis.cxx
+        HLT/Analysis.cxx
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
@@ -766,13 +766,13 @@ On branch devel-hlt
 Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
 
-	new file:   HLT/Analysis.cxx
+        new file:   HLT/Analysis.cxx
 
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git checkout -- <file>..." to discard changes in working directory)
 
-	modified:   HLT/README
+        modified:   HLT/README
 ```
 
 Now `git status` is telling you that you have in fact one "change to be
@@ -932,7 +932,7 @@ On branch devel-hlt
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
-	i-dont-want-to-commit-this.txt
+        i-dont-want-to-commit-this.txt
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
@@ -1051,7 +1051,7 @@ On branch devel-hlt
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
-	i-dont-want-to-commit-this.txt
+        i-dont-want-to-commit-this.txt
 
 nothing added to commit but untracked files present (use "git add" to track)
 Dropped refs/stash@{0} (1ef5cb6b908c66f21155f58949005eb64747b9cd)
@@ -1168,7 +1168,7 @@ The remove operation is automatically staged for commit:
 Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
 
-	deleted:    <file>
+        deleted:    <file>
 ```
 
 If you have deleted a file manually, it will appear as *deleted* but *not
@@ -1215,7 +1215,7 @@ On branch devel-hlt
 Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
 
-	modified:   HLT/Analysis.cxx
+        modified:   HLT/Analysis.cxx
 ```
 
 As you can see, your modifications are automatically staged for commit (*i.e.*,
@@ -1365,13 +1365,13 @@ On branch devel-hlt
 Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
 
-	new file:   ANALYSIS/README
-	new file:   HLT/Analysis.cxx
-	new file:   HLT/README
-	new file:   PWGPP/README
-	modified:   README
-	new file:   STEER/README
-	new file:   TPC/README
+        new file:   ANALYSIS/README
+        new file:   HLT/Analysis.cxx
+        new file:   HLT/README
+        new file:   PWGPP/README
+        modified:   README
+        new file:   STEER/README
+        new file:   TPC/README
 ```
 
 If you just want to get rid of all your modifications and restore the working
@@ -1448,7 +1448,7 @@ Unmerged paths:
   (use "git reset HEAD <file>..." to unstage)
   (use "git add <file>..." to mark resolution)
 
-	both modified:      README
+        both modified:      README
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
@@ -1740,6 +1740,9 @@ git tag --contains 1e2a988831e4908e2a3f990f85bb92301c586401
 > if they were in the given commit: the files might have been changed by other
 > commits in the meanwhile.
 
+> Also note that Git hashes which depend upon many things, including the
+> preceding commit. Two commits, one of which is a cherry-pick of the other,
+> will have a different hash.
 
 Additional Git documentation
 ----------------------------
