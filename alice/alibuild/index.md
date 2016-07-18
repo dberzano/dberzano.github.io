@@ -4,6 +4,7 @@ layout: tweet
 
 parnumbers: true
 createtoc: true
+deprecated_notice: 'This page describes an <b>advanced</b> use of aliBuild. If you work with a single AliPhysics version try the <a href="https://alisw.github.io/alibuild/">simplified tutorial</a> first!'
 ---
 
 ALICE has been using since some months a novel build tool for the centralized
