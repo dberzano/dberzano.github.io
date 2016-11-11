@@ -88,8 +88,15 @@ mkdir $HOME/alice && cd $HOME/alice
 aliBuild init AliRoot,AliPhysics -z ali-master
 cd ali-master
 aliBuild -z -w ../sw -d build AliPhysics
-alienv enter AliPhysics/latest-ali-master
+alienv enter AliPhysics/latest-ali-master-release
 ```
+
+Note that there will always be an `AliPhysics/latest-ali-master-release`
+corresponding to your just compiled AliPhysics version with the correct
+dependencies:
+
+* `ali-master` it's the arbitrary name you have provided with `-z` to `aliBuild`
+* `release` means you are using no special compilation flag (see later on)
 
 These lines should be sufficient to download all the software from scratch,
 build it for your system and enter an environment for using it.
@@ -233,7 +240,8 @@ alienv enter AliPhysics/latest-ali-master
 
 Enters the environment of the just-generated AliPhysics build. As we have
 already pointed out, the use of `-z` while building this version is what
-appended `latest-ali-master` to the name in a way that we can identify it.
+appended `latest-ali-master-release` to the name in a way that we can identify
+it.
 
 Note that `alienv enter` works the same way as the `alienv` script found on
 CVMFS: it will open a new shell, with the correct environment for executing
@@ -829,47 +837,47 @@ alienv setenv AliPhysics/latest-ali-master -c aliroot -b
 Example: compile ROOT 6
 -----------------------
 
-As an example of how to use `aliBuild` we can try to compile ROOT 6. Since
-ROOT 6 is not used by ALICE in production, we keep the ROOT 6 compatible recipes
-in a separate `alidist` branch called `IB/master/root6`.
+As an example of how to use `aliBuild` we can try to compile ROOT 6. We are
+using a special `aliBuild` feature called "defaults" to compile our AliPhysics
+and AliRoot against ROOT 6 using a different set of options.
 
-Let's init the environment for ROOT 6 in a directory called `root6`:
+Let's init the environment for ROOT 6 in a directory called `new-root` for
+clarity. This directory will be at the same level as `ali-master`:
 
 ```bash
 cd $HOME/alice
-aliBuild init ROOT --dist IB/master/root6 -z root6
+aliBuild init ROOT -z new-root
 ```
 
 Let's move there, and compile:
 
 ```bash
-cd root6
-aliBuild -z -d -w ../sw build ROOT
+cd new-root
+aliBuild --defaults new-root -z -d -w ../sw build AliPhysics
 ```
+
+> Note the `--defaults root6`, this is what does the trick.
+
+> Also note that ROOT 6 compilation takes longer than ROOT 5. This is normal
+> and should not scare you.
 
 When ready we can use it with:
 
 ```bash
-alienv enter ROOT/latest-root6
+alienv enter AliPhysics/latest-new-root-root6
 ```
 
-and then type `root` at the prompt.
-
-Since ROOT by default is downloaded from the ALICE mirror, which only constantly
-updates the ALICE patch branches we need for production, it is convenient to
-also point the ROOT clone we have created to the *official* repository by adding
-another "remote" in Git (we'll call it `upstream`, while ours is called
-`origin`):
+and then type `root` or `aliroot` at the prompt. One nice ROOT 6 feature is the
+use of [Jupyter notebooks](https://root.cern.ch/notebooks/HowTos/HowTo_ROOT-Notebooks.html):
+you can use them by typing at the prompt:
 
 ```bash
-cd $HOME/alice/root6/ROOT
-git remote add upstream https://github.com/root-mirror/root
-git checkout master
-git pull --rebase upstream master  # get changes from the official repo
+root --notebook
 ```
 
-After we've done that we can use the `aliBuild` command to build it.
-
+and your web browser will be opened with a Mathematica-like interface. Resources
+on ROOT 6 new features (including C++11) and Jupyter notebooks can be found on
+[Markus Fasel's contributions to the ALICE Analysis tutorial](https://indico.cern.ch/event/514239/).
 
 Resources
 ---------
