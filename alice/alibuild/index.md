@@ -853,7 +853,7 @@ Let's move there, and compile:
 
 ```bash
 cd new-root
-aliBuild --defaults new-root -z -d -w ../sw build AliPhysics
+aliBuild --defaults root6 -z -d -w ../sw build AliPhysics
 ```
 
 > Note the `--defaults root6`, this is what does the trick.
