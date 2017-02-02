@@ -235,7 +235,7 @@ full list of `aliBuild` options do `aliBuild --help` or
   going on in the build process (including warnings).
 
 ```bash
-alienv enter AliPhysics/latest-ali-master
+alienv enter AliPhysics/latest-ali-master-release
 ```
 
 Enters the environment of the just-generated AliPhysics build. As we have
@@ -784,7 +784,7 @@ alienv q aliphysics
 To enter a new shell with the correct environment loaded, do:
 
 ```bash
-alienv enter AliPhysics/latest-ali-master
+alienv enter AliPhysics/latest-ali-master-release
 ```
 
 or the correct package name. All the dependencies are set automatically. This is
