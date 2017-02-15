@@ -846,7 +846,7 @@ clarity. This directory will be at the same level as `ali-master`:
 
 ```bash
 cd $HOME/alice
-aliBuild init ROOT -z new-root
+aliBuild init AliRoot,AliPhysics -z new-root
 ```
 
 Let's move there, and compile:
