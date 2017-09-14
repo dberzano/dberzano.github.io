@@ -23,7 +23,25 @@ browser's keychain.
 
 > Some browsers on some operating systems might store the certificate
 > in a system-wide keychain: for example, this is the case for Safari
-> or Chrome on OS X.
+> or Chrome on macOS.
+
+
+### Obtain a certificate from CERN
+
+In case you don't know who to ask for getting a digital certificate, or in case
+the procedure at your institute is too lengthy and you can't afford waiting,
+you can simply ask CERN to issue you a Grid certificate. The certificate will
+be issued automatically and instantly if you have a CERN account.
+
+* [Generate a new CERN Grid User
+   certificate](https://ca.cern.ch/ca/user/Request.aspx?template=EE2User)
+
+If the link above does not function, go to the [CERN certification
+authority](https://ca.cern.ch/) web page and look for "New Grid user
+certificate".
+
+From that point on, follow the on-screen instructions until you get your
+certificate.
 
 
 Register your certificate to ALICE
@@ -50,8 +68,12 @@ modification or re-download of your current certificate.
 This means that you can export the certificate to files even if you
 are not yet registered to the ALICE VO.
 
-The exact procedure depends on your browser and operating system. On
-Firefox, for instance, go to:
+The exact procedure depends on your browser and operating system.
+
+
+### Firefox users
+
+On Firefox, for instance, go to:
 
     Preferences → Advanced → Encryption → Show certificates
 
@@ -62,6 +84,21 @@ file name and an export password to protect the exported content.
 The output file will be a PKCS12 file (usually its name ends with
 the extension `.p12`) that contains both the private key and the
 certificate.
+
+
+### macOS users
+
+If you use Chrome or Safari on macOS, certificates are saved in the system's
+keychain. Open it (there is an app called **Keychain**), then move to the
+**Category** panel on the left and select **My certificates** from the list.
+Make sure the **login** keychain is selected.
+
+Click on the certificate you want to use, then from the menu:
+
+    File → Export Items
+
+As for Firefox, the output file will be a PKCS12 file with both the private key
+and your certificate inside.
 
 
 Make your certificate usable by AliEn
