@@ -6,6 +6,7 @@ var SecretSanta = (function() {
         this.seed = seed;
         this.output = output;
         this.currentGiver = Cookies.get("giver");
+        this.currentSeed = Cookies.get("seed");
 
         // A date after Christmas
         var now = new Date();
@@ -36,7 +37,7 @@ var SecretSanta = (function() {
     };
 
     SecretSanta.prototype.drawLanding = function() {
-        if (this.currentGiver) {
+        if (this.currentGiver && this.currentSeed == this.seed) {
             this.drawSecretSanta(this.currentGiver);
         }
         else {
@@ -95,6 +96,7 @@ var SecretSanta = (function() {
             span.onclick = function() {
                 that.drawSecretSanta(this.dataset.giver);
                 Cookies.set("giver", this.dataset.giver, that.afterXmasDate);
+                Cookies.set("seed", that.seed);
             };
             this.output.appendChild(span);
         }
