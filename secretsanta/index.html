@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Secret Santa</title>
+<link href="https://fonts.googleapis.com/css?family=Emilys+Candy&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="MersenneTwister.js"></script>
+<script src="Cookies.js"></script>
+<script src="SecretSanta.js"></script>
+<script>
+function init() {
+    var ss = new SecretSanta(["Eugenio", "Mimma", "Samuele", "Jlenia", "Dario", "Miriam", "Francesco", "Andrès"],
+                             45,
+                             document.getElementById("SecretSantaOutput"));
+    //ss.drawPairs();
+    ss.drawLanding();
+}
+</script>
+</head>
+<body onload="init()">
+<div id="Container">
+  <div id="SecretSantaOutput"></div>
+</div>
+</body>
+</html>
