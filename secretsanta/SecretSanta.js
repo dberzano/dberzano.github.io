@@ -21,7 +21,16 @@ var SecretSanta = (function() {
         this.receiver = [];
         while (ary.length) {
             var rn = Math.round(mt.random() * (ary.length - 1));
-            if (this.giver[this.receiver.length] == ary[rn]) continue;  // no gifts to oneself
+            if (this.giver[this.receiver.length] == ary[rn]) {
+                // no gifts to oneself
+                if (ary.length == 1) {
+                    var lbo = this.receiver.pop();
+                    this.receiver.push(ary[0]);
+                    this.receiver.push(lbo);
+                    break;
+                }
+                else continue;
+            }
             this.receiver.push(ary.splice(rn, 1)[0]);
         }
     };
