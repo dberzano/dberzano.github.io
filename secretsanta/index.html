@@ -12,11 +12,18 @@
 <script src="SecretSanta.js"></script>
 <script>
 function init() {
+    if (window.location.search.includes("reset")) {
+        Cookies.unset("giver");
+    }
     var ss = new SecretSanta(["Eugenio", "Mimma", "Samuele", "Jlenia", "Dario", "Miriam", "Francesco", "Andrès"],
-                             45,
+                             20160411,
                              document.getElementById("SecretSantaOutput"));
-    //ss.drawPairs();
-    ss.drawLanding();
+    if (window.location.search.includes("debug")) {
+        ss.drawPairs();
+    }
+    else {
+        ss.drawLanding();
+    }
 }
 </script>
 </head>
