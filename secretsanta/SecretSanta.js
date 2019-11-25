@@ -24,22 +24,32 @@ var SecretSanta = (function() {
             this.afterXmasDate.setYear(this.afterXmasDate.getFullYear() + 1);
         }
 
-        var mt = new MersenneTwister(this.seed);
-        var ary = Array.from(this.giver);
-        this.receiver = [];
-        while (ary.length) {
-            var rn = Math.round(mt.random() * (ary.length - 1));
-            if (this.giver[this.receiver.length] == ary[rn]) {
-                // no gifts to oneself
-                if (ary.length == 1) {
-                    var lbo = this.receiver.pop();
-                    this.receiver.push(ary[0]);
-                    this.receiver.push(lbo);
+        var valid = false;
+        while (!valid) {
+            var mt = new MersenneTwister(this.seed);
+            this.receiver = Array.from(this.giver); // copy
+
+            // Shuffle (Fisher-Yates)
+            // See: https://medium.com/@nitinpatel_20236/how-to-shuffle-correctly-shuffle-an-array-in-javascript-15ea3f84bfb
+            for (var i=this.receiver.length-1; i>0; i--) {
+                var j = Math.floor(mt.random() * i);
+                var tmp = this.receiver[i];
+                this.receiver[i] = this.receiver[j];
+                this.receiver[j] = tmp;
+            }
+
+            // Check if I have elements in the same position (no giver == receiver)
+            for (var i=0; i<this.giver.length; i++) {
+                if (this.giver[i] == this.receiver[i]) {
+                    this.seed += 13;
+                    console.log("Attention: seed updated to " + this.seed);
+                    valid = false;
                     break;
                 }
-                else continue;
             }
-            this.receiver.push(ary.splice(rn, 1)[0]);
+
+            console.log("Extraction done with seed " + this.seed);
+            valid = true;
         }
     };
 
