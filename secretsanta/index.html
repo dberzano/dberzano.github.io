@@ -5,24 +5,28 @@
 <title>Secret Santa</title>
 <link href="https://fonts.googleapis.com/css?family=Emilys+Candy&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="MersenneTwister.js"></script>
 <script src="Cookies.js"></script>
 <script src="SecretSanta.js"></script>
 <script>
 function init() {
-    if (window.location.search.includes("reset")) {
-        Cookies.unset("giver");
-    }
+    var q = Cookies.getQuery();
+    var seed = parseInt(q.get("s"));
     var ss = new SecretSanta(["Eugenio", "Mimma", "Samuele", "Jlenia", "Dario", "Miriam", "Francesco", "Andrès"],
-                             434218,
+                             seed,
                              document.getElementById("SecretSantaOutput"));
-    if (window.location.search.includes("debug")) {
-        ss.drawPairs();
+    if (ss.valid) {
+        if (q.get("reset")) {
+            Cookies.unset("giver");
+            window.location.href = window.location.href.split("?")[0] + "?s=" + seed;
+        }
+
+        if (q.get("debug")) ss.drawPairs();
+        else ss.drawLanding();
     }
     else {
-        ss.drawLanding();
+        ss.drawError(ss.errorMessage);
     }
 }
 </script>

@@ -7,6 +7,13 @@ var SecretSanta = (function() {
         this.output = output;
         this.currentGiver = Cookies.get("giver");
         this.currentSeed = Cookies.get("seed");
+        this.valid = true;
+
+        if (isNaN(seed)) {
+            this.errorMessage = "Errore: seed non definito";
+            this.valid = false;
+            return;
+        }
 
         // A date after Christmas
         var now = new Date();
@@ -34,6 +41,15 @@ var SecretSanta = (function() {
             }
             this.receiver.push(ary.splice(rn, 1)[0]);
         }
+    };
+
+    SecretSanta.prototype.drawError = function(msg) {
+        // Error
+
+        this.output.innerHTML = "";
+        var div = document.createElement("H2");
+        div.innerHTML = msg;
+        this.output.appendChild(div);
     };
 
     SecretSanta.prototype.drawLanding = function() {
@@ -70,12 +86,12 @@ var SecretSanta = (function() {
 
         this.output.innerHTML = "";
         var h2 = document.createElement("H2");
-        h2.innerHTML = "Pairs";
+        h2.innerHTML = "Se sei qua stai barando!";
         this.output.appendChild(h2);
 
         for (var i=0; i<this.giver.length; i++) {
             var span = document.createElement("SPAN");
-            span.innerHTML = this.giver[i] + " ➡ " + this.receiver[i];
+            span.innerHTML = "🎅 " + this.giver[i] + "<br> ⭐ " + this.receiver[i];
             this.output.appendChild(span);
         }
     };

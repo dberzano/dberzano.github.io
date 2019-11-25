@@ -26,5 +26,29 @@ var Cookies = (function() {
         Cookies.set(name, "", yesteryear);
     };
 
+    Cookies.getQuery = function() {
+        var q = new Map();
+        var raw = window.location.search;
+        if (raw[0] == "?") raw = raw.substring(1);
+        raw.split("&").forEach(function(tok) {
+            var idx = tok.indexOf("=");
+            var key = null;
+            var val = null;
+            if (idx == -1) {
+                key = decodeURIComponent(tok);
+                val = true;
+            }
+            else if (idx > 0) {
+                key = decodeURIComponent(tok.substring(0, idx));
+                val = decodeURIComponent(tok.substring(idx + 1));
+            }
+            // idx == 0 is invalid
+            if (key) {
+                q.set(key, val);
+            }
+        });
+        return q;
+    };
+
     return Cookies;
 })();
