@@ -1,27 +1,3 @@
 name: "My name is Dario Berzano"
 description: "My personal page"
-
-url: "dberzano.github.io"
-
-#permalink: /:year/:month/:day/:title
-permalink: pretty
-paginate: 3
-paginate_path: /page:num
-
-gems:
- - "jekyll-paginate"
-
-highlighter: rouge
-markdown: kramdown
-kramdown:
-  input: GFM
-
-defaults:
-  -
-    scope:
-      path: "" # empty string for all files
-      type: posts
-    values:
-      layout: tweet
-      createtoc: false
-      parnumbers: false
+url: "https://dberzano.github.io"
