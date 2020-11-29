@@ -1,8 +1,9 @@
 var SecretSanta = (function() {
     // Secret Santa
 
-    var SecretSanta = function(listNames, seed, output) {
-        this.giver = listNames;
+    var SecretSanta = function(listNamesExclusions, seed, output) {
+        this.giver = Object.keys(listNamesExclusions);
+        this.exclusions = Object.assign({}, listNamesExclusions);
         this.seed = seed;
         this.output = output;
         this.currentGiver = Cookies.get("giver");
@@ -38,19 +39,22 @@ var SecretSanta = (function() {
                 this.receiver[j] = tmp;
             }
 
-            // Check if I have elements in the same position (no giver == receiver)
+            // Exclude current giver (other than the configured ones) from the list of receivers
+            valid = true;
             for (var i=0; i<this.giver.length; i++) {
-                if (this.giver[i] == this.receiver[i]) {
+                var currentExclusions = Array.from(this.exclusions[this.giver[i]]);
+                currentExclusions.push(this.giver[i]);
+                if (currentExclusions.indexOf(this.receiver[i]) != -1) {
                     this.seed += 13;
-                    console.log("Attention: seed updated to " + this.seed);
+                    console.log(`Attention: current receiver ${this.receiver[i]} is in the ` +
+                                `exclusion list of current giver ${this.giver[i]}: ` +
+                                `updating seed to ${this.seed}`);
                     valid = false;
                     break;
                 }
             }
-
-            console.log("Extraction done with seed " + this.seed);
-            valid = true;
         }
+        console.log(`Extraction done with seed ${this.seed}`);
     };
 
     SecretSanta.prototype.drawError = function(msg) {
@@ -86,7 +90,7 @@ var SecretSanta = (function() {
         this.output.innerHTML = "";
         var div = document.createElement("DIV");
         div.className = "result";
-        div.innerHTML = giver + ", sarai il Babbo Natale segreto di <b>" + this.getReceiver(giver) + "</b>!";
+        div.innerHTML = `${giver}, sarai il Babbo Natale segreto di <b>${this.getReceiver(giver)}</b>!`;
         this.output.appendChild(div);
     };
 
