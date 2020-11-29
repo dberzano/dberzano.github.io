@@ -13,7 +13,17 @@
 function init() {
     var q = Cookies.getQuery();
     var seed = parseInt(q.get("s"));
-    var ss = new SecretSanta(["Eugenio", "Mimma", "Samuele", "Jlenia", "Dario", "Miriam", "Francesco", "Andrès"],
+    // {"Name": ["Exclusion1", "Exclusion2"...]}
+    var ss = new SecretSanta({"Eugenio": ["Mimma"],
+                              "Mimma": ["Eugenio"],
+                              "Samuele": ["Jlenia"],
+                              "Jlenia": ["Samuele"],
+                              "Dario": ["Miriam"],
+                              "Miriam": ["Dario"],
+                              "Maria": ["Adele"],
+                              "Adele": ["Maria"],
+                              "Francesco": [],
+                              "Andrès": []},
                              seed,
                              document.getElementById("SecretSantaOutput"));
     if (ss.valid) {
