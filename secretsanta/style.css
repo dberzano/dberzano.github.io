@@ -78,4 +78,27 @@ h2 {
     content: '✨';
 }
 
+#SecretSantaOutput .result .other {
+    font-size: 50%;
+    margin-bottom: 0;
+    padding: 0;
+}
 
+#SecretSantaOutput .result .other a {
+    color: #FFD400;
+    text-decoration: none;
+}
+
+#SecretSantaOutput .result .other a:hover {
+    color: #FFD400;
+    text-decoration: underline;
+}
+
+#SecretSantaOutput .result .other::before {
+    content: '🎄';
+
+}
+
+#SecretSantaOutput .result .other::after {
+    content: '🎄';
+}

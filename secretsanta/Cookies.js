@@ -50,5 +50,13 @@ var Cookies = (function() {
         return q;
     };
 
+    Cookies.genQueryString = function(gq) {
+        var queryString = "";
+        gq.forEach(function(v, k, m) {
+            queryString += `${encodeURIComponent(k)}=${encodeURIComponent(v)}&`;
+        });
+        return "?" + queryString.substring(0, queryString.length-1);
+    };
+
     return Cookies;
 })();

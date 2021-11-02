@@ -2,16 +2,28 @@ var SecretSanta = (function() {
     // Secret Santa
 
     var SecretSanta = function(listNamesExclusions, seed, output) {
+
         this.giver = Object.keys(listNamesExclusions);
+        this.giver.sort();  // why? --> we impose an order because dicts are unordered
         this.exclusions = Object.assign({}, listNamesExclusions);
+        this.hashId = b64.md5(unescape(encodeURIComponent(
+            JSON.stringify({"a":this.giver, "b":this.exclusions})
+        )));
         this.seed = seed;
         this.output = output;
-        this.currentGiver = Cookies.get("giver");
-        this.currentSeed = Cookies.get("seed");
+        this.currentGiver = Cookies.get(`giver-${this.hashId}`);
+        this.currentSeed = Cookies.get(`seed-${this.hashId}`);
         this.valid = true;
+        console.info(`Hash of this configuration is ${this.hashId}`);
+
+        if (this.giver.length == 0) {
+            this.errorMessage = "Non conosco i partecipanti";
+            this.valid = false;
+            return;
+        }
 
         if (isNaN(seed)) {
-            this.errorMessage = "Errore: seed non definito";
+            this.errorMessage = "Seme non definito";
             this.valid = false;
             return;
         }
@@ -45,16 +57,16 @@ var SecretSanta = (function() {
                 var currentExclusions = Array.from(this.exclusions[this.giver[i]]);
                 currentExclusions.push(this.giver[i]);
                 if (currentExclusions.indexOf(this.receiver[i]) != -1) {
-                    this.seed += 13;
-                    console.log(`Attention: current receiver ${this.receiver[i]} is in the ` +
-                                `exclusion list of current giver ${this.giver[i]}: ` +
-                                `updating seed to ${this.seed}`);
+                    this.seed += 13;  // totally arbitrary
+                    console.info(`Attention: current receiver ${this.receiver[i]} is in the ` +
+                                 `exclusion list of current giver ${this.giver[i]}: ` +
+                                 `updating seed to ${this.seed}`);
                     valid = false;
                     break;
                 }
             }
         }
-        console.log(`Extraction done with seed ${this.seed}`);
+        console.info(`Extraction done with seed ${this.seed}`);
     };
 
     SecretSanta.prototype.drawError = function(msg) {
@@ -90,7 +102,11 @@ var SecretSanta = (function() {
         this.output.innerHTML = "";
         var div = document.createElement("DIV");
         div.className = "result";
-        div.innerHTML = `${giver}, sarai il Babbo Natale segreto di <b>${this.getReceiver(giver)}</b>!`;
+        div.innerHTML = `${giver}, sarai il Babbo Natale ` +
+                        `segreto di <b>${this.getReceiver(giver)}</b>!<br/>` +
+                        `<p class="other">` +
+                        `<a href="${window.location.href.split('#')[0]}&reset">` +
+                        `Vai qui se non sei ${giver}</a></p>`;
         this.output.appendChild(div);
     };
 
@@ -125,8 +141,9 @@ var SecretSanta = (function() {
             var that = this;  // "this" inside event handler
             span.onclick = function() {
                 that.drawSecretSanta(this.dataset.giver);
-                Cookies.set("giver", this.dataset.giver, that.afterXmasDate);
-                Cookies.set("seed", that.seed);
+                console.info(`Setting cookies for configuration ${that.hashId}`);
+                Cookies.set(`giver-${that.hashId}`, this.dataset.giver, that.afterXmasDate);
+                Cookies.set(`seed-${that.hashId}`, that.seed);
             };
             this.output.appendChild(span);
         }

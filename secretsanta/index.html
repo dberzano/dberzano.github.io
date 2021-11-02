@@ -10,27 +10,23 @@
 <script src="MersenneTwister.js"></script>
 <script src="Cookies.js"></script>
 <script src="SecretSanta.js"></script>
+<script src="b64.js"></script>
 <script>
 function init() {
     var q = Cookies.getQuery();
+    var participants = q.get("w");
     var seed = parseInt(q.get("s"));
-    // {"Name": ["Exclusion1", "Exclusion2"...]}
-    var ss = new SecretSanta({"Eugenio": ["Mimma"],
-                              "Mimma": ["Eugenio"],
-                              "Samuele": ["Jlenia"],
-                              "Jlenia": ["Samuele"],
-                              "Dario": ["Miriam"],
-                              "Miriam": ["Dario"],
-                              "Maria": ["Adele"],
-                              "Adele": ["Maria"],
-                              "Francesco": [],
-                              "Andrès": []},
-                             seed,
-                             document.getElementById("SecretSantaOutput"));
+    var ss = new SecretSanta(
+        participants === undefined ? {} : b64.decode(participants),
+        seed,
+        document.getElementById("SecretSantaOutput")
+    );
     if (ss.valid) {
         if (q.get("reset")) {
-            Cookies.unset("giver");
-            window.location.href = window.location.href.split("?")[0] + "?s=" + seed;
+            Cookies.unset(`giver-${ss.hashId}`);
+            var q = Cookies.getQuery();
+            q.delete("reset");
+            window.location.href = window.location.href.split("?")[0] + Cookies.genQueryString(q);
         }
 
         if (q.get("debug")) ss.drawPairs();
