@@ -19,8 +19,8 @@ Use this skill when asked to add a new configuration for the Secret Santa app. P
 1. Discover the current configuration set by listing `secretsanta/u/*/config.json`. Treat each parent directory name as an available source slug; do not rely on a hard-coded list.
 2. Ask for the new slug. Propose the current calendar year (`YYYY`, e.g. `2026`) as the default. If that path already exists, explain the collision and propose an unused slug, such as `<year>-2`; never silently overwrite.
 3. Ask whether to copy an existing configuration. Offer a separate choice for every discovered configuration, with its slug, plus a blank configuration choice. If there are no existing configurations, use a blank configuration. For a selected source, copy its participant names and exclusion arrays as the starting point; do not carry over its seed.
-4. Inspect the selected starting configuration and ask what to modify. The user can add/remove/rename participants and change exclusions. Apply only their requested changes. If starting blank, collect the full participant/exclusion mapping. Preserve JSON-compatible strings and arrays; do not invent participant details.
-5. Generate a fresh seed securely and offer it as the default in a seed confirmation prompt. Use Python's cryptographically secure `secrets` module, for example:
+4. Inspect the selected starting configuration and ask what to modify. The user can add/remove/rename participants and change exclusions. Preserve starting exclusions for participants who remain; carry exclusions through a rename only when the correspondence is unambiguous. If starting blank, collect the full participant/exclusion mapping. Preserve JSON-compatible strings and arrays; do not invent participant details. Then show the complete proposed participant list with each person's exclusions and obtain the user's explicit approval of that exact mapping before generating or confirming a seed, creating a branch, or writing files. If the user requests changes, revise and show the full mapping again for approval.
+5. Only after the user approves the complete participant/exclusion mapping, generate a fresh seed securely and offer it as the default in a separate seed confirmation prompt. Use Python's cryptographically secure `secrets` module, for example:
 
    ```bash
    python3 -c 'import secrets; print(secrets.randbelow(2147483648))'
@@ -46,10 +46,11 @@ Use this skill when asked to add a new configuration for the Secret Santa app. P
 
 ## Interaction requirements
 
-- Use a prompt for the slug, a prompt to choose the source configuration, a prompt for modifications, and a prompt to accept/change the generated seed. Do not bundle these into one prompt that hides later choices.
+- Use a separate prompt for the slug, source configuration, modifications, approval of the complete participant/exclusion mapping, and acceptance/change of the generated seed. Do not bundle these into one prompt that hides later choices.
 - When asking which configuration to copy, show every discovered configuration as an individual option; do not select one silently, even when there are many.
 - Do not ask for approval to copy the shared redirect page; it must remain identical across slugs.
 - If a requested change would leave an invalid participant/exclusion mapping, explain the specific inconsistency and ask how to resolve it before writing files.
-- Create the branch only after the user has confirmed configuration details and the seed; create the pull request only after the new configuration is verified and committed.
+- Before generating the seed or proceeding to branch creation/file changes, present every participant and their complete exclusions; require explicit user approval of that exact list. Any edits require presenting the revised full list and obtaining approval again.
+- Create the branch only after the user has confirmed the configuration details and the seed; create the pull request only after the new configuration is verified and committed.
 - Open the actual pull request URL in the browser and leave it unmerged for the user's review.
 
