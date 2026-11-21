@@ -42,7 +42,7 @@ Use this skill when asked to add a new configuration for the Secret Santa app. P
    Empty exclusion lists are `[]`. Serialize valid JSON with readable indentation. Do not add a per-slug copy of the app's root `index.html`.
 8. Verify the resulting JSON parses, the slug is URL-safe and unused, and the new redirect page matches the existing redirect template. Commit only the two new files; never include unrelated user changes. Follow the repository's commit conventions.
 9. Create a pull request from `secretsanta-<slug>` using the repository's PR conventions. Determine any required ticket key/title format from repository guidance or existing PRs; ask the user only if required information cannot be resolved from the repository. Do not merge the PR.
-10. Open the created PR URL in the user's browser so they can review and approve it. Report the branch, PR URL, created paths, and seed. Do not claim approval or merge unless the user performs that action.
+10. Open the created PR URL in the user's default browser using the normal default-browser integration; do not launch or switch to a separate managed, headless, or alternate browser. If the default browser is unavailable, report the PR URL and that it could not be opened there rather than falling back. Report the branch, PR URL, created paths, and seed. Do not claim approval or merge unless the user performs that action.
 
 ## Interaction requirements
 
