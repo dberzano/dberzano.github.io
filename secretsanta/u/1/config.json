@@ -1,0 +1,15 @@
+{
+  "participants": {
+    "Eugenio": ["Mimma"],
+    "Mimma": ["Eugenio"],
+    "Samuele": ["Jlenia"],
+    "Jlenia": ["Samuele"],
+    "Dario": ["Miriam"],
+    "Miriam": ["Dario"],
+    "Maria": ["Adele"],
+    "Adele": ["Maria"],
+    "Francesco": [],
+    "Andrès": []
+  },
+  "seed": null
+}

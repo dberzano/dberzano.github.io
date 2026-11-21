@@ -5,26 +5,16 @@
 <meta property="og:image" content="//dberzano.github.io/secretsanta/preview.jpg">
 <title>Secret Santa</title>
 <script src="../../Cookies.js"></script>
-<script src="../../b64.js"></script>
 <script>
-var q = Cookies.getQuery();
-q.set("w", b64.encode({
-    "Eugenio": ["Mimma"],
-    "Mimma": ["Eugenio"],
-    "Samuele": ["Jlenia"],
-    "Jlenia": ["Samuele"],
-    "Dario": ["Miriam"],
-    "Miriam": ["Dario"],
-    "Maria": ["Adele"],
-    "Adele": ["Maria"],
-    "Francesco": [],
-    "Andrès": []
-}));
-var newUrl = window.location.href.split("?")[0] + "../../" + Cookies.genQueryString(q);
-console.info(`Redirecting to ${newUrl}`);
-window.location.href = newUrl;
+    var q = Cookies.getQuery();
+    var path = window.location.pathname
+        .replace(/\/index\.html$/, "")
+        .replace(/\/$/, "");
+    q.set("slug", decodeURIComponent(path.substring(path.lastIndexOf("/") + 1)));
+    var target = new URL("../../", window.location.href);
+    target.search = Cookies.genQueryString(q);
+    window.location.replace(target.href);
 </script>
 </head>
-<body>
-</body>
+<body></body>
 </html>
