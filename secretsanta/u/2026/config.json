@@ -1,0 +1,16 @@
+{
+  "participants": {
+    "Dario": ["Miriam", "Lucia"],
+    "Miriam": ["Dario", "Lucia"],
+    "Francesco": ["Martina"],
+    "Andrès": ["Serena"],
+    "Serena": ["Andrès"],
+    "Samuele": ["Jlenia"],
+    "Jlenia": ["Samuele"],
+    "Maria": ["Adele"],
+    "Adele": ["Maria"],
+    "Martina": ["Francesco"],
+    "Lucia": ["Dario", "Miriam"]
+  },
+  "seed": 1861626352
+}
