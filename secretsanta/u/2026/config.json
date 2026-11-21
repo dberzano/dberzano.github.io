@@ -1,16 +1,16 @@
 {
   "participants": {
-    "Samu": [],
-    "Jle": [],
-    "Ade": [],
-    "Mari": [],
-    "Andre": [],
-    "Sere": [],
-    "Franci": ["Martina"],
-    "Martina": ["Franci"],
-    "Lucia": ["Dario", "Miriam"],
-    "Dario": ["Lucia", "Miriam"],
-    "Miriam": ["Lucia", "Dario"]
+    "Dario": ["Miriam", "Lucia"],
+    "Miriam": ["Dario", "Lucia"],
+    "Francesco": ["Martina"],
+    "Andrès": ["Serena"],
+    "Serena": ["Andrès"],
+    "Samuele": ["Jlenia"],
+    "Jlenia": ["Samuele"],
+    "Maria": ["Adele"],
+    "Adele": ["Maria"],
+    "Martina": ["Francesco"],
+    "Lucia": ["Dario", "Miriam"]
   },
   "seed": 1861626352
 }
