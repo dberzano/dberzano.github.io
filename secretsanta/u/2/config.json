@@ -1,0 +1,11 @@
+{
+  "participants": {
+    "Ruben": ["Sara"],
+    "Sara": ["Ruben"],
+    "Enza": ["Guido"],
+    "Guido": ["Enza"],
+    "Dario": ["Miriam"],
+    "Miriam": ["Dario"]
+  },
+  "seed": null
+}

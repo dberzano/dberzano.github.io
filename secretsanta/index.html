@@ -12,19 +12,51 @@
 <script src="SecretSanta.js"></script>
 <script src="b64.js"></script>
 <script>
-function init() {
+async function init() {
     var q = Cookies.getQuery();
-    var participants = q.get("w");
-    var seed = parseInt(q.get("s"));
-    var ss = new SecretSanta(
-        participants === undefined ? {} : b64.decode(participants),
-        seed,
-        document.getElementById("SecretSantaOutput")
-    );
+    var participants;
+    var seed;
+    var slug = q.get("slug");
+
+    if (slug !== undefined) {
+        if (q.has("w")) {
+            q.delete("w");
+            var cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete("w");
+            window.history.replaceState(window.history.state, "", cleanUrl.href);
+        }
+        try {
+            if (typeof slug !== "string" || !/^[A-Za-z0-9_-]+$/.test(slug)) {
+                throw new Error("Invalid configuration slug");
+            }
+            var appPath = window.location.pathname
+                .replace(/\/index\.html$/, "")
+                .replace(/\/?$/, "/");
+            var response = await fetch(appPath + "u/" + encodeURIComponent(slug) + "/config.json");
+            if (!response.ok) throw new Error("Configuration not found");
+            var config = await response.json();
+            participants = config.participants;
+            seed = config.seed === null ? parseInt(q.get("s")) : config.seed;
+            if (!participants || typeof participants !== "object") {
+                throw new Error("Invalid configuration data");
+            }
+        }
+        catch (error) {
+            new SecretSanta({}, NaN, document.getElementById("SecretSantaOutput"))
+                .drawError("Impossibile caricare la configurazione");
+            return;
+        }
+    }
+    else {
+        var encodedParticipants = q.get("w");
+        participants = encodedParticipants === undefined ? {} : b64.decode(encodedParticipants);
+        seed = parseInt(q.get("s"));
+    }
+
+    var ss = new SecretSanta(participants, seed, document.getElementById("SecretSantaOutput"));
     if (ss.valid) {
         if (q.get("reset")) {
             Cookies.unset(`giver-${ss.hashId}`);
-            var q = Cookies.getQuery();
             q.delete("reset");
             window.location.href = window.location.href.split("?")[0] + Cookies.genQueryString(q);
         }

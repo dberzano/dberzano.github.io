@@ -1,0 +1,12 @@
+{
+  "participants": {
+    "Ruben": ["Sara"],
+    "Sara": ["Ruben"],
+    "Enza": ["Guido"],
+    "Guido": ["Enza"],
+    "Dario": ["Miriam"],
+    "Miriam": ["Dario"],
+    "Lucia": ["Dario", "Miriam"]
+  },
+  "seed": 75
+}
